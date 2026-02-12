@@ -9,7 +9,7 @@
 
       <!-- 3D Print -->
       {{ $img := resources.Get "images/bento/3d-print.png" }}
-      <a href="/about/work-areas/3dprint/"
+      <a href="/work-areas/3dprint/"
         class="group relative col-span-2 row-span-5 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -19,7 +19,7 @@
 
       <!-- Laser Cutter -->
       {{ $img := resources.Get "images/bento/Laser-cutter.png" }}
-      <a href="/about/work-areas/laser/"
+      <a href="/work-areas/laser/"
         class="group relative col-span-4 row-span-3 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -29,7 +29,7 @@
 
       <!-- CNC -->
       {{ $img := resources.Get "images/workspace/cnc_background.jpg" }}
-      <a href="/about/work-areas/cnc/"
+      <a href="/work-areas/cnc/"
         class="group relative col-span-4 row-span-3 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -39,16 +39,33 @@
 
       <!-- Main Text Block -->
       <div class="col-span-8 row-span-5 flex flex-col items-center justify-center rounded-[10px] bg-white p-8 text-center shadow-lg">
-        <h1 class="mb-4 font-secondary text-4xl font-bold text-secondary xl:text-5xl">Your Very Own Makerspace</h1>
-        <h3 class="mb-8 text-xl text-gray-dark">Explore our space, tools and workshops</h3>
-        <a href="/about/work-areas/" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white transition-colors duration-300">
+        <h1 class="mb-2 font-secondary text-4xl font-bold text-secondary xl:text-5xl">Your Very Own Makerspace</h1>
+        <ul class="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-dark">
+          <li class="inline-flex items-center gap-1.5">
+            <i class="fa-regular fa-clock text-accent"></i>
+            24/7 member access
+          </li>
+          <li class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-screwdriver-wrench text-accent"></i>
+            All tools included
+          </li>
+          <li class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-warehouse text-accent"></i>
+            Full workspace access
+          </li>
+          <li class="inline-flex items-center gap-1.5">
+            <i class="fa-solid fa-people-group text-accent"></i>
+            Supportive community
+          </li>
+        </ul>
+        <a href="/work-areas/" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white transition-colors duration-300">
           Explore Space
         </a>
       </div>
 
       <!-- Woodwork -->
       {{ $img := resources.Get "images/bento/woodworking.png" }}
-      <a href="/about/work-areas/woodwork/"
+      <a href="/work-areas/woodwork/"
         class="group relative col-span-2 row-span-6 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -58,7 +75,7 @@
 
       <!-- Metal Work -->
       {{ $img := resources.Get "images/bento/weld.png" }}
-      <a href="/about/work-areas/metal/"
+      <a href="/work-areas/metal/"
         class="group relative col-span-3 row-span-3 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -68,7 +85,7 @@
 
       <!-- Electronics -->
       {{ $img := resources.Get "images/bento/solder.png" }}
-      <a href="/about/work-areas/electronics/"
+      <a href="/work-areas/electronics/"
         class="group relative col-span-5 row-span-3 overflow-hidden rounded-[10px] bg-cover bg-center"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
         <div class="absolute inset-0 bg-secondary/50 transition-all duration-300 group-hover:bg-secondary/20"></div>
@@ -81,42 +98,60 @@
     <!-- Mobile Version: List -->
     <div class="flex flex-col gap-4 xl:hidden">
 
-      <a href="/about/work-areas/3dprint/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/3dprint/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         3D Print
       </a>
 
-      <a href="/about/work-areas/electronics/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/electronics/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         Electronics
       </a>
 
       <!-- Mobile Hero -->
       {{ $img := resources.Get "images/bento/weld.png" }}
-      <div class="relative overflow-hidden rounded-[10px] bg-cover bg-center py-16"
+      <div class="relative overflow-hidden rounded-[10px] bg-cover bg-center py-10"
         style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
-        <div class="absolute inset-0 bg-secondary/60"></div>
-        <div class="relative z-10 text-center">
+        <div class="absolute inset-0 bg-secondary/70"></div>
+        <div class="relative z-10 text-center px-6">
           <h2 class="font-secondary text-2xl font-bold text-primary-2">Your Very Own</h2>
-          <h2 class="font-secondary text-3xl font-bold text-accent">Makerspace</h2>
+          <h2 class="mb-4 font-secondary text-3xl font-bold text-accent">Makerspace</h2>
+          <ul class="flex flex-col gap-2 text-sm text-white/90">
+            <li class="inline-flex items-center justify-center gap-1.5">
+              <i class="fa-regular fa-clock text-accent"></i>
+              24/7 member access
+            </li>
+            <li class="inline-flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-screwdriver-wrench text-accent"></i>
+              All tools included
+            </li>
+            <li class="inline-flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-warehouse text-accent"></i>
+              Full workspace access
+            </li>
+            <li class="inline-flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-people-group text-accent"></i>
+              Supportive community
+            </li>
+          </ul>
         </div>
       </div>
 
-      <a href="/about/work-areas/laser/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/laser/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         Laser Cutter
       </a>
 
-      <a href="/about/work-areas/cnc/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/cnc/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         CNC Machine
       </a>
 
-      <a href="/about/work-areas/metal/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/metal/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         Metal Work
       </a>
 
-      <a href="/about/work-areas/woodwork/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
+      <a href="/work-areas/woodwork/" class="block rounded-[10px] bg-white px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
         Wood Work
       </a>
 
-      <a href="/about/work-areas/" class="bg-accent hover:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
+      <a href="/work-areas/" class="bg-accent hover:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
         Explore Space
       </a>
 

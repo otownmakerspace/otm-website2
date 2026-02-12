@@ -2,6 +2,7 @@
 title: "FAQ"
 weight: 10
 section: "Resources"
+section_weight: 3
 anchor: "faq"
 ---
 <details>

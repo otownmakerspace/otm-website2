@@ -1,0 +1,22 @@
+{{/* Breadcrumb Partial */}}
+{{/* Usage: {{ partial "breadcrumb.html" . }} */}}
+{{/* Builds breadcrumb from the page's parent chain */}}
+
+{{ $ancestors := slice }}
+{{ $current := .Parent }}
+{{ range seq 10 }}
+  {{ if $current }}
+    {{ if not $current.IsHome }}
+      {{ $ancestors = $ancestors | append $current }}
+      {{ $current = $current.Parent }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<nav class="mb-8 text-sm text-gray-dark">
+  {{ range $ancestors | collections.Reverse }}
+    <a href="{{ .RelPermalink }}" class="hover:text-accent">{{ .Title }}</a>
+    <span class="mx-2">/</span>
+  {{ end }}
+  <span class="text-secondary font-medium">{{ .Title }}</span>
+</nav>

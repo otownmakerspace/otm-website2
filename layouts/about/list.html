@@ -57,7 +57,7 @@
         <!-- Introduction Section -->
         <section id="intro" class="mb-12 scroll-mt-8">
           {{ with .Content }}
-          <div class="prose prose-lg mb-12 max-w-none prose-headings:font-secondary prose-headings:text-secondary">
+          <div class="page-content mb-12 max-w-none">
             {{ . }}
           </div>
           {{ end }}
@@ -67,7 +67,7 @@
         {{ range $workAreas }}
         <section id="{{ .Title | urlize }}" class="mb-12 scroll-mt-8">
           <h2 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ .Title }}</h2>
-          <div class="prose prose-lg max-w-none prose-headings:font-secondary prose-headings:text-secondary prose-a:text-accent">
+          <div class="page-content max-w-none">
             {{ .Content }}
           </div>
         </section>
@@ -120,6 +120,14 @@
                   <span class="sr-only">LinkedIn</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                     <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H3.337v7.225h1.606zm-1.56-8.122c.56 0 .966-.37.966-.845 0-.485-.405-.853-.966-.853-.566 0-.972.368-.972.853 0 .475.406.845.972.845zM13.825 13.394V9.302c0-2.192-1.168-3.212-2.73-3.212-1.26 0-1.825.694-2.139 1.189v-.998H7.352c.021.454 0 7.225 0 7.225h1.606V9.334c0-.438.031-.875.16-1.191.35-.875 1.154-1.782 2.506-1.782 1.767 0 2.474 1.348 2.474 3.326v3.717h1.607z"/>
+                  </svg>
+                </a>
+                {{ end }}
+                {{ with .Params.social.discord }}
+                <a href="{{ . }}" class="text-secondary hover:text-accent duration-200" title="Discord">
+                  <span class="sr-only">Discord</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059.05.05 0 0 0-.018-.011 8.8 8.8 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.05.05 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007c.08.066.164.132.248.195a.05.05 0 0 1-.004.085 8.3 8.3 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
                   </svg>
                 </a>
                 {{ end }}

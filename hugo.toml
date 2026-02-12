@@ -5,13 +5,12 @@ title = "O'Town Makerspace"
 theme = 'hugo-up-business-main'
 
 [params]
-  description = "Empowering communities through volunteer action"
+  description = "Empowering makers to bring ideas to life"
   copyright = "© 2026 O'Town Makerspace. All rights reserved."
   logo = "images/branding/otown_logo_2.svg"
-  location = ["Copenhagen, Denmark"]
+  location = ["Havnegade 57, 5000 Odense C, Denmark"]
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
-  docSections = ["Getting Started", "General Rules", "Resources", "Legal & Policy"]
 
   [params.colors]
     accent = "#F68048"
@@ -27,6 +26,7 @@ theme = 'hugo-up-business-main'
   [params.social]
     facebook = "#"
     instagram = "#"
+    discord = "https://discord.gg/HDR8jsUp"
 
 # Enable raw HTML in markdown
 [markup]
@@ -55,8 +55,8 @@ theme = 'hugo-up-business-main'
   weight = 3
 
 [[menus.main]]
-  name = "Workshops"
-  url = "/about/work-areas/"
+  name = "Work areas"
+  url = "/work-areas/"
   weight = 4
 
 [[menus.main]]

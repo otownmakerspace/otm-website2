@@ -2,6 +2,7 @@
 title: "First Steps"
 weight: 20
 section: "Getting Started"
+section_weight: 1
 anchor: "first-steps"
 ---
 1. **Complete Your Profile** - Make sure your contact information and availability are up to date.

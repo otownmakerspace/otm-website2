@@ -1,0 +1,13 @@
+{{/* Returns an ordered slice of unique doc section names, sorted by section_weight.
+     Pass a page collection (e.g. sorted doc pages) as context. */}}
+{{ $sorted := sort . "Params.section_weight" }}
+{{ $seen := slice }}
+{{ $sections := slice }}
+{{ range $sorted }}
+  {{ $s := .Params.section }}
+  {{ if and $s (not (in $seen $s)) }}
+    {{ $seen = $seen | append $s }}
+    {{ $sections = $sections | append $s }}
+  {{ end }}
+{{ end }}
+{{ return $sections }}

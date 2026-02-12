@@ -1,33 +1,14 @@
 {{ define "main" }}
 <section class="py-16">
   <div class="container mx-auto px-4">
-    <!-- Breadcrumb -->
-    <nav class="mb-8 text-sm text-gray-dark">
-      <a href="/docs/" class="hover:text-accent">Documentation</a>
-      {{ with .Params.section }}
-        <span class="mx-2">/</span>
-        <span>{{ . }}</span>
-      {{ end }}
-      <span class="mx-2">/</span>
-      <span class="text-secondary font-medium">{{ .Title }}</span>
-    </nav>
+    {{ partial "breadcrumb.html" . }}
 
     <div class="flex flex-col gap-8 xl:flex-row">
       <!-- Sidebar -->
       <aside class="xl:w-64 xl:shrink-0">
         <nav class="bg-primary sticky top-8 rounded-[10px] p-6">
           <!-- Table of Contents -->
-          {{ if .TableOfContents }}
-            {{ $toc := .TableOfContents }}
-            {{ if ne $toc "<nav id=\"TableOfContents\"></nav>" }}
-              <div class="mb-6" id="toc-section">
-                <h2 class="text-secondary mb-4 font-secondary text-lg font-bold">On This Page</h2>
-                <div class="toc-nav text-sm text-gray-dark">
-                  {{ $toc }}
-                </div>
-              </div>
-            {{ end }}
-          {{ end }}
+          {{ partial "toc.html" . }}
 
           <!-- Sibling docs in same section -->
           {{ with .Params.section }}
@@ -57,65 +38,13 @@
       <!-- Main Content -->
       <main class="min-w-0 flex-1">
         <h1 class="text-secondary mb-8 font-secondary text-4xl font-bold xl:text-5xl">{{ .Title }}</h1>
-        <div class="prose prose-lg max-w-none prose-headings:font-secondary prose-headings:text-secondary prose-a:text-accent prose-headings:scroll-mt-20">
+        <div class="page-content max-w-none">
           {{ .Content }}
         </div>
+        {{ partial "content-styles.html" . }}
       </main>
     </div>
   </div>
 </section>
 
-<style type="text/tailwindcss">
-  .toc-nav ul {
-    @apply flex flex-col gap-1;
-  }
-  .toc-nav li {
-    @apply leading-snug;
-  }
-  .toc-nav a {
-    @apply block py-1 text-gray-dark hover:text-accent duration-200;
-  }
-  .toc-nav a.active {
-    @apply text-accent font-semibold;
-  }
-  .toc-nav ul ul {
-    @apply pl-3 mt-1;
-  }
-  .toc-nav ul ul a {
-    @apply text-xs;
-  }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const tocLinks = document.querySelectorAll('.toc-nav a');
-  if (tocLinks.length === 0) return;
-
-  const headings = [];
-  tocLinks.forEach(function(link) {
-    const id = link.getAttribute('href');
-    if (id && id.startsWith('#')) {
-      const el = document.getElementById(id.substring(1));
-      if (el) headings.push({ el: el, link: link });
-    }
-  });
-
-  function updateActiveLink() {
-    let current = null;
-    for (var i = 0; i < headings.length; i++) {
-      var rect = headings[i].el.getBoundingClientRect();
-      if (rect.top <= 100) {
-        current = headings[i];
-      }
-    }
-    tocLinks.forEach(function(link) { link.classList.remove('active'); });
-    if (current) {
-      current.link.classList.add('active');
-    }
-  }
-
-  window.addEventListener('scroll', updateActiveLink);
-  updateActiveLink();
-});
-</script>
 {{ end }}

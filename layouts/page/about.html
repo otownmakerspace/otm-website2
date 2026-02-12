@@ -5,39 +5,33 @@
     <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
     <p class="mx-auto mb-16 text-center text-gray-dark xl:max-w-[50%]">{{ .Params.description }}</p>
     {{ with .Content }}
-    <div class="prose prose-lg mx-auto max-w-3xl prose-headings:font-secondary prose-headings:text-secondary">
+    <div class="page-content mx-auto max-w-3xl">
       {{ . }}
     </div>
     {{ end }}
   </div>
 </section>
 
+<!-- Timeline -->
+{{ partial "timeline.html" . }}
+
 <!-- Mission & Vision -->
+{{ $mission := .GetPage "mission" }}
+{{ $vision := .GetPage "vision" }}
+{{ if or $mission $vision }}
 <section class="bg-primary py-16">
   <div class="container mx-auto px-4">
     <div class="mx-auto grid max-w-5xl gap-8 xl:grid-cols-2">
+      {{ with $mission }}
       <div class="rounded-[10px] bg-white p-8 xl:p-12">
-        <h2 class="text-accent mb-4 font-secondary text-sm font-semibold uppercase tracking-wide">Our Mission</h2>
-        <p class="text-secondary font-secondary text-xl font-bold xl:text-2xl">{{ .Params.mission }}</p>
+        <h2 class="text-accent mb-4 font-secondary text-sm font-semibold uppercase tracking-wide">{{ .Title }}</h2>
+        <div class="text-secondary font-secondary text-xl font-bold xl:text-2xl">{{ .Content }}</div>
       </div>
+      {{ end }}
+      {{ with $vision }}
       <div class="rounded-[10px] bg-white p-8 xl:p-12">
-        <h2 class="text-accent mb-4 font-secondary text-sm font-semibold uppercase tracking-wide">Our Vision</h2>
-        <p class="text-secondary font-secondary text-xl font-bold xl:text-2xl">{{ .Params.vision }}</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Values -->
-{{ with .Params.values }}
-<section class="py-16">
-  <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-2xl font-bold xl:text-4xl">Our Values</h2>
-    <div class="mx-auto grid max-w-5xl gap-6 md:grid-cols-2 xl:grid-cols-3">
-      {{ range . }}
-      <div class="bg-primary rounded-[10px] p-6 xl:p-8">
-        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ .title }}</h3>
-        <p class="text-gray-dark">{{ .text }}</p>
+        <h2 class="text-accent mb-4 font-secondary text-sm font-semibold uppercase tracking-wide">{{ .Title }}</h2>
+        <div class="text-secondary font-secondary text-xl font-bold xl:text-2xl">{{ .Content }}</div>
       </div>
       {{ end }}
     </div>
@@ -45,16 +39,109 @@
 </section>
 {{ end }}
 
+<!-- Values -->
+{{ with .GetPage "values" }}
+{{ $values := .Pages.ByWeight }}
+{{ if $values }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-12 text-center font-secondary text-2xl font-bold xl:text-4xl">{{ .Title }}</h2>
+    <div class="mx-auto grid max-w-5xl gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {{ range $values }}
+      <div class="bg-primary rounded-[10px] p-6 xl:p-8">
+        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ .Title }}</h3>
+        <div class="text-gray-dark">{{ .Content }}</div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+{{ end }}
+
 <!-- What We Do -->
-{{ with .Params.activities }}
+{{ with .GetPage "activities" }}
+{{ $activities := .Pages.ByWeight }}
+{{ if $activities }}
 <section class="bg-primary py-16">
   <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-2xl font-bold xl:text-4xl">What We Do</h2>
+    <h2 class="text-secondary mb-12 text-center font-secondary text-2xl font-bold xl:text-4xl">{{ .Title }}</h2>
     <div class="mx-auto grid max-w-5xl gap-8 md:grid-cols-2">
-      {{ range . }}
+      {{ range $activities }}
       <div class="rounded-[10px] bg-white p-6 xl:p-8">
-        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ .title }}</h3>
-        <p class="text-gray-dark">{{ .text }}</p>
+        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ .Title }}</h3>
+        <div class="text-gray-dark">{{ .Content }}</div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+{{ end }}
+
+<!-- Team -->
+{{ $team := where site.RegularPages "Params.section" "Team" }}
+{{ if $team }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-2 text-center font-secondary text-2xl font-bold xl:text-4xl">Our Team</h2>
+    {{ with .Params.subtitle }}
+      <p class="text-accent mb-8 text-center font-medium">{{ . }}</p>
+    {{ end }}
+    <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {{ range $team.ByWeight }}
+      <div class="bg-primary flex flex-col items-center rounded-[10px] p-6 text-center shadow-sm">
+        {{ $img := resources.Get .Params.profile_picture }}
+        <div class="mb-4 h-32 w-32 overflow-hidden rounded-full border-4 border-white shadow-md">
+          {{ if $img }}
+            <img src="{{ $img.RelPermalink }}" alt="{{ .Title }}" class="h-full w-full object-cover">
+          {{ else }}
+            <div class="bg-primary-2 flex h-full w-full items-center justify-center text-gray-dark">
+              <span>{{ .Title | truncate 1 "" }}</span>
+            </div>
+          {{ end }}
+        </div>
+        <h3 class="text-secondary mb-1 font-secondary text-xl font-bold">{{ .Title }}</h3>
+        <p class="mb-3 text-sm font-medium text-accent">{{ .Params.role }}</p>
+        {{ with .Content }}
+        <div class="prose prose-sm mb-4 text-gray-dark">
+          {{ . }}
+        </div>
+        {{ end }}
+        <div class="mt-auto flex gap-4">
+          {{ with .Params.social.github }}
+          <a href="{{ . }}" class="text-secondary hover:text-accent duration-200" title="GitHub">
+            <span class="sr-only">GitHub</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+          </a>
+          {{ end }}
+          {{ with .Params.social.gitlab }}
+          <a href="{{ . }}" class="text-secondary hover:text-accent duration-200" title="GitLab">
+            <span class="sr-only">GitLab</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="m15.734 8.8-.025-.067V8.73l-1.577-4.854a.541.541 0 0 0-.17-.267.53.53 0 0 0-.306-.1.53.53 0 0 0-.307.1.541.541 0 0 0-.17.267L11.899 8.2h-7.8l-1.28-3.945a.541.541 0 0 0-.17-.267.535.535 0 0 0-.613 0 .541.541 0 0 0-.17.267L.289 9.106a.544.544 0 0 0 .041.442.54.54 0 0 0 .324.235l7.155 2.21 7.155-2.21a.54.54 0 0 0 .324-.235.544.544 0 0 0 .046-.448Z"/>
+            </svg>
+          </a>
+          {{ end }}
+          {{ with .Params.social.linkedin }}
+          <a href="{{ . }}" class="text-secondary hover:text-accent duration-200" title="LinkedIn">
+            <span class="sr-only">LinkedIn</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H3.337v7.225h1.606zm-1.56-8.122c.56 0 .966-.37.966-.845 0-.485-.405-.853-.966-.853-.566 0-.972.368-.972.853 0 .475.406.845.972.845zM13.825 13.394V9.302c0-2.192-1.168-3.212-2.73-3.212-1.26 0-1.825.694-2.139 1.189v-.998H7.352c.021.454 0 7.225 0 7.225h1.606V9.334c0-.438.031-.875.16-1.191.35-.875 1.154-1.782 2.506-1.782 1.767 0 2.474 1.348 2.474 3.326v3.717h1.607z"/>
+            </svg>
+          </a>
+          {{ end }}
+          {{ with .Params.social.discord }}
+          <a href="{{ . }}" class="text-secondary hover:text-accent duration-200" title="Discord">
+            <span class="sr-only">Discord</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059.05.05 0 0 0-.018-.011 8.8 8.8 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.05.05 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007c.08.066.164.132.248.195a.05.05 0 0 1-.004.085 8.3 8.3 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+            </svg>
+          </a>
+          {{ end }}
+        </div>
       </div>
       {{ end }}
     </div>

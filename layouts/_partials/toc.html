@@ -1,0 +1,69 @@
+{{/* Table of Contents Partial */}}
+{{/* Usage: {{ partial "toc.html" . }} */}}
+{{/* Renders a TOC block with active-link scroll spy if the page has headings */}}
+
+{{ if .TableOfContents }}
+  {{ $toc := .TableOfContents }}
+  {{ if ne $toc "<nav id=\"TableOfContents\"></nav>" }}
+    <div class="mb-6" id="toc-section">
+      <p class="text-secondary mb-3 font-secondary text-sm font-semibold uppercase tracking-wide">On This Page</p>
+      <div class="toc-nav text-sm text-gray-dark">
+        {{ $toc }}
+      </div>
+    </div>
+
+    <style type="text/tailwindcss">
+      .toc-nav ul {
+        @apply flex flex-col gap-1;
+      }
+      .toc-nav li {
+        @apply leading-snug;
+      }
+      .toc-nav a {
+        @apply block py-1 text-gray-dark hover:text-accent duration-200;
+      }
+      .toc-nav a.active {
+        @apply text-accent font-semibold;
+      }
+      .toc-nav ul ul {
+        @apply pl-3 mt-1;
+      }
+      .toc-nav ul ul a {
+        @apply text-xs;
+      }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tocLinks = document.querySelectorAll('.toc-nav a');
+      if (tocLinks.length === 0) return;
+
+      const headings = [];
+      tocLinks.forEach(function(link) {
+        const id = link.getAttribute('href');
+        if (id && id.startsWith('#')) {
+          const el = document.getElementById(id.substring(1));
+          if (el) headings.push({ el: el, link: link });
+        }
+      });
+
+      function updateActiveLink() {
+        let current = null;
+        for (var i = 0; i < headings.length; i++) {
+          var rect = headings[i].el.getBoundingClientRect();
+          if (rect.top <= 100) {
+            current = headings[i];
+          }
+        }
+        tocLinks.forEach(function(link) { link.classList.remove('active'); });
+        if (current) {
+          current.link.classList.add('active');
+        }
+      }
+
+      window.addEventListener('scroll', updateActiveLink);
+      updateActiveLink();
+    });
+    </script>
+  {{ end }}
+{{ end }}

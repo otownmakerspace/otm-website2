@@ -7,7 +7,8 @@
     {{ end }}
 
     {{ $allDocs := .Pages.ByWeight }}
-    {{ range $section := site.Params.docSections }}
+    {{ $sections := partial "doc-sections.html" $allDocs }}
+    {{ range $section := $sections }}
       {{ $sectionDocs := where $allDocs "Params.section" $section }}
       {{ if $sectionDocs }}
         <div class="mb-12">

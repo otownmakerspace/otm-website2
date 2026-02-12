@@ -42,7 +42,7 @@
       </div>
       <ul class="flex flex-col gap-8 xl:flex-row xl:items-center">
         {{ range site.Menus.main }}
-          {{ if eq .URL "/about/work-areas/" }}
+          {{ if eq .URL "/work-areas/" }}
             {{/* Desktop dropdown */}}
             <li class="hidden xl:block relative group text-center">
               <a class="text-secondary hover:text-accent inline-flex items-center gap-1" href="{{ .URL }}">
@@ -99,7 +99,8 @@
               <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50">
                 <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-56">
                   {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
-                  {{ range $section := site.Params.docSections }}
+                  {{ $sections := partial "doc-sections.html" $allDocs }}
+                  {{ range $section := $sections }}
                     {{ $sectionDocs := where $allDocs "Params.section" $section }}
                     {{ if $sectionDocs }}
                     <div class="relative group/cat">
@@ -141,7 +142,8 @@
               </button>
               <div id="docsAccordion" class="hidden mt-4 text-left max-w-xs mx-auto">
                 {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
-                {{ range $i, $section := site.Params.docSections }}
+                {{ $sections := partial "doc-sections.html" $allDocs }}
+                {{ range $i, $section := $sections }}
                   {{ $sectionDocs := where $allDocs "Params.section" $section }}
                   {{ if $sectionDocs }}
                   <div class="mb-1">
