@@ -1,4 +1,5 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://makerspace.olaru.dk/'
+publishDir = 'docs'
 languageCode = 'en-us'
 title = "O'Town Makerspace"
 theme = 'hugo-up-business-main'
