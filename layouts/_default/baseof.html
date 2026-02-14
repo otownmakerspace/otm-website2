@@ -75,6 +75,94 @@
       }
     </script>
 
+    <!-- Klaro Cookie Consent -->
+    <script src="/js/klaro-config.js"></script>
+    <link rel="stylesheet" href="https://cdn.kiprotect.com/klaro/v0.7/klaro.css" />
+    <style>
+      /* Klaro theme overrides — navy/orange palette */
+      .klaro .cookie-modal .cm-modal,
+      .klaro .cookie-notice {
+        background-color: #0D1A63 !important;
+        color: #EDF2F8 !important;
+        font-family: 'Roboto', sans-serif !important;
+        border-radius: 10px !important;
+      }
+      .klaro .cookie-modal .cm-modal h1,
+      .klaro .cookie-notice h1,
+      .klaro .cookie-modal .cm-modal .cm-header h1 {
+        font-family: 'Space Grotesk', sans-serif !important;
+        color: #FFFFFF !important;
+      }
+      .klaro .cookie-notice .cn-body p,
+      .klaro .cookie-modal .cm-modal .cm-body p {
+        color: #EDF2F8 !important;
+        opacity: 0.9;
+      }
+      /* Accept / "Happy to help!" button */
+      .klaro .cookie-notice .cm-btn.cm-btn-success,
+      .klaro .cookie-modal .cm-btn.cm-btn-success {
+        background-color: #F68048 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 600 !important;
+        padding: 0.6rem 1.4rem !important;
+        transition: background-color 0.3s ease !important;
+      }
+      .klaro .cookie-notice .cm-btn.cm-btn-success:hover,
+      .klaro .cookie-modal .cm-btn.cm-btn-success:hover {
+        background-color: #e75008 !important;
+      }
+      /* Decline / secondary buttons */
+      .klaro .cookie-notice .cm-btn.cm-btn-danger,
+      .klaro .cookie-modal .cm-btn.cm-btn-danger,
+      .klaro .cookie-notice .cm-btn.cm-btn-info,
+      .klaro .cookie-modal .cm-btn.cm-btn-info {
+        background-color: transparent !important;
+        color: #EDF2F8 !important;
+        border: 2px solid #EDF2F8 !important;
+        border-radius: 10px !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        font-weight: 600 !important;
+        padding: 0.6rem 1.4rem !important;
+        transition: all 0.3s ease !important;
+      }
+      .klaro .cookie-notice .cm-btn.cm-btn-danger:hover,
+      .klaro .cookie-modal .cm-btn.cm-btn-danger:hover,
+      .klaro .cookie-notice .cm-btn.cm-btn-info:hover,
+      .klaro .cookie-modal .cm-btn.cm-btn-info:hover {
+        background-color: rgba(237, 242, 248, 0.15) !important;
+      }
+      /* Links inside Klaro */
+      .klaro .cookie-notice a,
+      .klaro .cookie-modal a {
+        color: #F68048 !important;
+        text-decoration: underline !important;
+      }
+      .klaro .cookie-notice a:hover,
+      .klaro .cookie-modal a:hover {
+        color: #e75008 !important;
+      }
+      /* Toggle switches */
+      .klaro .cookie-modal .cm-list-input:checked + .cm-list-label .slider {
+        background-color: #F68048 !important;
+      }
+      .klaro .cookie-modal .cm-list-label .slider {
+        background-color: #4a5580 !important;
+      }
+      /* Purpose list items */
+      .klaro .cookie-modal .cm-list-title,
+      .klaro .cookie-modal .cm-list-description {
+        color: #EDF2F8 !important;
+      }
+      /* Modal overlay */
+      .klaro .cookie-modal .cm-bg {
+        background-color: rgba(13, 26, 99, 0.85) !important;
+      }
+    </style>
+    <script defer src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js"></script>
+
     <!-- Custom styles -->
     <style type="text/tailwindcss">
       @layer base {
