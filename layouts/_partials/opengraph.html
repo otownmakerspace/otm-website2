@@ -1,3 +1,9 @@
+{{- /* Resolve title */ -}}
+{{- $title := .Title -}}
+{{- if .IsHome -}}
+  {{- $title = .Site.Title -}}
+{{- end -}}
+
 {{- /* Resolve description */ -}}
 {{- $description := .Site.Params.description -}}
 {{- with .Description -}}
@@ -63,7 +69,7 @@
 {{- end -}}
 
 <!-- Open Graph -->
-<meta property="og:title" content="{{ .Title }}" />
+<meta property="og:title" content="{{ $title }}" />
 <meta property="og:description" content="{{ $description }}" />
 <meta property="og:url" content="{{ .Permalink }}" />
 <meta property="og:site_name" content="{{ .Site.Title }}" />
@@ -87,7 +93,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="{{ .Title }}" />
+<meta name="twitter:title" content="{{ $title }}" />
 <meta name="twitter:description" content="{{ $description }}" />
 {{- if $imageURL }}
 <meta name="twitter:image" content="{{ $imageURL }}" />

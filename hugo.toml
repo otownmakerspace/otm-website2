@@ -16,7 +16,7 @@ defaultContentLanguage = 'en'
     weight = 2
 
 [params]
-  description = "Empowering makers to bring ideas to life"
+  description = "A community-driven makerspace in Odense with 24/7 access to 3D printers, laser cutters, CNC machines, electronics, and woodworking tools. Join us and build something."
   copyright = "© 2026 O'Town Makerspace. All rights reserved."
   logo = "images/branding/otown_logo_2.svg"
   location = ["Havnegade 57, 5000 Odense C, Denmark"]
