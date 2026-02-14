@@ -23,6 +23,9 @@
       {{ $description := .Site.Params.description }}
     {{ end }}
     <meta name="description" content="{{ $description }}" />
+    <link rel="canonical" href="{{ .Permalink }}" />
+
+    {{ partial "opengraph" . }}
 
     {{ with .OutputFormats.Get "RSS" -}}
       {{ printf `<link rel='%s' type='%s' href='%s' title='%s' />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}

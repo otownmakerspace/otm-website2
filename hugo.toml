@@ -22,6 +22,7 @@ defaultContentLanguage = 'en'
   location = ["Havnegade 57, 5000 Odense C, Denmark"]
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
+  ogImage = "images/og-default.jpg"
 
   [params.colors]
     accent = "#F68048"
