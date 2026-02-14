@@ -3,7 +3,6 @@ title: "Articles of Association"
 weight: 10
 section: "Legal & Policy"
 section_weight: 4
-anchor: "articles-of-association"
 ---
 
 ## 1. Name and status

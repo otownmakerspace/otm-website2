@@ -31,55 +31,61 @@
     <!-- Lightbox Modal -->
     <div
       id="gallery-lightbox"
-      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4"
       onclick="if(event.target===this)closeGallery()"
     >
-      <!-- Close Button -->
-      <button
-        onclick="closeGallery()"
-        class="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-        aria-label="Close gallery"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      <!-- Dialog Card -->
+      <div class="relative mx-auto flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[10px] border-4 border-accent bg-white shadow-2xl">
+        <!-- Close Button -->
+        <button
+          onclick="closeGallery()"
+          class="absolute right-3 top-3 z-10 rounded-full bg-secondary/80 p-2 text-white transition-colors hover:bg-secondary"
+          aria-label="Close gallery"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-      <!-- Previous Button -->
-      <button
-        onclick="prevImage()"
-        class="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
-        aria-label="Previous image"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
+        <!-- Image Area -->
+        <div class="relative flex min-h-0 flex-1 items-center justify-center bg-primary p-4">
+          <!-- Previous Button -->
+          <button
+            onclick="prevImage()"
+            class="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-secondary/80 p-2.5 text-white transition-colors hover:bg-secondary"
+            aria-label="Previous image"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-      <!-- Image Container -->
-      <div class="flex max-h-[85vh] max-w-[90vw] items-center justify-center">
-        <img
-          id="gallery-lightbox-img"
-          src=""
-          alt=""
-          class="max-h-[85vh] max-w-[90vw] rounded-[10px] object-contain"
-        />
-      </div>
+          <img
+            id="gallery-lightbox-img"
+            src=""
+            alt=""
+            class="max-h-[60vh] max-w-full rounded-[10px] object-contain"
+          />
 
-      <!-- Next Button -->
-      <button
-        onclick="nextImage()"
-        class="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
-        aria-label="Next image"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+          <!-- Next Button -->
+          <button
+            onclick="nextImage()"
+            class="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-secondary/80 p-2.5 text-white transition-colors hover:bg-secondary"
+            aria-label="Next image"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
 
-      <!-- Counter -->
-      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1 text-sm text-white">
-        <span id="gallery-counter"></span>
+        <!-- Description Footer -->
+        <div class="border-t border-gray-200 bg-white px-6 py-4">
+          <div class="flex items-center justify-between gap-4">
+            <p id="gallery-lightbox-desc-text" class="text-sm text-gray-dark leading-relaxed"></p>
+            <span id="gallery-counter" class="shrink-0 text-sm font-medium text-secondary-2"></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -91,16 +97,25 @@
             "{{ $full.RelPermalink }}",
           {{ end }}
         ];
+        const descriptions = [
+          {{ $meta := $.Params.gallery_meta }}
+          {{ range $img := $images }}
+            {{ $name := path.Base $img.Name }}
+            {{ if and $meta (index $meta $name) }}"{{ (index $meta $name).description }}"{{ else }}""{{ end }},
+          {{ end }}
+        ];
         let currentIndex = 0;
         const lightbox = document.getElementById('gallery-lightbox');
         const lightboxImg = document.getElementById('gallery-lightbox-img');
         const counter = document.getElementById('gallery-counter');
+        const descText = document.getElementById('gallery-lightbox-desc-text');
 
         function showImage(index) {
           currentIndex = (index + images.length) % images.length;
           lightboxImg.src = images[currentIndex];
           lightboxImg.alt = '{{ $.Title }} gallery image ' + (currentIndex + 1);
           counter.textContent = (currentIndex + 1) + ' / ' + images.length;
+          descText.textContent = descriptions[currentIndex] || '';
         }
 
         window.openGallery = function(index) {

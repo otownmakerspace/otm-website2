@@ -3,7 +3,6 @@ title: "Cookie and Privacy Policy"
 weight: 30
 section: "Legal & Policy"
 section_weight: 4
-anchor: "privacy-policy"
 ---
 
 ## 1. Cookie Policy

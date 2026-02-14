@@ -1,6 +1,6 @@
 ---
-title: "Personal Projects"
+title: "Repair & Personal Projects"
 weight: 4
 ---
 
-The makerspace provides the framework, space, and tools for members to pursue their own ideas — from concept to completion.
+Fix what's broken, improve what works, or build something entirely new. The makerspace gives you the tools and space to pursue your own ideas — from quick repairs to long-term passion projects.

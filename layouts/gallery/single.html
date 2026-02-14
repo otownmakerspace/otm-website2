@@ -1,0 +1,27 @@
+{{ define "main" }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    {{ partial "breadcrumb.html" . }}
+
+    <h1 class="text-secondary mb-4 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
+
+    {{ with .Date }}
+      <p class="mb-4 text-center text-secondary-2">{{ .Format "January 2, 2006" }}</p>
+    {{ end }}
+
+    {{ with .Params.description }}
+      <p class="mx-auto mb-8 text-center text-gray-dark xl:max-w-[50%]">{{ . }}</p>
+    {{ end }}
+
+    <div class="mx-auto max-w-6xl">
+      {{ with .Content }}
+        <div class="page-content mx-auto mb-8 max-w-4xl">
+          {{ . }}
+        </div>
+      {{ end }}
+
+      {{ partial "gallery.html" . }}
+    </div>
+  </div>
+</section>
+{{ end }}

@@ -10,13 +10,13 @@
       <!-- Sidebar TOC -->
       <aside class="xl:w-64 xl:shrink-0">
         <nav class="bg-primary sticky top-8 rounded-[10px] p-6">
-          <h2 class="text-secondary mb-4 font-secondary text-lg font-bold">Contents</h2>
+          <h2 class="text-secondary mb-4 font-secondary text-lg font-bold">{{ i18n "contents" }}</h2>
           
           <div class="mb-4">
-            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">Introduction</h3>
+            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">{{ i18n "introduction" }}</h3>
             <ul class="flex flex-col gap-1">
               <li>
-                <a href="#intro" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">Welcome</a>
+                <a href="#intro" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">{{ i18n "welcome" }}</a>
               </li>
             </ul>
           </div>
@@ -25,7 +25,7 @@
           {{ $workAreas := where $pages "Params.section" "Work Areas" }}
           {{ if $workAreas }}
           <div class="mb-4">
-            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">Work Areas</h3>
+            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">{{ i18n "work_areas" }}</h3>
             <ul class="flex flex-col gap-1">
               {{ range $workAreas }}
               <li>
@@ -41,10 +41,10 @@
           {{ $team := where $pages "Params.section" "Team" }}
           {{ if $team }}
           <div class="mb-4">
-            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">Team</h3>
+            <h3 class="text-secondary mb-2 text-sm font-semibold uppercase tracking-wide">{{ i18n "team" }}</h3>
             <ul class="flex flex-col gap-1">
               <li>
-                <a href="#team-section" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">Our Team</a>
+                <a href="#team-section" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">{{ i18n "our_team" }}</a>
               </li>
             </ul>
           </div>
@@ -76,7 +76,7 @@
         <!-- Team Section -->
         {{ if $team }}
         <section id="team-section" class="mb-12 scroll-mt-8">
-          <h2 class="text-secondary mb-2 font-secondary text-3xl font-bold">{{ .Params.title | default "Our Team" }}</h2>
+          <h2 class="text-secondary mb-2 font-secondary text-3xl font-bold">{{ .Params.title | default (i18n "our_team") }}</h2>
           {{ with .Params.subtitle }}
             <p class="text-accent mb-8 font-medium">{{ . }}</p>
           {{ end }}

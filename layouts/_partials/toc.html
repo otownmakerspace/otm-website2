@@ -6,7 +6,7 @@
   {{ $toc := .TableOfContents }}
   {{ if ne $toc "<nav id=\"TableOfContents\"></nav>" }}
     <div class="mb-6" id="toc-section">
-      <p class="text-secondary mb-3 font-secondary text-sm font-semibold uppercase tracking-wide">On This Page</p>
+      <p class="text-secondary mb-3 font-secondary text-sm font-semibold uppercase tracking-wide">{{ i18n "on_this_page" }}</p>
       <div class="toc-nav text-sm text-gray-dark">
         {{ $toc }}
       </div>

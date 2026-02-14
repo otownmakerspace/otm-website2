@@ -1,0 +1,56 @@
+{{ define "main" }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    {{ partial "breadcrumb.html" . }}
+
+    <article class="mx-auto max-w-3xl">
+      <!-- Header -->
+      <header class="mb-8 text-center">
+        <h1 class="text-secondary mb-4 font-secondary text-4xl font-bold xl:text-5xl">{{ .Title }}</h1>
+        <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-secondary-2">
+          <time datetime='{{ .Date.Format "2006-01-02" }}'>{{ .Date.Format "January 2, 2006" }}</time>
+          {{ with .Params.author }}
+            <span>&middot; {{ . }}</span>
+          {{ end }}
+          {{ with .Params.reading_time }}
+            <span>&middot; {{ . }} {{ i18n "min_read" }}</span>
+          {{ end }}
+        </div>
+        {{ with .Params.tags }}
+          <div class="mt-4 flex flex-wrap justify-center gap-2">
+            {{ range . }}
+              <span class="bg-primary rounded-full px-3 py-1 text-xs text-gray-dark">{{ . }}</span>
+            {{ end }}
+          </div>
+        {{ end }}
+      </header>
+
+      <!-- Cover Image -->
+      {{ with .Params.cover }}
+        {{ $img := resources.Get . }}
+        {{ with $img }}
+          {{ $hero := .Fit "1200x600 q90" }}
+          <div class="mb-10 overflow-hidden rounded-[10px]">
+            <img src="{{ $hero.RelPermalink }}" alt="{{ $.Title }}" class="w-full object-cover" />
+          </div>
+        {{ end }}
+      {{ end }}
+
+      <!-- Content -->
+      <div class="page-content max-w-none">
+        {{ .Content }}
+      </div>
+
+      <!-- Gallery (if any) -->
+      {{ partial "gallery.html" . }}
+
+      <!-- Author Footer -->
+      {{ with .Params.author }}
+      <footer class="mt-12 border-t border-primary-2 pt-6">
+        <p class="text-sm text-secondary-2">{{ i18n "written_by" }} <span class="font-semibold text-secondary">{{ . }}</span></p>
+      </footer>
+      {{ end }}
+    </article>
+  </div>
+</section>
+{{ end }}

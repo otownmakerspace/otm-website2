@@ -1,0 +1,61 @@
+{{ define "main" }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
+    {{ with .Params.description }}
+      <p class="mx-auto mb-16 text-center text-gray-dark xl:max-w-[50%]">{{ . }}</p>
+    {{ end }}
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {{ range .Pages.ByDate.Reverse }}
+        <a href="{{ .RelPermalink }}" class="group block overflow-hidden rounded-[10px] border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md">
+          {{/* Thumbnail */}}
+          {{ $thumbImg := false }}
+          {{ with .Params.thumbnail }}
+            {{ $thumbImg = resources.Get . }}
+          {{ end }}
+          {{ if not $thumbImg }}
+            {{ with .Params.gallery }}
+              {{ $pattern := printf "%s/*" . }}
+              {{ $images := resources.Match $pattern }}
+              {{ with index $images 0 }}
+                {{ $thumbImg = . }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+          {{ with $thumbImg }}
+            {{ $card := .Fill "600x400 q80" }}
+            <div class="aspect-[3/2] overflow-hidden">
+              <img
+                src="{{ $card.RelPermalink }}"
+                alt="{{ $.Title }}"
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          {{ end }}
+          <div class="p-5">
+            <time datetime='{{ .Date.Format "2006-01-02" }}' class="mb-1 block text-sm text-secondary-2">
+              {{ .Date.Format "January 2, 2006" }}
+            </time>
+            <h2 class="text-secondary mb-2 font-secondary text-lg font-bold group-hover:text-accent duration-200">{{ .Title }}</h2>
+            {{ with .Params.description }}
+              <p class="text-sm text-gray-dark line-clamp-2">{{ . }}</p>
+            {{ end }}
+            {{ with .Params.gallery }}
+              {{ $pattern := printf "%s/*" . }}
+              {{ $images := resources.Match $pattern }}
+              {{ if $images }}
+                <span class="mt-3 inline-flex items-center gap-1.5 text-xs text-secondary-2">
+                  <i class="fa-regular fa-images"></i>
+                  {{ len $images }} {{ i18n "photos" }}
+                </span>
+              {{ end }}
+            {{ end }}
+          </div>
+        </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}

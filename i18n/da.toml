@@ -1,0 +1,208 @@
+# ── Navigation & Header ──
+[toggle_nav]
+other = "Skift navigation"
+
+[close_nav]
+other = "Luk navigation"
+
+[getting_started]
+other = "Kom i gang"
+
+[work_areas]
+other = "Arbejdsområder"
+
+[legal_documents]
+other = "Juridiske dokumenter"
+
+# ── Footer ──
+[quick_links]
+other = "Genveje"
+
+[contact]
+other = "Kontakt"
+
+[member_access_247]
+other = "Medlemsadgang 24/7"
+
+# ── Bento / Hero ──
+[your_very_own_makerspace]
+other = "Dit helt eget Makerspace"
+
+[your_very_own]
+other = "Dit helt eget"
+
+[makerspace]
+other = "Makerspace"
+
+[member_access_247_short]
+other = "24/7 medlemsadgang"
+
+[all_tools_included]
+other = "Alt værktøj inkluderet"
+
+[full_workspace_access]
+other = "Fuld adgang til værkstedet"
+
+[supportive_community]
+other = "Et støttende fællesskab"
+
+[explore_space]
+other = "Udforsk rummet"
+
+[3d_print]
+other = "3D Print"
+
+[laser_cutter]
+other = "Laserskærer"
+
+[cnc_machine]
+other = "CNC-maskine"
+
+[wood_work]
+other = "Træværksted"
+
+[metal_work]
+other = "Metalværksted"
+
+[electronics]
+other = "Elektronik"
+
+# ── Home Page Sections ──
+[our_story]
+other = "Vores historie"
+
+[why_we_exist]
+other = "Hvorfor vi findes"
+
+[our_mission]
+other = "Vores mission"
+
+[our_impact]
+other = "Vores indflydelse"
+
+[why_join_us]
+other = "Hvorfor blive medlem?"
+
+[what_our_volunteers_say]
+other = "Hvad vores frivillige siger"
+
+[tldr_what_members_get]
+other = "Kort sagt — Hvad medlemmer får"
+
+[access_247]
+other = "24/7 adgang"
+
+[access_247_desc]
+other = "Adgang døgnet rundt til makerspace-lokalerne, på dine egne vilkår."
+
+[tools_equipment]
+other = "Værktøj & udstyr"
+
+[tools_equipment_desc]
+other = "Et stort udvalg af værktøj og maskiner til alle dine projekter — fra 3D-printere til metalbearbejdningsudstyr."
+
+[community]
+other = "Fællesskab"
+
+[community_desc]
+other = "Bliv en del af et energisk fællesskab, hvor du kan lære, dele viden og samarbejde med andre."
+
+[ready_to_build]
+other = "Klar til at bygge noget?"
+
+[ready_to_build_desc]
+other = "Uanset om du prototyper din næste idé, reparerer noget der gik i stykker, eller bare har lyst til at bruge hænderne — værktøjet og rummet er her. Det eneste der mangler er dig."
+
+[become_a_member]
+other = "Bliv medlem"
+
+[learn_more]
+other = "Læs mere"
+
+# ── Events ──
+[featured_events]
+other = "Udvalgte arrangementer"
+
+[spots_available]
+other = "pladser ledige"
+
+[register]
+other = "Tilmeld dig"
+
+[event_calendar]
+other = "Arrangementskalender"
+
+[never_miss_event]
+other = "Gå ikke glip af et arrangement"
+
+[subscribe_calendar]
+other = "Abonner på vores kalender for at holde dig opdateret:"
+
+[download_ics]
+other = "Download ICS"
+
+[add_google_calendar]
+other = "Tilføj til Google Kalender"
+
+# ── Articles ──
+[search_by_title]
+other = "Søg efter titel..."
+
+[all]
+other = "Alle"
+
+[no_articles_match]
+other = "Ingen artikler matcher din søgning."
+
+[written_by]
+other = "Skrevet af"
+
+[min_read]
+other = "min læsetid"
+
+# ── News ──
+[recent_posts]
+other = "Seneste indlæg"
+
+[search_posts]
+other = "Søg i indlæg..."
+
+[archive]
+other = "Arkiv"
+
+[by]
+other = "Af"
+
+# ── About ──
+[contents]
+other = "Indhold"
+
+[introduction]
+other = "Introduktion"
+
+[welcome]
+other = "Velkommen"
+
+[team]
+other = "Hold"
+
+[our_team]
+other = "Vores hold"
+
+# ── Docs / Misc ──
+[on_this_page]
+other = "På denne side"
+
+[photos]
+other = "billeder"
+
+# ── About CTA ──
+[ready_to_start_making]
+other = "Klar til at begynde at bygge?"
+
+[ready_to_start_making_desc]
+other = "Få 24/7 adgang til værkstedet, værktøj og et fællesskab af skabere, der elsker at bygge."
+
+# ── 404 ──
+[page_not_found]
+other = "Siden blev ikke fundet"

@@ -1,8 +1,19 @@
 baseURL = 'https://makerspace.olaru.dk/'
 publishDir = 'docs'
-languageCode = 'en-us'
 title = "O'Town Makerspace"
 theme = 'hugo-up-business-main'
+defaultContentLanguage = 'en'
+
+[languages]
+  [languages.en]
+    languageCode = 'en-us'
+    languageName = 'English'
+    weight = 1
+
+  [languages.da]
+    languageCode = 'da'
+    languageName = 'Dansk'
+    weight = 2
 
 [params]
   description = "Empowering makers to bring ideas to life"
@@ -38,60 +49,156 @@ theme = 'hugo-up-business-main'
     endLevel = 3
     ordered = false
 
-# Main navigation menu
-[[menus.main]]
+# ── English menus ──
+
+[[languages.en.menus.main]]
   name = "Home"
   url = "/"
   weight = 1
 
-[[menus.main]]
+[[languages.en.menus.main]]
   name = "About"
   url = "/about/"
   weight = 2
 
-[[menus.main]]
+[[languages.en.menus.main]]
   name = "Events"
   url = "/events/"
   weight = 3
 
-[[menus.main]]
-  name = "Work areas"
-  url = "/work-areas/"
+[[languages.en.menus.main]]
+  name = "Info"
+  url = "#"
   weight = 4
 
-[[menus.main]]
-  name = "Docs"
-  url = "/docs/"
+[[languages.en.menus.main]]
+  name = "Gallery"
+  url = "/gallery/"
   weight = 5
 
-[[menus.main]]
-  name = "News"
-  url = "/news/"
+[[languages.en.menus.main]]
+  name = "Articles"
+  url = "/articles/"
   weight = 6
 
-# CTA button in header
-[[menus.buttons]]
+[[languages.en.menus.main]]
+  name = "News"
+  url = "/news/"
+  weight = 7
+
+[[languages.en.menus.buttons]]
   name = "Join Us"
   url = "/#join"
   weight = 1
 
-# Footer menu
-[[menus.footer]]
+[[languages.en.menus.footer]]
   name = "About"
   url = "/about/"
   weight = 1
 
-[[menus.footer]]
+[[languages.en.menus.footer]]
   name = "Events"
   url = "/events/"
   weight = 2
 
-[[menus.footer]]
-  name = "Documentation"
-  url = "/docs/"
+[[languages.en.menus.footer]]
+  name = "Getting Started"
+  url = "/getting-started/"
   weight = 3
 
-[[menus.footer]]
+[[languages.en.menus.footer]]
+  name = "Documentation"
+  url = "/docs/"
+  weight = 4
+
+[[languages.en.menus.footer]]
+  name = "Gallery"
+  url = "/gallery/"
+  weight = 5
+
+[[languages.en.menus.footer]]
+  name = "Articles"
+  url = "/articles/"
+  weight = 6
+
+[[languages.en.menus.footer]]
   name = "News"
   url = "/news/"
+  weight = 7
+
+# ── Danish menus ──
+
+[[languages.da.menus.main]]
+  name = "Hjem"
+  url = "/"
+  weight = 1
+
+[[languages.da.menus.main]]
+  name = "Om os"
+  url = "/about/"
+  weight = 2
+
+[[languages.da.menus.main]]
+  name = "Arrangementer"
+  url = "/events/"
+  weight = 3
+
+[[languages.da.menus.main]]
+  name = "Info"
+  url = "#"
   weight = 4
+
+[[languages.da.menus.main]]
+  name = "Galleri"
+  url = "/gallery/"
+  weight = 5
+
+[[languages.da.menus.main]]
+  name = "Artikler"
+  url = "/articles/"
+  weight = 6
+
+[[languages.da.menus.main]]
+  name = "Nyheder"
+  url = "/news/"
+  weight = 7
+
+[[languages.da.menus.buttons]]
+  name = "Bliv medlem"
+  url = "/#join"
+  weight = 1
+
+[[languages.da.menus.footer]]
+  name = "Om os"
+  url = "/about/"
+  weight = 1
+
+[[languages.da.menus.footer]]
+  name = "Arrangementer"
+  url = "/events/"
+  weight = 2
+
+[[languages.da.menus.footer]]
+  name = "Kom i gang"
+  url = "/getting-started/"
+  weight = 3
+
+[[languages.da.menus.footer]]
+  name = "Dokumentation"
+  url = "/docs/"
+  weight = 4
+
+[[languages.da.menus.footer]]
+  name = "Galleri"
+  url = "/gallery/"
+  weight = 5
+
+[[languages.da.menus.footer]]
+  name = "Artikler"
+  url = "/articles/"
+  weight = 6
+
+[[languages.da.menus.footer]]
+  name = "Nyheder"
+  url = "/news/"
+  weight = 7

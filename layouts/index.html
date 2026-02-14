@@ -2,38 +2,18 @@
 <!-- Bento Workspace Grid -->
 {{ partial "bento-workspace.html" . }}
 
-<!-- Hero Section -->
-<section class="py-16 xl:py-24">
-  <div class="container mx-auto px-4 text-center">
-    <h1 class="text-secondary mb-8 font-secondary text-4xl font-bold xl:text-7xl">
-      {{ .Params.hero.title | default "Make a Difference in Your Community" }}
-    </h1>
-    <p class="mx-auto mb-12 max-w-2xl text-lg text-gray-dark xl:text-xl">
-      {{ .Params.hero.tagline | default "Join us and be part of something meaningful" }}
-    </p>
-    <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-      <a href="#join" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white duration-300">
-        Get Involved
-      </a>
-      <a href="/about/" class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-8 py-3 font-medium duration-300 hover:text-white">
-        Learn More
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- Story Section -->
 {{ with .Params.story }}
 <section class="bg-primary py-16">
   <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">Our Story</h2>
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "our_story" }}</h2>
     <div class="mx-auto grid max-w-5xl gap-8 xl:grid-cols-2">
       <div>
-        <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">Why We Exist</h3>
+        <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">{{ i18n "why_we_exist" }}</h3>
         <p class="text-gray-dark">{{ .why }}</p>
       </div>
       <div>
-        <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">Our Mission</h3>
+        <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">{{ i18n "our_mission" }}</h3>
         <p class="text-gray-dark">{{ .mission }}</p>
       </div>
     </div>
@@ -45,7 +25,7 @@
 {{ with .Params.impact }}
 <section class="py-16">
   <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">Our Impact</h2>
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "our_impact" }}</h2>
     <div class="grid gap-8 sm:grid-cols-2 xl:grid-cols-{{ len . }}">
       {{ range . }}
       <div class="text-center">
@@ -62,7 +42,7 @@
 {{ with .Params.benefits }}
 <section class="bg-primary py-16">
   <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">Why Join Us?</h2>
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "why_join_us" }}</h2>
     <div class="grid gap-8 xl:grid-cols-{{ len . }}">
       {{ range . }}
       <div class="rounded-[10px] bg-white p-8 text-center shadow-sm">
@@ -79,7 +59,7 @@
 {{ with .Params.testimonials }}
 <section class="py-16">
   <div class="container mx-auto px-4">
-    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">What Our Volunteers Say</h2>
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "what_our_volunteers_say" }}</h2>
     <div class="grid gap-8 xl:grid-cols-2">
       {{ range . }}
       <blockquote class="rounded-[10px] border-l-4 border-accent bg-white p-8 shadow-sm">
@@ -92,43 +72,52 @@
 </section>
 {{ end }}
 
-<!-- Join Form -->
+<!-- TL;DR -->
 <section id="join" class="bg-primary py-16">
   <div class="container mx-auto px-4">
-    <div class="mx-auto max-w-2xl rounded-[10px] bg-white p-8 shadow-lg xl:p-12">
-      <h2 class="text-secondary mb-4 text-center font-secondary text-3xl font-bold">Ready to Make a Difference?</h2>
-      <p class="mb-8 text-center text-gray-dark">Fill out the form below and we'll get in touch with you.</p>
-      <form action="{{ .Params.joinFormAction | default "#" }}" method="POST" class="flex flex-col gap-6">
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "tldr_what_members_get" }}</h2>
+    <div class="grid gap-8 xl:grid-cols-3">
+      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+        <i class="fa-solid fa-key text-accent mt-1 text-2xl shrink-0"></i>
         <div>
-          <label for="name" class="text-secondary mb-2 block text-sm font-medium">Full Name</label>
-          <input type="text" id="name" name="name" required
-            class="w-full rounded-[10px] border border-primary-2 px-4 py-3 focus:border-accent focus:outline-none">
+          <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "access_247" }}</h3>
+          <p class="text-gray-dark">{{ i18n "access_247_desc" }}</p>
         </div>
+      </div>
+      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+        <i class="fa-solid fa-screwdriver-wrench text-accent mt-1 text-2xl shrink-0"></i>
         <div>
-          <label for="email" class="text-secondary mb-2 block text-sm font-medium">Email</label>
-          <input type="email" id="email" name="email" required
-            class="w-full rounded-[10px] border border-primary-2 px-4 py-3 focus:border-accent focus:outline-none">
+          <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "tools_equipment" }}</h3>
+          <p class="text-gray-dark">{{ i18n "tools_equipment_desc" }}</p>
         </div>
+      </div>
+      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+        <i class="fa-solid fa-people-group text-accent mt-1 text-2xl shrink-0"></i>
         <div>
-          <label for="interests" class="text-secondary mb-2 block text-sm font-medium">What interests you about volunteering?</label>
-          <textarea id="interests" name="interests" rows="4"
-            class="w-full rounded-[10px] border border-primary-2 px-4 py-3 focus:border-accent focus:outline-none"></textarea>
+          <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "community" }}</h3>
+          <p class="text-gray-dark">{{ i18n "community_desc" }}</p>
         </div>
-        <div>
-          <label class="text-secondary mb-2 block text-sm font-medium">Areas of Interest</label>
-          <div class="flex flex-wrap gap-4">
-            {{ range .Params.volunteerAreas | default (slice "Event Organization" "Community Outreach" "Administrative Support" "Other") }}
-            <label class="flex items-center gap-2 text-gray-dark">
-              <input type="checkbox" name="areas" value="{{ . | urlize }}" class="accent-accent rounded">
-              <span>{{ . }}</span>
-            </label>
-            {{ end }}
-          </div>
-        </div>
-        <button type="submit" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white duration-300">
-          Submit Application
-        </button>
-      </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-16 xl:py-24">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-secondary mb-8 font-secondary text-4xl font-bold xl:text-7xl">
+      {{ i18n "ready_to_build" }}
+    </h2>
+    <p class="mx-auto mb-12 max-w-2xl text-lg text-gray-dark xl:text-xl">
+      {{ i18n "ready_to_build_desc" }}
+    </p>
+    <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
+      <a href="{{ "/getting-started/first-steps/" | relLangURL }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white duration-300">
+        {{ i18n "become_a_member" }}
+      </a>
+      <a href="{{ "/about/" | relLangURL }}" class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-8 py-3 font-medium duration-300 hover:text-white">
+        {{ i18n "learn_more" }}
+      </a>
     </div>
   </div>
 </section>

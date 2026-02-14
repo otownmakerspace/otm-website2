@@ -1,6 +1,6 @@
 ---
-title: "Digital Fabrication"
+title: "Making & Fabrication"
 weight: 1
 ---
 
-Members create prototypes and final products using tools such as 3D printers, CNC equipment, and laser cutters.
+Members bring ideas to life using 3D printers, laser cutters, CNC machines, and hands-on crafting tools — from rough prototypes to polished finished pieces.

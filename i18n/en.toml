@@ -1,0 +1,208 @@
+# ── Navigation & Header ──
+[toggle_nav]
+other = "Toggle Navigation"
+
+[close_nav]
+other = "Close Navigation"
+
+[getting_started]
+other = "Getting Started"
+
+[work_areas]
+other = "Work Areas"
+
+[legal_documents]
+other = "Legal Documents"
+
+# ── Footer ──
+[quick_links]
+other = "Quick Links"
+
+[contact]
+other = "Contact"
+
+[member_access_247]
+other = "Member access 24/7"
+
+# ── Bento / Hero ──
+[your_very_own_makerspace]
+other = "Your Very Own Makerspace"
+
+[your_very_own]
+other = "Your Very Own"
+
+[makerspace]
+other = "Makerspace"
+
+[member_access_247_short]
+other = "24/7 member access"
+
+[all_tools_included]
+other = "All tools included"
+
+[full_workspace_access]
+other = "Full workspace access"
+
+[supportive_community]
+other = "Supportive community"
+
+[explore_space]
+other = "Explore Space"
+
+[3d_print]
+other = "3D Print"
+
+[laser_cutter]
+other = "Laser Cutter"
+
+[cnc_machine]
+other = "CNC Machine"
+
+[wood_work]
+other = "Wood Work"
+
+[metal_work]
+other = "Metal Work"
+
+[electronics]
+other = "Electronics"
+
+# ── Home Page Sections ──
+[our_story]
+other = "Our Story"
+
+[why_we_exist]
+other = "Why We Exist"
+
+[our_mission]
+other = "Our Mission"
+
+[our_impact]
+other = "Our Impact"
+
+[why_join_us]
+other = "Why Join Us?"
+
+[what_our_volunteers_say]
+other = "What Our Volunteers Say"
+
+[tldr_what_members_get]
+other = "TL;DR — What Members Get"
+
+[access_247]
+other = "24/7 Access"
+
+[access_247_desc]
+other = "Round-the-clock access to the makerspace premises, on your own schedule."
+
+[tools_equipment]
+other = "Tools & Equipment"
+
+[tools_equipment_desc]
+other = "A large variety of tools and machines for all your projects — from 3D printers to metalworking gear."
+
+[community]
+other = "Community"
+
+[community_desc]
+other = "Be part of an energetic community where you can learn, share knowledge, and collaborate with others."
+
+[ready_to_build]
+other = "Ready to Build Something?"
+
+[ready_to_build_desc]
+other = "Whether you're prototyping your next idea, fixing something that broke, or just itching to get your hands dirty — the tools and the space are here. All that's missing is you."
+
+[become_a_member]
+other = "Become a Member"
+
+[learn_more]
+other = "Learn More"
+
+# ── Events ──
+[featured_events]
+other = "Featured Events"
+
+[spots_available]
+other = "spots available"
+
+[register]
+other = "Register"
+
+[event_calendar]
+other = "Event Calendar"
+
+[never_miss_event]
+other = "Never Miss an Event"
+
+[subscribe_calendar]
+other = "Subscribe to our calendar to stay updated:"
+
+[download_ics]
+other = "Download ICS"
+
+[add_google_calendar]
+other = "Add to Google Calendar"
+
+# ── Articles ──
+[search_by_title]
+other = "Search by title..."
+
+[all]
+other = "All"
+
+[no_articles_match]
+other = "No articles match your search."
+
+[written_by]
+other = "Written by"
+
+[min_read]
+other = "min read"
+
+# ── News ──
+[recent_posts]
+other = "Recent Posts"
+
+[search_posts]
+other = "Search posts..."
+
+[archive]
+other = "Archive"
+
+[by]
+other = "By"
+
+# ── About ──
+[contents]
+other = "Contents"
+
+[introduction]
+other = "Introduction"
+
+[welcome]
+other = "Welcome"
+
+[team]
+other = "Team"
+
+[our_team]
+other = "Our Team"
+
+# ── Docs / Misc ──
+[on_this_page]
+other = "On This Page"
+
+[photos]
+other = "photos"
+
+# ── About CTA ──
+[ready_to_start_making]
+other = "Ready to Start Making?"
+
+[ready_to_start_making_desc]
+other = "Get 24/7 access to the workshop, tools, and a community of makers who love to build."
+
+# ── 404 ──
+[page_not_found]
+other = "Page Not Found"

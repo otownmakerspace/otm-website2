@@ -11,7 +11,7 @@
       class="cursor-pointer xl:hidden"
       type="button"
       onclick="document.getElementById('navbarContent').classList.toggle('-translate-y-full')"
-      aria-label="Toggle Navigation"
+      aria-label="{{ i18n "toggle_nav" }}"
     >
       <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -33,7 +33,7 @@
           class="cursor-pointer"
           type="button"
           onclick="document.getElementById('navbarContent').classList.toggle('-translate-y-full')"
-          aria-label="Close Navigation"
+          aria-label="{{ i18n "close_nav" }}"
         >
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -42,150 +42,199 @@
       </div>
       <ul class="flex flex-col gap-8 xl:flex-row xl:items-center">
         {{ range site.Menus.main }}
-          {{ if eq .URL "/work-areas/" }}
-            {{/* Desktop dropdown */}}
+          {{ if eq .URL "#" }}
+            {{/* Info mega-dropdown — Desktop */}}
             <li class="hidden xl:block relative group text-center">
-              <a class="text-secondary hover:text-accent inline-flex items-center gap-1" href="{{ .URL }}">
+              <button class="text-secondary hover:text-accent inline-flex items-center gap-1 cursor-pointer">
                 {{ .Name }}
                 <svg class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
-              </a>
-              <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50">
-                <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-56">
-                  {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
-                  {{ range $workAreas }}
-                  <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
-                    {{ .Title }}
-                  </a>
-                  {{ end }}
-                </div>
-              </div>
-            </li>
-            {{/* Mobile accordion */}}
-            <li class="xl:hidden text-center">
-              <button
-                class="text-secondary hover:text-accent inline-flex items-center gap-1 cursor-pointer"
-                type="button"
-                onclick="let el = document.getElementById('workshopsAccordion'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');"
-              >
-                {{ .Name }}
-                <svg class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
               </button>
-              <div id="workshopsAccordion" class="hidden mt-4 text-left max-w-xs mx-auto">
-                {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
-                <ul class="flex flex-col gap-1">
-                  {{ range $workAreas }}
-                    <li>
-                      <a href="{{ .RelPermalink }}" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">
-                        {{ .Title }}
-                      </a>
-                    </li>
-                  {{ end }}
-                </ul>
-              </div>
-            </li>
-          {{ else if eq .URL "/docs/" }}
-            {{/* Desktop dropdown */}}
-            <li class="hidden xl:block relative group text-center">
-              <a class="text-secondary hover:text-accent inline-flex items-center gap-1" href="{{ .URL }}">
-                {{ .Name }}
-                <svg class="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </a>
               <div class="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50">
-                <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-56">
-                  {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
-                  {{ $sections := partial "doc-sections.html" $allDocs }}
-                  {{ range $section := $sections }}
-                    {{ $sectionDocs := where $allDocs "Params.section" $section }}
-                    {{ if $sectionDocs }}
-                    <div class="relative group/cat">
-                      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200 cursor-pointer">
-                        {{ $section }}
-                        <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                      </button>
-                      <div class="invisible opacity-0 group-hover/cat:visible group-hover/cat:opacity-100 transition-all duration-200 absolute left-full top-0 pl-1 z-50">
-                        <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                          {{ range $sectionDocs }}
-                          <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
-                            {{ .Title }}
-                          </a>
-                          {{ end }}
-                        </div>
-                      </div>
-                    </div>
-                    {{ end }}
-                  {{ end }}
-                  <div class="border-t border-gray-200 mt-1 pt-1">
-                    <a href="/docs/" class="block px-4 py-2 text-sm text-accent hover:bg-primary hover:text-accent-2 font-medium duration-200">View all docs &rarr;</a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            {{/* Mobile accordion */}}
-            <li class="xl:hidden text-center">
-              <button
-                class="text-secondary hover:text-accent inline-flex items-center gap-1 cursor-pointer"
-                type="button"
-                onclick="let el = document.getElementById('docsAccordion'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');"
-              >
-                {{ .Name }}
-                <svg class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </button>
-              <div id="docsAccordion" class="hidden mt-4 text-left max-w-xs mx-auto">
-                {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
-                {{ $sections := partial "doc-sections.html" $allDocs }}
-                {{ range $i, $section := $sections }}
-                  {{ $sectionDocs := where $allDocs "Params.section" $section }}
-                  {{ if $sectionDocs }}
-                  <div class="mb-1">
-                    <button
-                      class="w-full flex items-center justify-between py-2 text-sm text-secondary font-semibold hover:text-accent duration-200 cursor-pointer"
-                      type="button"
-                      onclick="let el = this.nextElementSibling; el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
-                    >
-                      {{ $section }}
-                      <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-3 w-64">
+                  {{/* Getting Started */}}
+                  <div class="relative group/gs">
+                    <a href="{{ "/getting-started/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      {{ i18n "getting_started" }}
+                      <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                       </svg>
-                    </button>
-                    <ul class="hidden flex-col gap-1 pl-3 pb-2">
-                      {{ range $sectionDocs }}
-                        <li>
-                          <a href="{{ .RelPermalink }}" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">
-                            {{ .Title }}
-                          </a>
-                        </li>
-                      {{ end }}
-                    </ul>
+                    </a>
+                    <div class="invisible opacity-0 group-hover/gs:visible group-hover/gs:opacity-100 transition-all duration-200 absolute left-full top-0 pl-1 z-50">
+                      <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                        {{ $gsPage := site.GetPage "/getting-started" }}
+                        {{ range $gsPage.Pages.ByWeight }}
+                        <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                        {{ end }}
+                      </div>
+                    </div>
                   </div>
-                  {{ end }}
-                {{ end }}
-                <a href="/docs/" class="block mt-2 pt-2 border-t border-gray-200 text-sm text-accent hover:text-accent-2 font-medium">View all docs &rarr;</a>
+                  {{/* Work Areas */}}
+                  <div class="relative group/wa">
+                    <a href="{{ "/work-areas/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      {{ i18n "work_areas" }}
+                      <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </a>
+                    <div class="invisible opacity-0 group-hover/wa:visible group-hover/wa:opacity-100 transition-all duration-200 absolute left-full top-0 pl-1 z-50">
+                      <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                        {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
+                        {{ range $workAreas }}
+                        <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                        {{ end }}
+                      </div>
+                    </div>
+                  </div>
+                  {{/* Legal Documents */}}
+                  <div class="relative group/ld">
+                    <a href="{{ "/docs/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      {{ i18n "legal_documents" }}
+                      <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                      </svg>
+                    </a>
+                    <div class="invisible opacity-0 group-hover/ld:visible group-hover/ld:opacity-100 transition-all duration-200 absolute left-full top-0 pl-1 z-50">
+                      <div class="bg-white rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                        {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
+                        {{ range $allDocs }}
+                        <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                        {{ end }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            {{/* Info mega-dropdown — Mobile */}}
+            <li class="xl:hidden text-center">
+              <button
+                class="text-secondary hover:text-accent inline-flex items-center gap-1 cursor-pointer"
+                type="button"
+                onclick="let el = document.getElementById('infoAccordion'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-180');"
+              >
+                {{ .Name }}
+                <svg class="h-4 w-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              <div id="infoAccordion" class="hidden mt-4 text-left max-w-xs mx-auto">
+                {{/* Getting Started */}}
+                <div class="mb-1">
+                  <button
+                    class="w-full flex items-center justify-between py-2 text-sm text-secondary font-semibold hover:text-accent duration-200 cursor-pointer"
+                    type="button"
+                    onclick="let el = this.nextElementSibling; el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+                  >
+                    {{ i18n "getting_started" }}
+                    <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  <ul class="hidden flex-col gap-1 pl-3 pb-2">
+                    {{ $gsPage := site.GetPage "/getting-started" }}
+                    {{ range $gsPage.Pages.ByWeight }}
+                      <li>
+                        <a href="{{ .RelPermalink }}" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </div>
+                {{/* Work Areas */}}
+                <div class="mb-1">
+                  <button
+                    class="w-full flex items-center justify-between py-2 text-sm text-secondary font-semibold hover:text-accent duration-200 cursor-pointer"
+                    type="button"
+                    onclick="let el = this.nextElementSibling; el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+                  >
+                    {{ i18n "work_areas" }}
+                    <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  <ul class="hidden flex-col gap-1 pl-3 pb-2">
+                    {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
+                    {{ range $workAreas }}
+                      <li>
+                        <a href="{{ .RelPermalink }}" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </div>
+                {{/* Legal Documents */}}
+                <div class="mb-1">
+                  <button
+                    class="w-full flex items-center justify-between py-2 text-sm text-secondary font-semibold hover:text-accent duration-200 cursor-pointer"
+                    type="button"
+                    onclick="let el = this.nextElementSibling; el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+                  >
+                    {{ i18n "legal_documents" }}
+                    <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  <ul class="hidden flex-col gap-1 pl-3 pb-2">
+                    {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
+                    {{ range $allDocs }}
+                      <li>
+                        <a href="{{ .RelPermalink }}" class="block py-1 text-sm text-gray-dark hover:text-accent duration-200">
+                          {{ .Title }}
+                        </a>
+                      </li>
+                    {{ end }}
+                  </ul>
+                </div>
               </div>
             </li>
           {{ else }}
             <li class="text-center">
-              <a class="text-secondary hover:text-accent" href="{{ .URL }}">{{ .Name }}</a>
+              <a class="text-secondary hover:text-accent" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
             </li>
           {{ end }}
         {{ end }}
       </ul>
-      <ul class="flex flex-col gap-8 xl:flex-row">
-        {{ range .Site.Menus.buttons }}
-          <li class="text-center">
-            <a class="bg-accent hover:bg-accent-2 rounded px-6 py-2 text-white" href="{{ .URL }}">{{ .Name }}</a>
-          </li>
-        {{ end }}
-      </ul>
+      <div class="flex flex-col items-center gap-4 xl:flex-row xl:gap-6">
+        {{/* Language switcher */}}
+        <div class="flex items-center gap-1 text-sm font-medium">
+          {{ range .Site.Languages }}
+            {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
+            {{ if $isCurrent }}
+              <span class="text-accent font-semibold uppercase">{{ .Lang }}</span>
+            {{ else }}
+              {{/* Link to the same page's translation, or fall back to the language's homepage */}}
+              {{ $targetURL := (printf "/%s/" .Lang) }}
+              {{ range $.Translations }}
+                {{ if eq .Language.Lang $.Site.Language.Lang | not }}
+                  {{ $targetURL = .RelPermalink }}
+                {{ end }}
+              {{ end }}
+              <a href="{{ $targetURL }}" class="text-secondary hover:text-accent uppercase duration-200">{{ .Lang }}</a>
+            {{ end }}
+            {{ if ne .Lang (index (last 1 $.Site.Languages) 0).Lang }}
+              <span class="text-secondary-2">|</span>
+            {{ end }}
+          {{ end }}
+        </div>
+        {{/* CTA buttons */}}
+        <ul class="flex flex-col gap-4 xl:flex-row">
+          {{ range .Site.Menus.buttons }}
+            <li class="text-center">
+              <a class="bg-accent hover:bg-accent-2 rounded px-6 py-2 text-white" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+            </li>
+          {{ end }}
+        </ul>
+      </div>
     </div>
   </div>
 </nav>

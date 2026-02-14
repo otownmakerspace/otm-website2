@@ -11,7 +11,7 @@
       <aside class="xl:w-72 xl:shrink-0">
         <nav class="bg-primary sticky top-8 rounded-[10px] p-6">
           <div class="mb-6 flex items-center justify-between">
-            <h2 class="text-secondary font-secondary text-lg font-bold">Recent Posts</h2>
+            <h2 class="text-secondary font-secondary text-lg font-bold">{{ i18n "recent_posts" }}</h2>
             <a href='{{ "news/index.xml" | absURL }}' class="text-accent hover:text-accent-2 transition-colors" title="RSS Feed">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm1.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0-8.5a1 1 0 0 1 1 1c0 2.481 2.019 4.5 4.5 4.5a1 1 0 0 1 0 2c-3.59 0-6.5-2.91-6.5-6.5a1 1 0 0 1 1-1zm0-4a1 1 0 0 1 1 1c0 4.694 3.806 8.5 8.5 8.5a1 1 0 0 1 0 2c-5.798 0-10.5-4.702-10.5-10.5a1 1 0 0 1 1-1z"/>
@@ -24,7 +24,7 @@
             <input
               type="search"
               id="post-search"
-              placeholder="Search posts..."
+              placeholder="{{ i18n "search_posts" }}"
               class="w-full rounded-[10px] border border-primary-2 px-4 py-2 text-sm focus:border-accent focus:outline-none"
             >
           </div>
@@ -47,7 +47,7 @@
 
           <!-- Archive -->
           <div class="mt-6 border-t border-primary-2 pt-6">
-            <h3 class="text-secondary mb-3 text-sm font-semibold uppercase tracking-wide">Archive</h3>
+            <h3 class="text-secondary mb-3 text-sm font-semibold uppercase tracking-wide">{{ i18n "archive" }}</h3>
             <ul class="flex flex-col gap-1 text-sm">
               {{ range .Pages.GroupByDate "January 2006" }}
               <li class="text-gray-dark">{{ .Key }} ({{ len .Pages }})</li>
@@ -74,7 +74,7 @@
             </div>
             <h2 class="text-secondary font-secondary text-2xl font-bold xl:text-3xl">{{ .Title }}</h2>
             {{ with .Params.author }}
-            <p class="mt-2 text-sm text-secondary-2">By {{ . }}</p>
+            <p class="mt-2 text-sm text-secondary-2">{{ i18n "by" }} {{ . }}</p>
             {{ end }}
           </header>
 

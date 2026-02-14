@@ -1,6 +1,6 @@
 ---
-title: "Woodworking & Craft"
+title: "Woodworking & Metalworking"
 weight: 3
 ---
 
-Woodworking tools and craft stations give members the freedom to build furniture, models, props, and practical objects.
+From furniture and sculpture to welding and forging — members work with wood and metal using both hand tools and power tools to create functional and artistic pieces.

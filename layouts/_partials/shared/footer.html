@@ -15,21 +15,21 @@
             {{ with .facebook }}
               <li class="bg-accent/20 text-secondary flex size-8 items-center justify-center rounded-full">
                 <a href="{{ . }}" aria-label="Facebook">
-                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                  <i class="fa-brands fa-facebook-f"></i>
                 </a>
               </li>
             {{ end }}
             {{ with .instagram }}
               <li class="bg-accent/20 text-secondary flex size-8 items-center justify-center rounded-full">
                 <a href="{{ . }}" aria-label="Instagram">
-                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                  <i class="fa-brands fa-instagram"></i>
                 </a>
               </li>
             {{ end }}
             {{ with .discord }}
               <li class="bg-accent/20 text-secondary flex size-8 items-center justify-center rounded-full">
                 <a href="{{ . }}" aria-label="Discord">
-                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059.05.05 0 0 0-.018-.011 8.8 8.8 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.05.05 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007c.08.066.164.132.248.195a.05.05 0 0 1-.004.085 8.3 8.3 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/></svg>
+                  <i class="fa-brands fa-discord"></i>
                 </a>
               </li>
             {{ end }}
@@ -37,17 +37,17 @@
         {{ end }}
       </div>
       <div class="xl:col-span-2">
-        <h2 class="text-secondary mb-2 text-center text-lg font-bold xl:text-start">Quick Links</h2>
+        <h2 class="text-secondary mb-2 text-center text-lg font-bold xl:text-start">{{ i18n "quick_links" }}</h2>
         <ul class="flex flex-col gap-1 text-sm">
           {{ range .Site.Menus.footer }}
             <li class="text-center xl:text-start">
-              <a class="hover:text-accent" href="{{ .URL }}">{{ .Name }}</a>
+              <a class="hover:text-accent" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
             </li>
           {{ end }}
         </ul>
       </div>
       <div class="xl:col-span-6">
-        <h2 class="text-secondary mb-2 text-center text-lg font-bold xl:text-start">Contact</h2>
+        <h2 class="text-secondary mb-2 text-center text-lg font-bold xl:text-start">{{ i18n "contact" }}</h2>
         <ul class="flex flex-col gap-1 text-sm">
           {{ range .Site.Params.location }}
             <li class="text-center xl:text-start">
@@ -67,7 +67,7 @@
           {{ end }}
           <li class="text-center xl:text-start mt-2 inline-flex items-center gap-1.5 font-semibold text-secondary">
             <i class="fa-regular fa-clock shrink-0"></i>
-            Member access 24/7
+            {{ i18n "member_access_247" }}
           </li>
         </ul>
       </div>

@@ -7,7 +7,7 @@
     <!-- Featured Events -->
     {{ with .Params.featuredEvents }}
     <div class="mb-16">
-      <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold">Featured Events</h2>
+      <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold">{{ i18n "featured_events" }}</h2>
       <div class="grid gap-8 xl:grid-cols-3">
         {{ range . }}
         <article class="rounded-[10px] bg-primary p-6 xl:p-8">
@@ -17,11 +17,11 @@
           <p class="mb-4 text-gray-dark">{{ .description }}</p>
           <div class="mb-4 flex flex-wrap gap-4 text-sm text-secondary-2">
             <span>{{ .time }}</span>
-            {{ with .spots }}<span class="text-accent font-semibold">{{ . }} spots available</span>{{ end }}
+            {{ with .spots }}<span class="text-accent font-semibold">{{ . }} {{ i18n "spots_available" }}</span>{{ end }}
           </div>
           {{ with .registerUrl }}
           <a href="{{ . }}" class="bg-accent hover:bg-accent-2 inline-block rounded-[10px] px-6 py-2 text-white duration-300">
-            Register
+            {{ i18n "register" }}
           </a>
           {{ end }}
         </article>
@@ -32,7 +32,7 @@
 
     <!-- Calendar Section -->
     <div class="mb-16">
-      <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold">Event Calendar</h2>
+      <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold">{{ i18n "event_calendar" }}</h2>
       <div class="mx-auto max-w-5xl overflow-hidden rounded-[10px] bg-white shadow-lg">
         <iframe
                 src="https://calendar.google.com/calendar/embed?src={{ .Params.googleCalendarId | urlquery }}&ctz={{ .Params.timezone | default "Europe/London" }}&mode={{ .Params.calendarMode | default "MONTH" }}&showTitle=0&showNav=1&showPrint=0&showTabs=1&showCalendars=0"
@@ -45,14 +45,14 @@
 
     <!-- Subscribe Section -->
     <div class="bg-primary mx-auto max-w-2xl rounded-[10px] p-8 text-center">
-      <h2 class="text-secondary mb-4 font-secondary text-2xl font-bold">Never Miss an Event</h2>
-      <p class="mb-6 text-gray-dark">Subscribe to our calendar to stay updated:</p>
+      <h2 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ i18n "never_miss_event" }}</h2>
+      <p class="mb-6 text-gray-dark">{{ i18n "subscribe_calendar" }}</p>
       <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a href="{{ .Site.Params.calendarIcsUrl }}" download class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-6 py-2 duration-300 hover:text-white">
-          Download ICS
+          {{ i18n "download_ics" }}
         </a>
         <a href="https://calendar.google.com/calendar/r?cid={{ .Params.calendarCid }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-6 py-2 text-white duration-300">
-          Add to Google Calendar
+          {{ i18n "add_google_calendar" }}
         </a>
       </div>
     </div>

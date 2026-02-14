@@ -3,7 +3,6 @@ title: "Terms of Membership"
 weight: 20
 section: "Legal & Policy"
 section_weight: 4
-anchor: "terms-of-membership"
 ---
 
 ## 1. Scope
