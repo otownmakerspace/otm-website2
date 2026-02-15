@@ -1,0 +1,91 @@
+{{ define "main" }}
+<!-- Contact Cards -->
+<section class="bg-primary py-16">
+  <div class="container mx-auto px-4">
+    <h1 class="text-secondary mb-12 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ i18n "get_in_touch" }}</h1>
+    <div class="mx-auto grid max-w-5xl gap-8 xl:grid-cols-3">
+      {{/* Email */}}
+      {{ range .Site.Params.contact }}
+      <div class="rounded-[10px] bg-surface p-8 text-center shadow-sm">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/15">
+          <i class="fa-regular fa-envelope text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "email_us" }}</h3>
+        <a href="mailto:{{ . }}" class="text-accent hover:text-accent-2 text-lg">{{ . }}</a>
+      </div>
+      {{ end }}
+
+      {{/* Location */}}
+      {{ range .Site.Params.location }}
+      <div class="rounded-[10px] bg-surface p-8 text-center shadow-sm">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/15">
+          <i class="fa-solid fa-location-dot text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "our_location" }}</h3>
+        <a href="https://www.google.com/maps/search/?api=1&query={{ . | urlquery }}" target="_blank" rel="noopener" class="text-accent hover:text-accent-2 text-lg">
+          {{ . }}
+        </a>
+      </div>
+      {{ end }}
+
+      {{/* Open Hours */}}
+      <div class="rounded-[10px] bg-surface p-8 text-center shadow-sm">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/15">
+          <i class="fa-regular fa-clock text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "open_hours" }}</h3>
+        <p class="text-gray-dark">{{ i18n "open_hours_public" }} <a href="{{ "/events/" | relLangURL }}" class="text-accent hover:text-accent-2 font-semibold underline underline-offset-2">{{ i18n "open_hours_open_house" }}</a></p>
+        <p class="text-gray-dark mt-1">{{ i18n "open_hours_members" }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social Media -->
+{{ with .Site.Params.social }}
+<section class="bg-primary py-16">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-secondary mb-12 font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "follow_us" }}</h2>
+    <div class="flex flex-wrap items-center justify-center gap-6">
+      {{ with .facebook }}
+      <a href="{{ . }}" target="_blank" rel="noopener" aria-label="Facebook"
+         class="flex h-20 w-20 items-center justify-center rounded-[10px] bg-surface text-secondary shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:text-accent">
+        <i class="fa-brands fa-facebook text-4xl"></i>
+      </a>
+      {{ end }}
+      {{ with .instagram }}
+      <a href="{{ . }}" target="_blank" rel="noopener" aria-label="Instagram"
+         class="flex h-20 w-20 items-center justify-center rounded-[10px] bg-surface text-secondary shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:text-accent">
+        <i class="fa-brands fa-instagram text-4xl"></i>
+      </a>
+      {{ end }}
+      {{ with .discord }}
+      <a href="{{ . }}" target="_blank" rel="noopener" aria-label="Discord"
+         class="flex h-20 w-20 items-center justify-center rounded-[10px] bg-surface text-secondary shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:text-accent">
+        <i class="fa-brands fa-discord text-4xl"></i>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<!-- Map -->
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "find_us" }}</h2>
+    <div class="mx-auto max-w-5xl overflow-hidden rounded-[10px] shadow-sm">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2222.0!2d10.3886!3d55.3977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sHavnegade+57%2C+5000+Odense+C%2C+Denmark!5e0!3m2!1sen!2sdk!4v1"
+        width="100%"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="{{ i18n "find_us" }}"
+      ></iframe>
+    </div>
+  </div>
+</section>
+{{ end }}

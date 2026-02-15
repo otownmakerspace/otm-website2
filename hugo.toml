@@ -26,15 +26,45 @@ defaultContentLanguage = 'en'
   memberPortalUrl = "https://members.theotowngarage.com"
 
   [params.colors]
-    accent = "#F68048"
-    accent_2 = "#e75008"
-    primary = "#EDF2F8"
-    primary_2 = "#E1E9F4"
-    secondary = "#0D1A63"
-    secondary_2 = "#1A2CA3"
-    gray_light = "#EEF1FF"
-    gray_dark = "#0D1A63"
-    tertiary = "#1A2CA3"
+    accent = "#FF9B51"
+    accent_2 = "#FF700A"
+    primary = "#EAEFEF"
+    primary_2 = "#BFC9D1"
+    secondary = "#25343F"
+    secondary_2 = "#3F5E74"
+    gray_light = "#EAEFEF"
+    gray_dark = "#25343F"
+    tertiary = "#3F5E74"
+    # ── Alt palette: warm navy ──
+    # accent = "#FAB95B"
+    # accent_2 = "#F89812"
+    # primary = "#E8E2DB"
+    # primary_2 = "#D3C8BB"
+    # secondary = "#1A3263"
+    # secondary_2 = "#547792"
+    # gray_light = "#E8E2DB"
+    # gray_dark = "#1A3263"
+    # tertiary = "#547792"
+    # ── Alt palette: sage/cream ──
+    # accent = "#FF7F11"
+    # accent_2 = "#D66400"
+    # primary = "#E2E8CE"
+    # primary_2 = "#ACBFA4"
+    # secondary = "#262626"
+    # secondary_2 = "#4D4D4D"
+    # gray_light = "#E2E8CE"
+    # gray_dark = "#262626"
+    # tertiary = "#4D4D4D"
+    # ── Alt palette: navy-blue ──
+    # accent = "#F68048"
+    # accent_2 = "#e75008"
+    # primary = "#EDF2F8"
+    # primary_2 = "#E1E9F4"
+    # secondary = "#0D1A63"
+    # secondary_2 = "#1A2CA3"
+    # gray_light = "#EEF1FF"
+    # gray_dark = "#0D1A63"
+    # tertiary = "#1A2CA3"
 
   [params.social]
     facebook = "https://www.facebook.com/theotowngarage"
@@ -67,26 +97,6 @@ defaultContentLanguage = 'en'
   name = "Events"
   url = "/events/"
   weight = 3
-
-[[languages.en.menus.main]]
-  name = "Info"
-  url = "#"
-  weight = 4
-
-[[languages.en.menus.main]]
-  name = "Gallery"
-  url = "/gallery/"
-  weight = 5
-
-[[languages.en.menus.main]]
-  name = "Articles"
-  url = "/articles/"
-  weight = 6
-
-[[languages.en.menus.main]]
-  name = "News"
-  url = "/news/"
-  weight = 7
 
 [[languages.en.menus.footer]]
   name = "About"
@@ -123,6 +133,11 @@ defaultContentLanguage = 'en'
   url = "/news/"
   weight = 7
 
+[[languages.en.menus.footer]]
+  name = "Contact"
+  url = "/contact/"
+  weight = 8
+
 # ── Danish menus ──
 
 [[languages.da.menus.main]]
@@ -139,26 +154,6 @@ defaultContentLanguage = 'en'
   name = "Arrangementer"
   url = "/events/"
   weight = 3
-
-[[languages.da.menus.main]]
-  name = "Info"
-  url = "#"
-  weight = 4
-
-[[languages.da.menus.main]]
-  name = "Galleri"
-  url = "/gallery/"
-  weight = 5
-
-[[languages.da.menus.main]]
-  name = "Artikler"
-  url = "/articles/"
-  weight = 6
-
-[[languages.da.menus.main]]
-  name = "Nyheder"
-  url = "/news/"
-  weight = 7
 
 [[languages.da.menus.footer]]
   name = "Om os"
@@ -194,3 +189,8 @@ defaultContentLanguage = 'en'
   name = "Nyheder"
   url = "/news/"
   weight = 7
+
+[[languages.da.menus.footer]]
+  name = "Kontakt"
+  url = "/contact/"
+  weight = 8

@@ -23,6 +23,18 @@ other = "Log ind"
 [sign_up]
 other = "Tilmeld dig"
 
+[settings]
+other = "Indstillinger"
+
+[language]
+other = "Sprog"
+
+[theme]
+other = "Tema"
+
+[dark_mode]
+other = "Mørk tilstand"
+
 [memberships]
 other = "Medlemskaber"
 
@@ -122,6 +134,33 @@ other = "Fællesskab"
 [community_desc]
 other = "Bliv en del af et energisk fællesskab, hvor du kan lære, dele viden og samarbejde med andre."
 
+[tldr_how_to_get_started]
+other = "Sådan kommer du i gang"
+
+[step_open_house]
+other = "Besøg et Åbent Hus"
+
+[step_open_house_desc]
+other = "Kom forbi makerspacet under et af vores Åbent Hus-arrangementer — de er åbne for alle. Uden for Åbent Hus har kun medlemmer adgang til lokalerne."
+
+[step_introduction]
+other = "Få din introduktion"
+
+[step_introduction_desc]
+other = "Under dit besøg får du en orientering fra et bestyrelsesmedlem om sikkerhed, adgang og hvordan tingene fungerer i rummet."
+
+[step_documents]
+other = "Gennemgå dokumenterne"
+
+[step_documents_desc]
+other = "Gennemgå vedtægterne og medlemsvilkårene, så du ved hvad du kan forvente, og hvad der forventes af dig."
+
+[step_sign_up]
+other = "Tilmeld dig online"
+
+[step_sign_up_desc]
+other = "Når du er klar, registrer dig som medlem via vores onlineformular og få 24/7 adgang til rummet."
+
 [ready_to_build]
 other = "Klar til at bygge noget?"
 
@@ -217,6 +256,44 @@ other = "Klar til at begynde at bygge?"
 
 [ready_to_start_making_desc]
 other = "Få 24/7 adgang til værkstedet, værktøj og et fællesskab af skabere, der elsker at bygge."
+
+# ── Nav Menu ──
+[gallery]
+other = "Galleri"
+
+[articles]
+other = "Artikler"
+
+[news]
+other = "Nyheder"
+
+# ── Contact ──
+[get_in_touch]
+other = "Kontakt os"
+
+[find_us]
+other = "Find os"
+
+[follow_us]
+other = "Følg os"
+
+[open_hours]
+other = "Åbningstider"
+
+[open_hours_public]
+other = "Offentlig: Under"
+
+[open_hours_open_house]
+other = "Åbent Hus-arrangementer"
+
+[open_hours_members]
+other = "Medlemmer: 24/7 adgang"
+
+[email_us]
+other = "Skriv til os"
+
+[our_location]
+other = "Vores lokation"
 
 # ── 404 ──
 [page_not_found]

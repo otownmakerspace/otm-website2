@@ -45,7 +45,7 @@
     <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "why_join_us" }}</h2>
     <div class="grid gap-8 xl:grid-cols-{{ len . }}">
       {{ range . }}
-      <div class="rounded-[10px] bg-white p-8 text-center shadow-sm">
+      <div class="rounded-[10px] bg-surface p-8 text-center shadow-sm">
         <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">{{ .title }}</h3>
         <p class="text-gray-dark">{{ .description }}</p>
       </div>
@@ -62,7 +62,7 @@
     <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "what_our_volunteers_say" }}</h2>
     <div class="grid gap-8 xl:grid-cols-2">
       {{ range . }}
-      <blockquote class="rounded-[10px] border-l-4 border-accent bg-white p-8 shadow-sm">
+      <blockquote class="rounded-[10px] border-l-4 border-accent bg-surface p-8 shadow-sm">
         <p class="mb-4 text-lg italic text-gray-dark">"{{ .quote }}"</p>
         <cite class="text-secondary font-secondary font-semibold">— {{ .name }}, {{ .role }}</cite>
       </blockquote>
@@ -75,28 +75,58 @@
 <!-- TL;DR -->
 <section id="join" class="bg-primary py-16">
   <div class="container mx-auto px-4">
+    {{/* Subsection: What Members Get */}}
     <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "tldr_what_members_get" }}</h2>
     <div class="grid gap-8 xl:grid-cols-3">
-      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+      <div class="flex items-start gap-4 rounded-[10px] bg-surface p-8 shadow-sm">
         <i class="fa-solid fa-key text-accent mt-1 text-2xl shrink-0"></i>
         <div>
           <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "access_247" }}</h3>
           <p class="text-gray-dark">{{ i18n "access_247_desc" }}</p>
         </div>
       </div>
-      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+      <div class="flex items-start gap-4 rounded-[10px] bg-surface p-8 shadow-sm">
         <i class="fa-solid fa-screwdriver-wrench text-accent mt-1 text-2xl shrink-0"></i>
         <div>
           <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "tools_equipment" }}</h3>
           <p class="text-gray-dark">{{ i18n "tools_equipment_desc" }}</p>
         </div>
       </div>
-      <div class="flex items-start gap-4 rounded-[10px] bg-white p-8 shadow-sm">
+      <div class="flex items-start gap-4 rounded-[10px] bg-surface p-8 shadow-sm">
         <i class="fa-solid fa-people-group text-accent mt-1 text-2xl shrink-0"></i>
         <div>
           <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "community" }}</h3>
           <p class="text-gray-dark">{{ i18n "community_desc" }}</p>
         </div>
+      </div>
+    </div>
+
+    {{/* Subsection: How to Get Started */}}
+    <h2 class="text-secondary mt-20 mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "tldr_how_to_get_started" }}</h2>
+    <div class="mx-auto grid max-w-4xl gap-6 xl:grid-cols-4">
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white font-secondary text-xl font-bold">1</div>
+        <i class="fa-solid fa-door-open text-accent mb-3 text-2xl"></i>
+        <h3 class="text-secondary mb-2 font-secondary text-lg font-bold">{{ i18n "step_open_house" }}</h3>
+        <p class="text-gray-dark text-sm">{{ i18n "step_open_house_desc" }}</p>
+      </div>
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white font-secondary text-xl font-bold">2</div>
+        <i class="fa-solid fa-handshake text-accent mb-3 text-2xl"></i>
+        <h3 class="text-secondary mb-2 font-secondary text-lg font-bold">{{ i18n "step_introduction" }}</h3>
+        <p class="text-gray-dark text-sm">{{ i18n "step_introduction_desc" }}</p>
+      </div>
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white font-secondary text-xl font-bold">3</div>
+        <i class="fa-solid fa-file-lines text-accent mb-3 text-2xl"></i>
+        <h3 class="text-secondary mb-2 font-secondary text-lg font-bold">{{ i18n "step_documents" }}</h3>
+        <p class="text-gray-dark text-sm">{{ i18n "step_documents_desc" }}</p>
+      </div>
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-white font-secondary text-xl font-bold">4</div>
+        <i class="fa-solid fa-user-plus text-accent mb-3 text-2xl"></i>
+        <h3 class="text-secondary mb-2 font-secondary text-lg font-bold">{{ i18n "step_sign_up" }}</h3>
+        <p class="text-gray-dark text-sm">{{ i18n "step_sign_up_desc" }}</p>
       </div>
     </div>
   </div>

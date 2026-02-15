@@ -39,7 +39,7 @@
           >{{ i18n "all" }}</button>
           {{ range $allTags }}
             <button
-              class="tag-btn rounded-full border border-primary-2 bg-white px-3 py-1 text-xs font-medium text-gray-dark transition-colors duration-200 cursor-pointer hover:border-accent hover:text-accent"
+              class="tag-btn rounded-full border border-primary-2 bg-surface px-3 py-1 text-xs font-medium text-gray-dark transition-colors duration-200 cursor-pointer hover:border-accent hover:text-accent"
               data-tag="{{ . | lower }}"
             >{{ . }}</button>
           {{ end }}
@@ -52,7 +52,7 @@
       {{ range .Pages.ByDate.Reverse }}
         <a
           href="{{ .RelPermalink }}"
-          class="article-card group flex flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md md:flex-row"
+          class="article-card group flex flex-col overflow-hidden rounded-[10px] border border-gray-200 bg-surface shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md md:flex-row"
           data-title="{{ .Title | lower }}"
           data-tags="{{ with .Params.tags }}{{ delimit . "," | lower }}{{ end }}"
         >
@@ -137,10 +137,10 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.addEventListener('click', function() {
       tagBtns.forEach(function(b) {
         b.classList.remove('active', 'bg-accent', 'text-white', 'border-accent');
-        b.classList.add('bg-white', 'text-gray-dark', 'border-primary-2');
+        b.classList.add('bg-surface', 'text-gray-dark', 'border-primary-2');
       });
       btn.classList.add('active', 'bg-accent', 'text-white', 'border-accent');
-      btn.classList.remove('bg-white', 'text-gray-dark', 'border-primary-2');
+      btn.classList.remove('bg-surface', 'text-gray-dark', 'border-primary-2');
       activeTag = btn.dataset.tag;
       filterArticles();
     });

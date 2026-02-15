@@ -11,7 +11,7 @@
     {{ if .RegularPages }}
     <div class="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
       {{ range (.Paginate .RegularPages).Pages }}
-        <a class="group block rounded-[10px] border border-primary-2 bg-white p-6 shadow-sm transition-shadow hover:shadow-md" href="{{ .Permalink }}">
+        <a class="group block rounded-[10px] border border-primary-2 bg-surface p-6 shadow-sm transition-shadow hover:shadow-md" href="{{ .Permalink }}">
           <h2 class="text-secondary mb-2 font-secondary text-xl font-semibold group-hover:text-accent">{{ .Title }}</h2>
           {{ with .Date }}
             <time class="mb-3 block text-sm text-secondary-2">{{ .Format "January 2, 2006" }}</time>

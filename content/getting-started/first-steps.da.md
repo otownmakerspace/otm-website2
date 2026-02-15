@@ -24,7 +24,11 @@ Når du føler, at makerspacet er noget, du gerne vil være en del af, er næste
 
 ## 4. Bliv medlem
 
-Når du har besluttet, at du vil have fuld adgang, tilmeld dig på vores hjemmeside som betalende medlem. Efter registrering, tilslut dig [makerspacets Discord](https://discord.gg/HDR8jsUp) og aftal et introduktionsmøde med et af bestyrelsesmedlemmerne.
+Når du har besluttet, at du vil have fuld adgang, er her hvordan du kommer i gang:
+
+1. **Tilmeld dig et medlemskab** — Registrer dig som betalende medlem på vores [medlemsportal](https://members.theotowngarage.com/subscribe/200)
+2. **Tilslut dig Discord** — Bliv en del af fællesskabet på [makerspacets Discord](https://discord.gg/HDR8jsUp)
+3. **Kom forbi til Åbent Hus** — Deltag i en Åbent Hus-session for at få den officielle introduktion og orientering fra et bestyrelsesmedlem
 
 ## 5. Din første introduktion
 

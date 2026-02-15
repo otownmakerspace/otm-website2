@@ -33,7 +33,7 @@
           <ul class="flex flex-col gap-3" id="post-list">
             {{ range .Pages.ByDate.Reverse }}
             <li>
-              <a href="#{{ .File.BaseFileName }}" class="post-link group block rounded-[10px] p-2 duration-200 hover:bg-white">
+              <a href="#{{ .File.BaseFileName }}" class="post-link group block rounded-[10px] p-2 duration-200 hover:bg-surface">
                 <time datetime='{{ .Date.Format "2006-01-02" }}' class="text-xs text-secondary-2">
                   {{ .Date.Format "Jan 2, 2006" }}
                 </time>
@@ -60,7 +60,7 @@
       <!-- Main Content -->
       <main class="min-w-0 flex-1">
         {{ range .Pages.ByDate.Reverse }}
-        <article id="{{ .File.BaseFileName }}" class="mb-12 scroll-mt-8 rounded-[10px] bg-white p-6 shadow-sm xl:p-8">
+        <article id="{{ .File.BaseFileName }}" class="mb-12 scroll-mt-8 rounded-[10px] bg-surface p-6 shadow-sm xl:p-8">
           <header class="mb-6">
             <div class="mb-2 flex flex-wrap items-center gap-3">
               <time datetime='{{ .Date.Format "2006-01-02" }}' class="text-sm text-secondary-2">
@@ -116,9 +116,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     postLinks.forEach(link => {
-      link.classList.remove('bg-white');
+      link.classList.remove('bg-surface');
       if (link.getAttribute('href') === '#' + currentPost) {
-        link.classList.add('bg-white');
+        link.classList.add('bg-surface');
       }
     });
   }

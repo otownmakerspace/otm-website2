@@ -24,7 +24,11 @@ When you feel that the makerspace is something you'd like to be part of, the nex
 
 ## 4. Become a Member
 
-Once you've decided you want full access, sign up on our website as a paying member. After registering, join the [makerspace Discord](https://discord.gg/HDR8jsUp) and arrange an introduction meeting with one of the board members.
+Once you've decided you want full access, here's how to get started:
+
+1. **Sign up for a membership** — Register as a paying member on our [membership portal](https://members.theotowngarage.com/subscribe/200)
+2. **Join the Discord** — Connect with the community on the [makerspace Discord](https://discord.gg/HDR8jsUp)
+3. **Come by on Open House** — Attend an Open House session to get the official introduction and orientation from a board member
 
 ## 5. Your First Introduction
 

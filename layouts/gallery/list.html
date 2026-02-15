@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {{ range .Pages.ByDate.Reverse }}
-        <a href="{{ .RelPermalink }}" class="group block overflow-hidden rounded-[10px] border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md">
+        <a href="{{ .RelPermalink }}" class="group block overflow-hidden rounded-[10px] border border-gray-200 bg-surface shadow-sm transition-all duration-200 hover:border-accent hover:shadow-md">
           {{/* Thumbnail */}}
           {{ $thumbImg := false }}
           {{ with .Params.thumbnail }}

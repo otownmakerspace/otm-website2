@@ -23,6 +23,18 @@ other = "Sign In"
 [sign_up]
 other = "Sign Up"
 
+[settings]
+other = "Settings"
+
+[language]
+other = "Language"
+
+[theme]
+other = "Theme"
+
+[dark_mode]
+other = "Dark Mode"
+
 [memberships]
 other = "Memberships"
 
@@ -122,6 +134,33 @@ other = "Community"
 [community_desc]
 other = "Be part of an energetic community where you can learn, share knowledge, and collaborate with others."
 
+[tldr_how_to_get_started]
+other = "How to Get Started"
+
+[step_open_house]
+other = "Visit an Open House"
+
+[step_open_house_desc]
+other = "Come to the makerspace during one of our Open House events — they are open to the public. Outside of Open House, only members can access the premises."
+
+[step_introduction]
+other = "Get Your Introduction"
+
+[step_introduction_desc]
+other = "During your visit, you'll receive an orientation from a board member covering safety, access, and how things work around the space."
+
+[step_documents]
+other = "Review the Documents"
+
+[step_documents_desc]
+other = "Go over the Articles of Association and Terms of Membership so you know what to expect and what's expected of you."
+
+[step_sign_up]
+other = "Sign Up Online"
+
+[step_sign_up_desc]
+other = "Once you're ready, register as a member through our online form and get 24/7 access to the space."
+
 [ready_to_build]
 other = "Ready to Build Something?"
 
@@ -217,6 +256,44 @@ other = "Ready to Start Making?"
 
 [ready_to_start_making_desc]
 other = "Get 24/7 access to the workshop, tools, and a community of makers who love to build."
+
+# ── Nav Menu ──
+[gallery]
+other = "Gallery"
+
+[articles]
+other = "Articles"
+
+[news]
+other = "News"
+
+# ── Contact ──
+[get_in_touch]
+other = "Get in Touch"
+
+[find_us]
+other = "Find Us"
+
+[follow_us]
+other = "Follow Us"
+
+[open_hours]
+other = "Open Hours"
+
+[open_hours_public]
+other = "Public: During"
+
+[open_hours_open_house]
+other = "Open House events"
+
+[open_hours_members]
+other = "Members: 24/7 access"
+
+[email_us]
+other = "Email Us"
+
+[our_location]
+other = "Our Location"
 
 # ── 404 ──
 [page_not_found]
