@@ -23,6 +23,7 @@ defaultContentLanguage = 'en'
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
   ogImage = "images/og-default.jpg"
+  memberPortalUrl = "https://members.theotowngarage.com"
 
   [params.colors]
     accent = "#F68048"
@@ -86,11 +87,6 @@ defaultContentLanguage = 'en'
   name = "News"
   url = "/news/"
   weight = 7
-
-[[languages.en.menus.buttons]]
-  name = "Join Us"
-  url = "/#join"
-  weight = 1
 
 [[languages.en.menus.footer]]
   name = "About"
@@ -163,11 +159,6 @@ defaultContentLanguage = 'en'
   name = "Nyheder"
   url = "/news/"
   weight = 7
-
-[[languages.da.menus.buttons]]
-  name = "Bliv medlem"
-  url = "/#join"
-  weight = 1
 
 [[languages.da.menus.footer]]
   name = "Om os"

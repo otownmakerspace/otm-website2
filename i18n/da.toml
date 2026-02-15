@@ -14,6 +14,21 @@ other = "Arbejdsområder"
 [legal_documents]
 other = "Juridiske dokumenter"
 
+[join_us]
+other = "Bliv medlem"
+
+[sign_in]
+other = "Log ind"
+
+[sign_up]
+other = "Tilmeld dig"
+
+[memberships]
+other = "Medlemskaber"
+
+[memberships_subtitle]
+other = "Bliv en del af vores kreative rum"
+
 # ── Footer ──
 [quick_links]
 other = "Genveje"
@@ -114,7 +129,7 @@ other = "Klar til at bygge noget?"
 other = "Uanset om du prototyper din næste idé, reparerer noget der gik i stykker, eller bare har lyst til at bruge hænderne — værktøjet og rummet er her. Det eneste der mangler er dig."
 
 [become_a_member]
-other = "Bliv medlem"
+other = "Kom i gang"
 
 [learn_more]
 other = "Læs mere"

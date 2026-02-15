@@ -14,6 +14,21 @@ other = "Work Areas"
 [legal_documents]
 other = "Legal Documents"
 
+[join_us]
+other = "Join Us"
+
+[sign_in]
+other = "Sign In"
+
+[sign_up]
+other = "Sign Up"
+
+[memberships]
+other = "Memberships"
+
+[memberships_subtitle]
+other = "Join our creative space"
+
 # ── Footer ──
 [quick_links]
 other = "Quick Links"
@@ -114,7 +129,7 @@ other = "Ready to Build Something?"
 other = "Whether you're prototyping your next idea, fixing something that broke, or just itching to get your hands dirty — the tools and the space are here. All that's missing is you."
 
 [become_a_member]
-other = "Become a Member"
+other = "Get Started"
 
 [learn_more]
 other = "Learn More"

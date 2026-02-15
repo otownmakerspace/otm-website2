@@ -1,0 +1,35 @@
+{{ with .Params.membership_items }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-2 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "memberships" }}</h2>
+    <p class="text-secondary-2 mb-12 text-center text-lg">{{ i18n "memberships_subtitle" }}</p>
+    <div class="mx-auto grid max-w-4xl gap-8 xl:grid-cols-2">
+      {{ range . }}
+      <div class="flex flex-col rounded-[10px] border border-gray-200 bg-primary p-8 shadow-sm">
+        <h3 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ .title }}</h3>
+        <div class="mb-6">
+          {{ if .currency }}
+            <span class="text-accent font-secondary text-4xl font-bold">{{ .price }}</span>
+            <span class="text-secondary-2 text-lg"> {{ .currency }}</span>
+            <span class="text-secondary-2 text-sm">/ {{ .occurrence }}</span>
+          {{ else }}
+            <span class="text-accent font-secondary text-2xl font-bold">{{ .price }}</span>
+          {{ end }}
+        </div>
+        <ul class="mb-8 flex flex-col gap-3">
+          {{ range .features }}
+          <li class="flex items-start gap-3">
+            <i class="fa-solid fa-check text-accent mt-1 shrink-0"></i>
+            <span class="text-gray-dark">{{ .txt }}</span>
+          </li>
+          {{ end }}
+        </ul>
+        <a href="{{ .subscribe_link }}" class="bg-secondary hover:bg-secondary-2 mt-auto rounded-[10px] px-8 py-3 text-center font-medium text-white duration-300">
+          {{ .button_txt }}
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}

@@ -12,12 +12,6 @@
   }
 }
 
-@theme {
-  --color-primary: {{ .Site.Params.colors.primary }};
-  --color-secondary: {{ .Site.Params.colors.secondary }};
-  --color-tertiary: {{ .Site.Params.colors.tertiary }};
-}
-
 body {
   @apply antialiased;
 }
