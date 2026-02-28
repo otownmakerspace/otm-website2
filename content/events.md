@@ -16,22 +16,19 @@ calendarCid: "aW5mb0B0aGVvdG93bmdhcmFnZS5jb20"
 featuredEvents:
   - title: "Open House / Weekly meetup"
     date: "Every Thursday"
-    time: "18:00 AM - 20:00 PM"
+    time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
-    
+
   - title: "3D printing meetup"
     date: "Every Thursday"
-    time: "18:00 AM - 20:00 PM"
+    time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
 
   - title: "Laser cutting meetup"
     date: "Every Thursday"
-    time: "18:00 AM - 20:00 PM"
+    time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
 ---

@@ -6,7 +6,7 @@ section_weight: 4
 ---
 
 ## 1. Name and status
-1. The Association's name is The O'Town Garage
+1. The Association's name is The O'Town Makerspace
 2. The Association is registered as a Danish "Forening".
 3. The Association's registered office is in Odense.
 

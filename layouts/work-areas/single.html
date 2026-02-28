@@ -3,33 +3,22 @@
   <div class="container mx-auto px-4">
     {{ partial "breadcrumb.html" . }}
 
-    {{ with .Title }}
-      <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ . }}</h1>
-    {{ end }}
-    {{ with .Params.description }}
-      <p class="mx-auto mb-16 text-center text-gray-dark xl:max-w-[50%]">{{ . }}</p>
-    {{ end }}
+    <div class="flex flex-col gap-8 xl:flex-row">
+      <!-- Sidebar -->
+      {{ partial "sidebar-toc.html" . }}
 
-    <div class="mx-auto max-w-6xl xl:flex xl:gap-10">
       <!-- Main Content -->
-      <div class="min-w-0 xl:flex-1">
-        {{ with .Content }}
-          <div class="page-content max-w-none">
-            {{ . }}
-          </div>
+      <main class="min-w-0 flex-1">
+        <h1 class="text-secondary mb-8 font-secondary text-4xl font-bold xl:text-5xl">{{ .Title }}</h1>
+        {{ with .Params.description }}
+          <p class="mb-8 text-gray-dark">{{ . }}</p>
         {{ end }}
-
+        <div class="page-content max-w-none">
+          {{ .Content }}
+        </div>
         {{ partial "content-styles.html" . }}
-
         {{ partial "gallery.html" . }}
-      </div>
-
-      <!-- Table of Contents (desktop only) -->
-      <aside class="hidden xl:block xl:w-64 xl:shrink-0">
-        <nav class="bg-primary sticky top-8 rounded-[10px] p-6">
-          {{ partial "toc.html" . }}
-        </nav>
-      </aside>
+      </main>
     </div>
   </div>
 </section>

@@ -149,16 +149,23 @@
 </section>
 {{ end }}
 
-<!-- CTA -->
-<section class="py-16">
+<!-- Sponsors -->
+{{ with .Site.Params.sponsor_items }}
+<section class="bg-primary py-16">
   <div class="container mx-auto px-4">
-    <div class="bg-secondary mx-auto max-w-3xl rounded-[10px] p-8 text-center xl:p-12">
-      <h2 class="mb-4 font-secondary text-2xl font-bold text-white xl:text-4xl">{{ i18n "ready_to_start_making" }}</h2>
-      <p class="mb-8 text-white/80">{{ i18n "ready_to_start_making_desc" }}</p>
-      <a href="{{ "/getting-started/first-steps/" | relLangURL }}" class="bg-accent hover:bg-accent-2 inline-block rounded-[10px] px-8 py-3 text-white duration-300">
-        {{ i18n "become_a_member" }}
+    <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold xl:text-4xl">{{ i18n "our_sponsors" }}</h2>
+    <div class="flex flex-wrap items-center justify-center gap-12">
+      {{ range . }}
+      {{ $logo := resources.Get .logo }}
+      {{ if $logo }}
+      <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" class="grayscale opacity-60 transition duration-300 hover:grayscale-0 hover:opacity-100">
+        <img src="{{ $logo.RelPermalink }}" alt="{{ .name }}" class="h-16 w-auto object-contain" />
       </a>
+      {{ end }}
+      {{ end }}
     </div>
   </div>
 </section>
+{{ end }}
+
 {{ end }}

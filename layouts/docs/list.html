@@ -15,9 +15,8 @@
           <h2 class="text-secondary mb-6 font-secondary text-2xl font-bold">{{ $section }}</h2>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {{ range $sectionDocs }}
-            <a href="{{ .RelPermalink }}" class="group block bg-surface rounded-[10px] border border-gray-200 p-6 hover:border-accent hover:shadow-md transition-all duration-200">
-              <h3 class="text-secondary mb-2 font-secondary text-lg font-bold group-hover:text-accent duration-200">{{ .Title }}</h3>
-              <p class="text-sm text-gray-dark line-clamp-2">{{ .Summary | plainify | truncate 120 }}</p>
+            <a href="{{ .RelPermalink }}" class="group flex items-center justify-center bg-surface rounded-[10px] border border-gray-200 p-6 hover:border-accent hover:shadow-md transition-all duration-200 text-center">
+              <h3 class="text-secondary font-secondary text-xl font-extrabold group-hover:text-accent duration-200">{{ .Title }}</h3>
             </a>
             {{ end }}
           </div>

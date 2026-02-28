@@ -2,6 +2,37 @@
 <!-- Bento Workspace Grid -->
 {{ partial "bento-workspace.html" . }}
 
+<!-- What is a Makerspace -->
+<section class="py-16 xl:py-24">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-6 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "what_is_a_makerspace" }}</h2>
+    <p class="mx-auto mb-12 max-w-3xl text-center text-lg text-gray-dark xl:text-xl">{{ i18n "what_is_a_makerspace_desc" }}</p>
+    <div class="grid gap-8 xl:grid-cols-3">
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+          <i class="fa-solid fa-warehouse text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-3 font-secondary text-xl font-bold">{{ i18n "makerspace_shared_workshop" }}</h3>
+        <p class="text-gray-dark">{{ i18n "makerspace_shared_workshop_desc" }}</p>
+      </div>
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+          <i class="fa-solid fa-gears text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-3 font-secondary text-xl font-bold">{{ i18n "makerspace_tools_for_all" }}</h3>
+        <p class="text-gray-dark">{{ i18n "makerspace_tools_for_all_desc" }}</p>
+      </div>
+      <div class="flex flex-col items-center text-center rounded-[10px] bg-surface p-8 shadow-sm">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10">
+          <i class="fa-solid fa-lightbulb text-accent text-2xl"></i>
+        </div>
+        <h3 class="text-secondary mb-3 font-secondary text-xl font-bold">{{ i18n "makerspace_learn_and_create" }}</h3>
+        <p class="text-gray-dark">{{ i18n "makerspace_learn_and_create_desc" }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Story Section -->
 {{ with .Params.story }}
 <section class="bg-primary py-16">

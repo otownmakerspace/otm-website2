@@ -5,36 +5,8 @@
   </button>
   <div class="invisible opacity-0 group-hover/settings:visible group-hover/settings:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
     <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-3 w-56">
-      {{/* Language */}}
-      <div class="px-4 pb-3 border-b border-gray-100">
-        <p class="text-xs font-semibold text-secondary-2 uppercase mb-2">{{ i18n "language" }}</p>
-        <div class="flex items-center gap-1 text-sm font-medium">
-          {{ range .Site.Languages }}
-            {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
-            {{ if $isCurrent }}
-              <span class="text-accent font-semibold uppercase">{{ .Lang }}</span>
-            {{ else }}
-              {{ $targetURL := (printf "/%s/" .Lang) }}
-              {{ range $.Translations }}
-                {{ if eq .Language.Lang $.Site.Language.Lang | not }}
-                  {{ $targetURL = .RelPermalink }}
-                {{ end }}
-              {{ end }}
-              <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="text-secondary hover:text-accent uppercase duration-200">{{ .Lang }}</a>
-            {{ end }}
-            {{ if ne .Lang (index (last 1 $.Site.Languages) 0).Lang }}
-              <span class="text-secondary-2">|</span>
-            {{ end }}
-          {{ end }}
-        </div>
-      </div>
-      {{/* Theme */}}
-      <div class="px-4 py-3 border-b border-gray-100">
-        <p class="text-xs font-semibold text-secondary-2 uppercase mb-2">{{ i18n "theme" }}</p>
-        <div class="flex flex-col gap-1" id="themeButtonsDesktop"></div>
-      </div>
       {{/* Dark Mode */}}
-      <div class="px-4 pt-3">
+      <div class="px-4 py-3">
         <label class="flex items-center justify-between cursor-pointer">
           <span class="text-xs font-semibold text-secondary-2 uppercase">{{ i18n "dark_mode" }}</span>
           <div class="relative">
@@ -60,36 +32,8 @@
   </button>
   <div id="settingsAccordion" class="hidden mt-4 text-left max-w-xs mx-auto">
     <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-3">
-      {{/* Language */}}
-      <div class="px-4 pb-3 border-b border-gray-100">
-        <p class="text-xs font-semibold text-secondary-2 uppercase mb-2">{{ i18n "language" }}</p>
-        <div class="flex items-center gap-1 text-sm font-medium">
-          {{ range .Site.Languages }}
-            {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
-            {{ if $isCurrent }}
-              <span class="text-accent font-semibold uppercase">{{ .Lang }}</span>
-            {{ else }}
-              {{ $targetURL := (printf "/%s/" .Lang) }}
-              {{ range $.Translations }}
-                {{ if eq .Language.Lang $.Site.Language.Lang | not }}
-                  {{ $targetURL = .RelPermalink }}
-                {{ end }}
-              {{ end }}
-              <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="text-secondary hover:text-accent uppercase duration-200">{{ .Lang }}</a>
-            {{ end }}
-            {{ if ne .Lang (index (last 1 $.Site.Languages) 0).Lang }}
-              <span class="text-secondary-2">|</span>
-            {{ end }}
-          {{ end }}
-        </div>
-      </div>
-      {{/* Theme */}}
-      <div class="px-4 py-3 border-b border-gray-100">
-        <p class="text-xs font-semibold text-secondary-2 uppercase mb-2">{{ i18n "theme" }}</p>
-        <div class="flex flex-col gap-1" id="themeButtonsMobile"></div>
-      </div>
       {{/* Dark Mode */}}
-      <div class="px-4 pt-3">
+      <div class="px-4 py-3">
         <label class="flex items-center justify-between cursor-pointer">
           <span class="text-xs font-semibold text-secondary-2 uppercase">{{ i18n "dark_mode" }}</span>
           <div class="relative">

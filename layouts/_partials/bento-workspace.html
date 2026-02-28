@@ -39,26 +39,8 @@
 
       <!-- Main Text Block -->
       <div class="col-span-8 row-span-5 flex flex-col items-center justify-center rounded-[10px] bg-surface p-8 text-center shadow-lg">
-        <h1 class="mb-2 font-secondary text-4xl font-bold text-secondary xl:text-5xl">{{ i18n "your_very_own_makerspace" }}</h1>
-        <ul class="mb-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-dark">
-          <li class="inline-flex items-center gap-1.5">
-            <i class="fa-regular fa-clock text-accent"></i>
-            {{ i18n "member_access_247_short" }}
-          </li>
-          <li class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-screwdriver-wrench text-accent"></i>
-            {{ i18n "all_tools_included" }}
-          </li>
-          <li class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-warehouse text-accent"></i>
-            {{ i18n "full_workspace_access" }}
-          </li>
-          <li class="inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-people-group text-accent"></i>
-            {{ i18n "supportive_community" }}
-          </li>
-        </ul>
-        <a href="{{ "/work-areas/" | relLangURL }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white transition-colors duration-300">
+        <h1 class="mb-6 font-secondary text-4xl font-bold text-secondary xl:text-5xl">{{ i18n "your_very_own_makerspace" }}</h1>
+        <a href="{{ "/virtual-tour/" | relLangURL }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white transition-colors duration-300">
           {{ i18n "explore_space" }}
         </a>
       </div>
@@ -113,25 +95,7 @@
         <div class="absolute inset-0 bg-secondary/70"></div>
         <div class="relative z-10 text-center px-6">
           <h2 class="font-secondary text-2xl font-bold text-primary-2">{{ i18n "your_very_own" }}</h2>
-          <h2 class="mb-4 font-secondary text-3xl font-bold text-accent">{{ i18n "makerspace" }}</h2>
-          <ul class="flex flex-col gap-2 text-sm text-white/90">
-            <li class="inline-flex items-center justify-center gap-1.5">
-              <i class="fa-regular fa-clock text-accent"></i>
-              {{ i18n "member_access_247_short" }}
-            </li>
-            <li class="inline-flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-screwdriver-wrench text-accent"></i>
-              {{ i18n "all_tools_included" }}
-            </li>
-            <li class="inline-flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-warehouse text-accent"></i>
-              {{ i18n "full_workspace_access" }}
-            </li>
-            <li class="inline-flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-people-group text-accent"></i>
-              {{ i18n "supportive_community" }}
-            </li>
-          </ul>
+          <h2 class="font-secondary text-3xl font-bold text-accent">{{ i18n "makerspace" }}</h2>
         </div>
       </div>
 
@@ -151,7 +115,7 @@
         {{ i18n "wood_work" }}
       </a>
 
-      <a href="{{ "/work-areas/" | relLangURL }}" class="bg-accent hover:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
+      <a href="{{ "/virtual-tour/" | relLangURL }}" class="bg-accent hover:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
         {{ i18n "explore_space" }}
       </a>
 

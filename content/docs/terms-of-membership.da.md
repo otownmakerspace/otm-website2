@@ -7,7 +7,7 @@ section_weight: 4
 
 ## 1. Omfang
 
-Disse medlemsbetingelser omfatter alle faciliteter, værksteder, lejede lokaler og garager, der drives af "The O'Town Garage Forening". Disse omtales samlet som "faciliteter" eller "facilitet".
+Disse medlemsbetingelser omfatter alle faciliteter, værksteder, lejede lokaler og garager, der drives af "The O'Town Makerspace Forening". Disse omtales samlet som "faciliteter" eller "facilitet".
 
 Underskriveren af disse betingelser omtales som "medlem" eller "medlemmer".
 
@@ -19,27 +19,27 @@ De nuværende åbningstider er dynamiske og drives af medlemmer, hvilket resulte
 
 ## 3. Oppetid
 
-Når faciliteterne bruges af mange medlemmer, kan det lægge pres på maskiner og værktøj. Det betyder, at ventetid kan forekomme, og at maskiner og værktøj nogle gange kan være "ude af drift" og ikke må betjenes, før de er udskiftet eller repareret. Problemer, der opstår, vil altid blive løst hurtigst muligt inden for "The O'Town Garage Forening"s kapacitet, og medlemmer opfordres til at informere medarbejdere, frivillige eller andre repræsentanter for "The O'Town Garage Forening", hvis de oplever nedbrud af en maskine eller et værktøj, så andre medlemmer kan informeres.
+Når faciliteterne bruges af mange medlemmer, kan det lægge pres på maskiner og værktøj. Det betyder, at ventetid kan forekomme, og at maskiner og værktøj nogle gange kan være "ude af drift" og ikke må betjenes, før de er udskiftet eller repareret. Problemer, der opstår, vil altid blive løst hurtigst muligt inden for "The O'Town Makerspace Forening"s kapacitet, og medlemmer opfordres til at informere medarbejdere, frivillige eller andre repræsentanter for "The O'Town Makerspace Forening", hvis de oplever nedbrud af en maskine eller et værktøj, så andre medlemmer kan informeres.
 
 ## 4. Medlemmers rettigheder
 
 Udover de fastlagte betingelser og rettigheder gælder følgende rettigheder for medlemmer:
 
-Medlemmer har ret til at stemme ved det årlige valg til "The O'Town Garage Forening"-bestyrelsen med én stemme hver.
+Medlemmer har ret til at stemme ved det årlige valg til "The O'Town Makerspace Forening"-bestyrelsen med én stemme hver.
 
-Medlemmer har ret til at stille op til valg ved det årlige valg til "The O'Town Garage Forening"-bestyrelsen.
+Medlemmer har ret til at stille op til valg ved det årlige valg til "The O'Town Makerspace Forening"-bestyrelsen.
 
-Medlemmer har ret til at deltage i alle åbne møder afholdt af "The O'Town Garage Forening".
+Medlemmer har ret til at deltage i alle åbne møder afholdt af "The O'Town Makerspace Forening".
 
-Medlemmer har ret til at appellere for at få deres udelukkelse ophævet ved at sende en ansøgning til "The O'Town Garage Forening"-bestyrelsen. Dog skal der gå mindst 60 dage mellem hver ansøgning.
+Medlemmer har ret til at appellere for at få deres udelukkelse ophævet ved at sende en ansøgning til "The O'Town Makerspace Forening"-bestyrelsen. Dog skal der gå mindst 60 dage mellem hver ansøgning.
 
 ## 5. Skader
 
-Hvis et medlem beskadiger en maskine, er vedkommende forpligtet til at informere medarbejdere, frivillige eller andre repræsentanter for "The O'Town Garage Forening", så det kan håndteres hurtigst muligt.
+Hvis et medlem beskadiger en maskine, er vedkommende forpligtet til at informere medarbejdere, frivillige eller andre repræsentanter for "The O'Town Makerspace Forening", så det kan håndteres hurtigst muligt.
 
 Skader forårsaget af medlemmers ukorrekte eller uansvarlige brug af maskiner, værktøj og faciliteter vil blive faktureret til medlemmet.
 
-Udover betingelserne i dette dokument er medlemmet forpligtet til at underskrive og acceptere betingelserne i den supplerende "ansvarsfritagelse" fra "The O'Town Garage Forening".
+Udover betingelserne i dette dokument er medlemmet forpligtet til at underskrive og acceptere betingelserne i den supplerende "ansvarsfritagelse" fra "The O'Town Makerspace Forening".
 
 ## 6. Lukkedage
 
@@ -49,13 +49,13 @@ Faciliteterne kan også være lukkede på grund af ferie og helligdage.
 
 ## 7. Opbevaring
 
-Medlemmer kan kun opbevare ejendele på faciliteterne efter aftale med medarbejdere, frivillige eller repræsentanter for "The O'Town Garage Forening", og det sker udelukkende på medlemmets egen risiko.
+Medlemmer kan kun opbevare ejendele på faciliteterne efter aftale med medarbejdere, frivillige eller repræsentanter for "The O'Town Makerspace Forening", og det sker udelukkende på medlemmets egen risiko.
 
 Ejendele, der opbevares uden aftale, fjernes efter 7 dage for medlemmets regning.
 
 ## 8. Forsikring
 
-"The O'Town Garage Forening" opfordrer kraftigt alle sine medlemmer til at have forsikring, da "The O'Town Garage Forening" IKKE dækker skader eller tabt/beskadiget ejendom tilhørende medlemmer. Det anbefales stærkt, at medlemmer har følgende danske forsikringer eller tilsvarende: "Indboforsikring" og "Ulykkesforsikring". Hvis der er tvivl, bør medlemmet tale med sit forsikringsselskab.
+"The O'Town Makerspace Forening" opfordrer kraftigt alle sine medlemmer til at have forsikring, da "The O'Town Makerspace Forening" IKKE dækker skader eller tabt/beskadiget ejendom tilhørende medlemmer. Det anbefales stærkt, at medlemmer har følgende danske forsikringer eller tilsvarende: "Indboforsikring" og "Ulykkesforsikring". Hvis der er tvivl, bør medlemmet tale med sit forsikringsselskab.
 
 ## 9. Oprydning
 
@@ -75,23 +75,23 @@ Faciliteterne betragtes som fællesareal, og medlemmer opfordres til at give hin
 
 ## 12. Sikkerhed
 
-Medlemmer er forpligtet til at underskrive "ansvarsfritagelsen" fra "The O'Town Garage Forening" og følge betingelserne i det dokument.
+Medlemmer er forpligtet til at underskrive "ansvarsfritagelsen" fra "The O'Town Makerspace Forening" og følge betingelserne i det dokument.
 
-"The O'Town Garage Forening" ønsker at understrege, at medlemmer er forpligtet til at følge ALLE sikkerhedsregler og -bestemmelser, og brug af personlige værnemidler SKAL overholdes til enhver tid. Desuden har medlemmer et ansvar for at forhindre personskade på andre medlemmer.
+"The O'Town Makerspace Forening" ønsker at understrege, at medlemmer er forpligtet til at følge ALLE sikkerhedsregler og -bestemmelser, og brug af personlige værnemidler SKAL overholdes til enhver tid. Desuden har medlemmer et ansvar for at forhindre personskade på andre medlemmer.
 
 ## 13. Gæster
 
-Medlemmer har lov til at medbringe gæster som selskab, men ikke som arbejdskraft. Medlemmer er ansvarlige for og hæfter for deres gæster, og betingelserne fra "The O'Town Garage Forening" gælder også for dem.
+Medlemmer har lov til at medbringe gæster som selskab, men ikke som arbejdskraft. Medlemmer er ansvarlige for og hæfter for deres gæster, og betingelserne fra "The O'Town Makerspace Forening" gælder også for dem.
 
 ## 14. Advarsler og udelukkelse
 
-"The O'Town Garage Forening" opererer efter et advarselsprincip. I tilfælde af et medlems forseelse modtager vedkommende først en mundtlig advarsel. Hvis der er endnu en hændelse inden for 1 måned efter den mundtlige advarsel, modtager vedkommende en skriftlig advarsel. Endnu en hændelse inden for 1 måned efter den skriftlige advarsel medfører, at medlemmet indstilles til udelukkelse fra "The O'Town Garage Forening". Bestyrelsen i "The O'Town Garage Forening" afgør resultatet, og medlemmet kan indsende en redegørelse for sine handlinger. Ved udelukkelse skal medlemmet fjerne alle ejendele fra faciliteterne hurtigst muligt.
+"The O'Town Makerspace Forening" opererer efter et advarselsprincip. I tilfælde af et medlems forseelse modtager vedkommende først en mundtlig advarsel. Hvis der er endnu en hændelse inden for 1 måned efter den mundtlige advarsel, modtager vedkommende en skriftlig advarsel. Endnu en hændelse inden for 1 måned efter den skriftlige advarsel medfører, at medlemmet indstilles til udelukkelse fra "The O'Town Makerspace Forening". Bestyrelsen i "The O'Town Makerspace Forening" afgør resultatet, og medlemmet kan indsende en redegørelse for sine handlinger. Ved udelukkelse skal medlemmet fjerne alle ejendele fra faciliteterne hurtigst muligt.
 
-"The O'Town Garage Forening" har beføjelse til at gennemføre en øjeblikkelig udelukkelse fra faciliteterne i tilfælde af særligt alvorlige overtrædelser.
+"The O'Town Makerspace Forening" har beføjelse til at gennemføre en øjeblikkelig udelukkelse fra faciliteterne i tilfælde af særligt alvorlige overtrædelser.
 
 ## 15. Licens
 
-"The O'Town Garage Forening" kræver, at dets medlemmer har en licens til at betjene visse maskiner og værktøj. "The O'Town Garage Forening" afholder regelmæssige muligheder for at erhverve licenser, og medlemmer kan opnå 2 grader af licensering for et specifikt værktøj eller maskine.
+"The O'Town Makerspace Forening" kræver, at dets medlemmer har en licens til at betjene visse maskiner og værktøj. "The O'Town Makerspace Forening" afholder regelmæssige muligheder for at erhverve licenser, og medlemmer kan opnå 2 grader af licensering for et specifikt værktøj eller maskine.
 
 1. grad er "retten til at bruge maskinen/værktøjet under vejledning af et medlem, der har 2. grads licens til maskinen/værktøjet".
 
@@ -99,4 +99,4 @@ Medlemmer har lov til at medbringe gæster som selskab, men ikke som arbejdskraf
 
 ## 16. Privatlivspolitik
 
-"The O'Town Garage Forening"s privatlivspolitik kan findes i "Cookie- og privatlivspolitik for The O'Town Garage Forening".
+"The O'Town Makerspace Forening"s privatlivspolitik kan findes i "Cookie- og privatlivspolitik for The O'Town Makerspace Forening".

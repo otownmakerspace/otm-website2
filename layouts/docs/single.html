@@ -5,35 +5,7 @@
 
     <div class="flex flex-col gap-8 xl:flex-row">
       <!-- Sidebar -->
-      <aside class="xl:w-64 xl:shrink-0">
-        <nav class="bg-primary sticky top-8 rounded-[10px] p-6">
-          <!-- Table of Contents -->
-          {{ partial "toc.html" . }}
-
-          <!-- Sibling docs in same section -->
-          {{ with .Params.section }}
-            {{ $currentSection := . }}
-            {{ $currentPage := $ }}
-            {{ $docsPage := site.GetPage "/docs" }}
-            {{ $siblings := where $docsPage.Pages.ByWeight "Params.section" $currentSection }}
-            {{ if gt (len $siblings) 1 }}
-              <div>
-                <h2 class="text-secondary mb-3 font-secondary text-sm font-semibold uppercase tracking-wide">{{ $currentSection }}</h2>
-                <ul class="flex flex-col gap-1">
-                  {{ range $siblings }}
-                    <li>
-                      <a href="{{ .RelPermalink }}"
-                        class="block py-1 text-sm duration-200 {{ if eq .RelPermalink $currentPage.RelPermalink }}text-accent font-semibold{{ else }}text-gray-dark hover:text-accent{{ end }}">
-                        {{ .Title }}
-                      </a>
-                    </li>
-                  {{ end }}
-                </ul>
-              </div>
-            {{ end }}
-          {{ end }}
-        </nav>
-      </aside>
+      {{ partial "sidebar-toc.html" . }}
 
       <!-- Main Content -->
       <main class="min-w-0 flex-1">

@@ -23,6 +23,9 @@ other = "Log ind"
 [sign_up]
 other = "Tilmeld dig"
 
+[more]
+other = "Mere"
+
 [settings]
 other = "Indstillinger"
 
@@ -94,6 +97,31 @@ other = "Metalværksted"
 [electronics]
 other = "Elektronik"
 
+# ── What is a Makerspace ──
+[what_is_a_makerspace]
+other = "Hvad er et Makerspace?"
+
+[what_is_a_makerspace_desc]
+other = "Et makerspace er et fællesskabsdrevet værksted, hvor folk mødes for at bygge, eksperimentere og lære. Tænk på det som et fælles værksted — men med professionelt værktøj, ekspertviden og en kultur, hvor man hjælper hinanden."
+
+[makerspace_shared_workshop]
+other = "Et fælles værksted"
+
+[makerspace_shared_workshop_desc]
+other = "Et makerspace er et fysisk rum udstyret med værktøj og maskiner, som ville være upraktiske at eje derhjemme. Medlemmerne deler rummet og vedligeholder det sammen, så omkostningerne holdes lave for alle."
+
+[makerspace_tools_for_all]
+other = "Værktøj til alle håndværk"
+
+[makerspace_tools_for_all_desc]
+other = "Fra 3D-printere og laserskærere til træværkstedsbænke og loddestandere — et makerspace giver dig adgang til et bredt udvalg af udstyr på tværs af mange discipliner, alt under ét tag."
+
+[makerspace_learn_and_create]
+other = "Lær, skab, gentag"
+
+[makerspace_learn_and_create_desc]
+other = "Uanset om du er helt nybegynder eller erfaren maker, er det her et sted, hvor du kan lære nye færdigheder, eksperimentere frit og gøre dine idéer til virkelighed med dine egne hænder — med folk omkring dig der deler den samme passion for at lære og skabe ting."
+
 # ── Home Page Sections ──
 [our_story]
 other = "Vores historie"
@@ -161,6 +189,9 @@ other = "Tilmeld dig online"
 [step_sign_up_desc]
 other = "Når du er klar, registrer dig som medlem via vores onlineformular og få 24/7 adgang til rummet."
 
+[our_sponsors]
+other = "Vores sponsorer"
+
 [ready_to_build]
 other = "Klar til at bygge noget?"
 
@@ -175,13 +206,16 @@ other = "Læs mere"
 
 # ── Events ──
 [featured_events]
-other = "Udvalgte arrangementer"
+other = "Faste arrangementer"
 
 [spots_available]
 other = "pladser ledige"
 
 [register]
 other = "Tilmeld dig"
+
+[add_to_calendar]
+other = "Tilføj til kalender"
 
 [event_calendar]
 other = "Arrangementskalender"
@@ -294,6 +328,22 @@ other = "Skriv til os"
 
 [our_location]
 other = "Vores lokation"
+
+# ── Virtuel rundvisning ──
+[vt_main_area]
+other = "Hovedområde"
+
+[vt_work_areas]
+other = "Arbejdsområder"
+
+[vt_utilities]
+other = "Faciliteter"
+
+[vt_hint]
+other = "Klik på et område for detaljer"
+
+[vt_select_area]
+other = "Vælg et område på kortet for at se detaljer"
 
 # ── 404 ──
 [page_not_found]

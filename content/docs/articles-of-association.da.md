@@ -6,7 +6,7 @@ section_weight: 4
 ---
 
 ## 1. Navn og status
-1. Foreningens navn er The O'Town Garage
+1. Foreningens navn er The O'Town Makerspace
 2. Foreningen er registreret som en dansk "Forening".
 3. Foreningens hjemsted er i Odense.
 

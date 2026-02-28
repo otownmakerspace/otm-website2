@@ -23,6 +23,9 @@ other = "Sign In"
 [sign_up]
 other = "Sign Up"
 
+[more]
+other = "More"
+
 [settings]
 other = "Settings"
 
@@ -94,6 +97,31 @@ other = "Metal Work"
 [electronics]
 other = "Electronics"
 
+# ── What is a Makerspace ──
+[what_is_a_makerspace]
+other = "What is a Makerspace?"
+
+[what_is_a_makerspace_desc]
+other = "A makerspace is a community-operated workspace where people come together to build, tinker, and learn. Think of it as a shared workshop — but with industrial-grade tools, expert knowledge, and a culture of helping each other out."
+
+[makerspace_shared_workshop]
+other = "A Shared Workshop"
+
+[makerspace_shared_workshop_desc]
+other = "A makerspace is a physical space equipped with tools and machines that would be impractical to own at home. Members share the space and maintain it together, keeping costs low for everyone."
+
+[makerspace_tools_for_all]
+other = "Tools for Every Craft"
+
+[makerspace_tools_for_all_desc]
+other = "From 3D printers and laser cutters to woodworking benches and soldering stations — a makerspace gives you access to a wide range of equipment across many disciplines, all under one roof."
+
+[makerspace_learn_and_create]
+other = "Learn, Create, Repeat"
+
+[makerspace_learn_and_create_desc]
+other = "Whether you're a complete beginner or a seasoned maker, this is a place where you can pick up new skills, experiment freely, and turn your ideas into reality with your own hands — with people around who share the same passion for learning and making things."
+
 # ── Home Page Sections ──
 [our_story]
 other = "Our Story"
@@ -161,6 +189,9 @@ other = "Sign Up Online"
 [step_sign_up_desc]
 other = "Once you're ready, register as a member through our online form and get 24/7 access to the space."
 
+[our_sponsors]
+other = "Our Sponsors"
+
 [ready_to_build]
 other = "Ready to Build Something?"
 
@@ -175,13 +206,16 @@ other = "Learn More"
 
 # ── Events ──
 [featured_events]
-other = "Featured Events"
+other = "Regular Events"
 
 [spots_available]
 other = "spots available"
 
 [register]
 other = "Register"
+
+[add_to_calendar]
+other = "Add to Calendar"
 
 [event_calendar]
 other = "Event Calendar"
@@ -294,6 +328,22 @@ other = "Email Us"
 
 [our_location]
 other = "Our Location"
+
+# ── Virtual Tour ──
+[vt_main_area]
+other = "Main Area"
+
+[vt_work_areas]
+other = "Work Areas"
+
+[vt_utilities]
+other = "Utilities"
+
+[vt_hint]
+other = "Click an area for details"
+
+[vt_select_area]
+other = "Select an area on the map to see details"
 
 # ── 404 ──
 [page_not_found]

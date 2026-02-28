@@ -1,0 +1,15 @@
+{{ with .Site.Params.sponsor_items }}
+<div class="mb-8 border-t border-gray-200/20 pt-8">
+  <p class="text-secondary mb-4 text-center text-sm font-semibold">{{ i18n "our_sponsors" }}</p>
+  <div class="flex flex-wrap items-center justify-center gap-8">
+    {{ range . }}
+    {{ $logo := resources.Get .logo }}
+    {{ if $logo }}
+    <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" class="grayscale opacity-60 transition duration-300 hover:grayscale-0 hover:opacity-100">
+      <img src="{{ $logo.RelPermalink }}" alt="{{ .name }}" class="h-8 w-auto object-contain" />
+    </a>
+    {{ end }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}

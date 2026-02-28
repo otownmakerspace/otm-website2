@@ -16,19 +16,16 @@ featuredEvents:
     time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
 
   - title: "3D print-møde"
     date: "Hver torsdag"
     time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
 
   - title: "Laserskæring-møde"
     date: "Hver torsdag"
     time: "18:00 - 20:00"
     location: "Havnegade 57, 5000 Odense C"
     description: ""
-    registerUrl: "#"
 ---

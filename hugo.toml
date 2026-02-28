@@ -16,6 +16,7 @@ defaultContentLanguage = 'en'
     weight = 2
 
 [params]
+  siteName = "O'Town Makerspace"
   description = "A community-driven makerspace in Odense with 24/7 access to 3D printers, laser cutters, CNC machines, electronics, and woodworking tools."
   copyright = "© 2026 O'Town Makerspace. All rights reserved."
   logo = "images/branding/otown_logo_2.svg"
@@ -25,16 +26,31 @@ defaultContentLanguage = 'en'
   ogImage = "images/og-default.jpg"
   memberPortalUrl = "https://members.theotowngarage.com"
 
+  [[params.sponsor_items]]
+    name = "Coalescent Mobile Robotics"
+    logo = "images/partners/Coalescent-Mobile-Robotics.webp"
+    url = "https://cm-robotics.com"
+
+  [[params.sponsor_items]]
+    name = "Rotoy"
+    logo = "images/partners/rotoy.svg"
+    url = "https://www.rotoy.dk/da"
+
+  [[params.sponsor_items]]
+    name = "Hetzner"
+    logo = "images/partners/hetzner.svg"
+    url = "https://www.hetzner.com"
+
   [params.colors]
-    accent = "#FF9B51"
-    accent_2 = "#FF700A"
-    primary = "#EAEFEF"
-    primary_2 = "#BFC9D1"
-    secondary = "#25343F"
-    secondary_2 = "#3F5E74"
-    gray_light = "#EAEFEF"
-    gray_dark = "#25343F"
-    tertiary = "#3F5E74"
+    accent = "#F68048"
+    accent_2 = "#e75008"
+    primary = "#EDF2F8"
+    primary_2 = "#E1E9F4"
+    secondary = "#0D1A63"
+    secondary_2 = "#1A2CA3"
+    gray_light = "#EEF1FF"
+    gray_dark = "#0D1A63"
+    tertiary = "#1A2CA3"
     # ── Alt palette: warm navy ──
     # accent = "#FAB95B"
     # accent_2 = "#F89812"
@@ -89,7 +105,7 @@ defaultContentLanguage = 'en'
   weight = 1
 
 [[languages.en.menus.main]]
-  name = "About"
+  name = "About Us"
   url = "/about/"
   weight = 2
 

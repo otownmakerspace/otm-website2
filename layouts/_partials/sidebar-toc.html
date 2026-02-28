@@ -1,0 +1,109 @@
+{{/* Sidebar with Table of Contents + Sibling Navigation */}}
+{{/* Usage: {{ partial "sidebar-toc.html" . }} */}}
+
+{{ $currentPage := . }}
+{{ $section := .CurrentSection }}
+{{ $hasToc := false }}
+{{ if .TableOfContents }}
+  {{ if ne .TableOfContents "<nav id=\"TableOfContents\"></nav>" }}
+    {{ $hasToc = true }}
+  {{ end }}
+{{ end }}
+
+{{/* Determine siblings */}}
+{{ $siblings := slice }}
+{{ $sectionTitle := "" }}
+{{ if .Params.section }}
+  {{ $siblings = where $section.Pages.ByWeight "Params.section" .Params.section }}
+  {{ $sectionTitle = .Params.section }}
+{{ else }}
+  {{ $siblings = $section.Pages.ByWeight }}
+  {{ $sectionTitle = $section.Title }}
+{{ end }}
+
+<aside class="xl:w-64 xl:shrink-0">
+  <nav class="bg-primary sticky top-20 rounded-[10px] p-6">
+    {{ if gt (len $siblings) 1 }}
+      <h2 class="text-secondary mb-4 font-secondary text-lg font-bold text-center">{{ $sectionTitle }}</h2>
+      <ul class="flex flex-col gap-1">
+        {{ range $siblings }}
+          {{ $isCurrent := eq .RelPermalink $currentPage.RelPermalink }}
+          <li>
+            <a href="{{ .RelPermalink }}"
+              class="block py-1 text-sm font-semibold duration-200 {{ if $isCurrent }}text-accent{{ else }}text-gray-dark hover:text-accent{{ end }}">
+              {{ .Title }}
+            </a>
+            {{/* Nest on-page headings under the active page */}}
+            {{ if and $isCurrent $hasToc }}
+              <div class="toc-nav ml-3 mt-1 border-l-2 border-accent/30 pl-3 text-sm text-gray-dark">
+                {{ $currentPage.TableOfContents }}
+              </div>
+            {{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    {{ else }}
+      {{/* No siblings — just show on-page TOC */}}
+      {{ if $hasToc }}
+        <p class="text-secondary mb-4 font-secondary text-lg font-bold text-center">{{ i18n "on_this_page" }}</p>
+        <div class="toc-nav text-sm text-gray-dark">
+          {{ .TableOfContents }}
+        </div>
+      {{ end }}
+    {{ end }}
+
+    <style type="text/tailwindcss">
+      .toc-nav ul {
+        @apply flex flex-col gap-1;
+      }
+      .toc-nav li {
+        @apply leading-snug;
+      }
+      .toc-nav a {
+        @apply block py-1 text-gray-dark font-normal hover:text-accent duration-200;
+      }
+      .toc-nav a.active {
+        @apply text-accent font-semibold;
+      }
+      .toc-nav ul ul {
+        @apply pl-3 mt-1;
+      }
+      .toc-nav ul ul a {
+        @apply text-[0.7rem];
+      }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tocLinks = document.querySelectorAll('.toc-nav a');
+      if (tocLinks.length === 0) return;
+
+      const headings = [];
+      tocLinks.forEach(function(link) {
+        const id = link.getAttribute('href');
+        if (id && id.startsWith('#')) {
+          const el = document.getElementById(id.substring(1));
+          if (el) headings.push({ el: el, link: link });
+        }
+      });
+
+      function updateActiveLink() {
+        let current = null;
+        for (var i = 0; i < headings.length; i++) {
+          var rect = headings[i].el.getBoundingClientRect();
+          if (rect.top <= 100) {
+            current = headings[i];
+          }
+        }
+        tocLinks.forEach(function(link) { link.classList.remove('active'); });
+        if (current) {
+          current.link.classList.add('active');
+        }
+      }
+
+      window.addEventListener('scroll', updateActiveLink);
+      updateActiveLink();
+    });
+    </script>
+  </nav>
+</aside>

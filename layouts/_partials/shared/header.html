@@ -1,4 +1,4 @@
-<nav>
+<nav class="sticky top-0 z-40 bg-surface/95 backdrop-blur-sm shadow-sm">
   <div class="container mx-auto flex items-center justify-between px-4 py-6">
     <a class="flex items-center gap-2" href="{{ .Site.BaseURL }}">
       {{ with .Site.Params.logo }}
@@ -43,21 +43,13 @@
       <ul class="flex flex-col gap-8 xl:flex-row xl:items-center">
         {{ range site.Menus.main }}
           <li class="text-center">
-            <a class="text-secondary hover:text-accent" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+            <a class="text-secondary hover:text-accent font-bold" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
           </li>
         {{ end }}
-      </ul>
-      <div class="flex flex-col items-center gap-4 xl:flex-row xl:gap-6">
-        {{/* Settings gear dropdown */}}
-        {{ partial "shared/settings" . }}
-        {{/* Hamburger dropdown — Desktop */}}
-        <div class="hidden xl:block relative group/burger">
-          <button class="bg-secondary hover:bg-secondary-2 rounded px-3 py-2 text-white inline-flex items-center cursor-pointer transition-colors duration-200" aria-label="Menu">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-          <div class="invisible opacity-0 group-hover/burger:visible group-hover/burger:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+        {{/* "More" dropdown — Desktop */}}
+        <li class="hidden xl:block relative group/more text-center">
+          <span class="text-secondary hover:text-accent font-bold cursor-pointer">{{ i18n "more" }}</span>
+          <div class="invisible opacity-0 group-hover/more:visible group-hover/more:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
             <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
               {{/* Info with flyout */}}
               <div class="relative group/info">
@@ -145,32 +137,19 @@
               <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                 <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
               </a>
-              {{/* Divider */}}
-              <div class="my-2 border-t border-gray-200"></div>
-              {{/* Sign In */}}
-              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
-              </a>
-              {{/* Sign Up */}}
-              <a href="{{ "/getting-started/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
-              </a>
             </div>
           </div>
-        </div>
-        {{/* Hamburger dropdown — Mobile */}}
-        <div class="xl:hidden text-center">
+        </li>
+        {{/* "More" dropdown — Mobile */}}
+        <li class="xl:hidden text-center">
           <button
-            class="bg-secondary hover:bg-secondary-2 rounded px-3 py-2 text-white inline-flex items-center cursor-pointer transition-colors duration-200"
+            class="text-secondary hover:text-accent font-bold cursor-pointer"
             type="button"
             onclick="let el = document.getElementById('burgerDropdown'); el.classList.toggle('hidden');"
-            aria-label="Menu"
           >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
+            {{ i18n "more" }}
           </button>
-          <div id="burgerDropdown" class="hidden mt-2 text-left max-w-xs mx-auto">
+          <div id="burgerDropdown" class="hidden mt-4 text-left max-w-xs mx-auto">
             <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2">
               {{/* Info accordion */}}
               <div class="px-4 py-2">
@@ -206,14 +185,74 @@
               <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                 <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
               </a>
-              {{/* Divider */}}
-              <div class="my-2 border-t border-gray-200"></div>
-              {{/* Sign In */}}
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="flex flex-col items-center gap-4 xl:flex-row xl:gap-6">
+        {{/* Language switcher */}}
+        <div class="flex items-center gap-2">
+          {{ range .Site.Languages }}
+            {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
+            {{ $targetURL := (printf "/%s/" .Lang) }}
+            {{ if not $isCurrent }}
+              {{ range $.Translations }}
+                {{ if eq .Language.Lang $.Site.Language.Lang | not }}
+                  {{ $targetURL = .RelPermalink }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+            {{ $flag := "fi-gb" }}{{ if eq .Lang "da" }}{{ $flag = "fi-dk" }}{{ end }}
+            {{ if $isCurrent }}
+              <span class="cursor-default" title="{{ .LanguageName }}">
+                <span class="fi {{ $flag }} text-xl leading-none"></span>
+              </span>
+            {{ else }}
+              <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="opacity-50 hover:opacity-100 transition-opacity duration-200 rounded-sm" title="{{ .LanguageName }}">
+                <span class="fi {{ $flag }} text-xl leading-none"></span>
+              </a>
+            {{ end }}
+          {{ end }}
+        </div>
+        {{/* Settings gear dropdown */}}
+        {{ partial "shared/settings" . }}
+        {{/* Account dropdown — Desktop */}}
+        <div class="hidden xl:block relative group/account">
+          <button class="bg-accent hover:bg-accent-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200">
+            {{ i18n "join_us" }}
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="invisible opacity-0 group-hover/account:visible group-hover/account:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-48">
               <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                 <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
               </a>
-              {{/* Sign Up */}}
-              <a href="{{ "/getting-started/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
+              </a>
+            </div>
+          </div>
+        </div>
+        {{/* Account dropdown — Mobile */}}
+        <div class="xl:hidden text-center">
+          <button
+            class="bg-accent hover:bg-accent-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200"
+            type="button"
+            onclick="let el = document.getElementById('accountDropdown'); el.classList.toggle('hidden');"
+          >
+            {{ i18n "join_us" }}
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="accountDropdown" class="hidden mt-2 text-left max-w-xs mx-auto">
+            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2">
+              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
+              </a>
+              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                 <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
               </a>
             </div>
