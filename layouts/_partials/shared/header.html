@@ -1,263 +1,328 @@
-<nav class="sticky top-0 z-40 bg-surface/95 backdrop-blur-sm shadow-sm">
-  <div class="container mx-auto flex items-center justify-between px-4 py-6">
-    <a class="flex items-center gap-2" href="{{ .Site.BaseURL }}">
-      {{ with .Site.Params.logo }}
-      <img src="{{ . | absURL }}" alt="{{ $.Site.Title }}" class="h-10 w-auto xl:h-12">
-      {{ else }}
-      <span class="text-secondary text-xl font-semibold uppercase xl:text-2xl">{{ $.Site.Title }}</span>
-      {{ end }}
-    </a>
-    <button
-      class="cursor-pointer xl:hidden"
-      type="button"
-      onclick="document.getElementById('navbarContent').classList.toggle('-translate-y-full')"
-      aria-label="{{ i18n "toggle_nav" }}"
-    >
-      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-    <div
-      class="fixed inset-0 flex -translate-y-full flex-col items-center justify-center gap-8 bg-surface duration-500 xl:relative xl:translate-y-0 xl:flex-row z-50"
-      id="navbarContent"
-    >
-      <div class="container absolute top-0 mx-auto flex items-center justify-between px-4 py-6 xl:hidden">
-        <a class="flex items-center gap-2" href="{{ .Site.BaseURL }}">
-          {{ with .Site.Params.logo }}
-          <img src="{{ . | absURL }}" alt="{{ $.Site.Title }}" class="h-10 w-auto">
-          {{ else }}
-          <span class="text-secondary text-xl font-semibold uppercase">{{ $.Site.Title }}</span>
-          {{ end }}
-        </a>
-        <button
-          class="cursor-pointer"
-          type="button"
-          onclick="document.getElementById('navbarContent').classList.toggle('-translate-y-full')"
-          aria-label="{{ i18n "close_nav" }}"
-        >
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      <ul class="flex flex-col gap-8 xl:flex-row xl:items-center">
-        {{ range site.Menus.main }}
-          <li class="text-center">
-            <a class="text-secondary hover:text-accent font-bold" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
-          </li>
+<nav class="sticky top-0 z-[9999] bg-surface/95 backdrop-blur-sm shadow-sm">
+  <div class="container mx-auto px-4">
+    {{/* ── Top bar: logo + desktop nav + burger ── */}}
+    <div class="flex items-center justify-between py-6">
+      <a class="flex items-center gap-2" href="{{ .Site.BaseURL }}">
+        {{ with .Site.Params.logo }}
+        <img src="{{ . | absURL }}" alt="{{ $.Site.Title }}" class="h-10 w-auto xl:h-12">
+        {{ else }}
+        <span class="text-secondary text-xl font-semibold uppercase xl:text-2xl">{{ $.Site.Title }}</span>
         {{ end }}
-        {{/* "More" dropdown — Desktop */}}
-        <li class="hidden xl:block relative group/more text-center">
-          <span class="text-secondary hover:text-accent font-bold cursor-pointer">{{ i18n "more" }}</span>
-          <div class="invisible opacity-0 group-hover/more:visible group-hover/more:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
-            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-              {{/* Info with flyout */}}
-              <div class="relative group/info">
-                <button class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
-                  <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-info w-4 text-center"></i> Info</span>
-                  <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </button>
-                <div class="invisible opacity-0 group-hover/info:visible group-hover/info:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
-                  <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                    {{/* Getting Started */}}
-                    <div class="relative group/gs2">
-                      <a href="{{ "/getting-started/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
-                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-rocket w-4 text-center"></i> {{ i18n "getting_started" }}</span>
-                        <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                      </a>
-                      <div class="invisible opacity-0 group-hover/gs2:visible group-hover/gs2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
-                        <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                          {{ $gsPage := site.GetPage "/getting-started" }}
-                          {{ range $gsPage.Pages.ByWeight }}
-                          <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
-                            {{ .Title }}
-                          </a>
-                          {{ end }}
+      </a>
+
+      {{/* ── Desktop navigation (xl+) ── */}}
+      <div class="hidden xl:flex xl:items-center xl:gap-8">
+        <ul class="flex items-center gap-8">
+          {{ range site.Menus.main }}
+            <li>
+              <a class="text-secondary hover:text-accent font-bold" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+            </li>
+          {{ end }}
+          {{/* "More" dropdown — Desktop */}}
+          <li class="relative group/more">
+            <span class="text-secondary hover:text-accent font-bold cursor-pointer">{{ i18n "more" }}</span>
+            <div class="invisible opacity-0 group-hover/more:visible group-hover/more:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+              <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                {{/* Info with flyout */}}
+                <div class="relative group/info">
+                  <button class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
+                    <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-info w-4 text-center"></i> Info</span>
+                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  <div class="invisible opacity-0 group-hover/info:visible group-hover/info:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                    <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                      {{/* Getting Started */}}
+                      <div class="relative group/gs2">
+                        <a href="{{ "/getting-started/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                          <span class="inline-flex items-center gap-2"><i class="fa-solid fa-rocket w-4 text-center"></i> {{ i18n "getting_started" }}</span>
+                          <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                        </a>
+                        <div class="invisible opacity-0 group-hover/gs2:visible group-hover/gs2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                          <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                            {{ $gsPage := site.GetPage "/getting-started" }}
+                            {{ range $gsPage.Pages.ByWeight }}
+                            <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                              {{ .Title }}
+                            </a>
+                            {{ end }}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    {{/* Work Areas */}}
-                    <div class="relative group/wa2">
-                      <a href="{{ "/work-areas/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
-                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> {{ i18n "work_areas" }}</span>
-                        <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                      </a>
-                      <div class="invisible opacity-0 group-hover/wa2:visible group-hover/wa2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
-                        <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                          {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
-                          {{ range $workAreas }}
-                          <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
-                            {{ .Title }}
-                          </a>
-                          {{ end }}
+                      {{/* Work Areas */}}
+                      <div class="relative group/wa2">
+                        <a href="{{ "/work-areas/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                          <span class="inline-flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> {{ i18n "work_areas" }}</span>
+                          <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                        </a>
+                        <div class="invisible opacity-0 group-hover/wa2:visible group-hover/wa2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                          <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                            {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
+                            {{ range $workAreas }}
+                            <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                              {{ .Title }}
+                            </a>
+                            {{ end }}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    {{/* Legal Documents */}}
-                    <div class="relative group/ld2">
-                      <a href="{{ "/docs/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
-                        <span class="inline-flex items-center gap-2"><i class="fa-solid fa-file-lines w-4 text-center"></i> {{ i18n "legal_documents" }}</span>
-                        <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                        </svg>
-                      </a>
-                      <div class="invisible opacity-0 group-hover/ld2:visible group-hover/ld2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
-                        <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                          {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
-                          {{ range $allDocs }}
-                          <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
-                            {{ .Title }}
-                          </a>
-                          {{ end }}
+                      {{/* Legal Documents */}}
+                      <div class="relative group/ld2">
+                        <a href="{{ "/docs/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                          <span class="inline-flex items-center gap-2"><i class="fa-solid fa-file-lines w-4 text-center"></i> {{ i18n "legal_documents" }}</span>
+                          <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                        </a>
+                        <div class="invisible opacity-0 group-hover/ld2:visible group-hover/ld2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                          <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                            {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
+                            {{ range $allDocs }}
+                            <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
+                              {{ .Title }}
+                            </a>
+                            {{ end }}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                {{/* Gallery */}}
+                <a href="{{ "/gallery/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-images w-4 text-center"></i> {{ i18n "gallery" }}
+                </a>
+                {{/* Articles */}}
+                <a href="{{ "/articles/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-newspaper w-4 text-center"></i> {{ i18n "articles" }}
+                </a>
+                {{/* News */}}
+                <a href="{{ "/news/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-bullhorn w-4 text-center"></i> {{ i18n "news" }}
+                </a>
+                {{/* Contact */}}
+                <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
+                </a>
               </div>
-              {{/* Gallery */}}
-              <a href="{{ "/gallery/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-images w-4 text-center"></i> {{ i18n "gallery" }}
-              </a>
-              {{/* Articles */}}
-              <a href="{{ "/articles/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-newspaper w-4 text-center"></i> {{ i18n "articles" }}
-              </a>
-              {{/* News */}}
-              <a href="{{ "/news/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-bullhorn w-4 text-center"></i> {{ i18n "news" }}
-              </a>
-              {{/* Contact */}}
-              <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
-              </a>
             </div>
-          </div>
-        </li>
-        {{/* "More" dropdown — Mobile */}}
-        <li class="xl:hidden text-center">
-          <button
-            class="text-secondary hover:text-accent font-bold cursor-pointer"
-            type="button"
-            onclick="let el = document.getElementById('burgerDropdown'); el.classList.toggle('hidden');"
-          >
-            {{ i18n "more" }}
-          </button>
-          <div id="burgerDropdown" class="hidden mt-4 text-left max-w-xs mx-auto">
-            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2">
-              {{/* Info accordion */}}
-              <div class="px-4 py-2">
-                <button
-                  class="w-full flex items-center justify-between text-sm font-semibold text-secondary hover:text-accent duration-200 cursor-pointer"
-                  type="button"
-                  onclick="let el = document.getElementById('burgerInfoAccordion'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
-                >
-                  <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-info w-4 text-center"></i> Info</span>
-                  <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </button>
-                <div id="burgerInfoAccordion" class="hidden mt-2 pl-3 flex flex-col gap-1">
-                  <a href="{{ "/getting-started/" | relLangURL }}" class="flex items-center gap-2 py-1 text-sm text-gray-dark hover:text-accent duration-200"><i class="fa-solid fa-rocket w-4 text-center"></i> {{ i18n "getting_started" }}</a>
-                  <a href="{{ "/work-areas/" | relLangURL }}" class="flex items-center gap-2 py-1 text-sm text-gray-dark hover:text-accent duration-200"><i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> {{ i18n "work_areas" }}</a>
-                  <a href="{{ "/docs/" | relLangURL }}" class="flex items-center gap-2 py-1 text-sm text-gray-dark hover:text-accent duration-200"><i class="fa-solid fa-file-lines w-4 text-center"></i> {{ i18n "legal_documents" }}</a>
-                </div>
-              </div>
-              {{/* Gallery */}}
-              <a href="{{ "/gallery/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-images w-4 text-center"></i> {{ i18n "gallery" }}
-              </a>
-              {{/* Articles */}}
-              <a href="{{ "/articles/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-newspaper w-4 text-center"></i> {{ i18n "articles" }}
-              </a>
-              {{/* News */}}
-              <a href="{{ "/news/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-bullhorn w-4 text-center"></i> {{ i18n "news" }}
-              </a>
-              {{/* Contact */}}
-              <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
-              </a>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="flex flex-col items-center gap-4 xl:flex-row xl:gap-6">
-        {{/* Language switcher */}}
-        <div class="flex items-center gap-2">
-          {{ range .Site.Languages }}
-            {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
-            {{ $targetURL := (printf "/%s/" .Lang) }}
-            {{ if not $isCurrent }}
-              {{ range $.Translations }}
-                {{ if eq .Language.Lang $.Site.Language.Lang | not }}
-                  {{ $targetURL = .RelPermalink }}
+          </li>
+        </ul>
+        <div class="flex items-center gap-6">
+          {{/* Language switcher */}}
+          <div class="flex items-center gap-2">
+            {{ range .Site.Languages }}
+              {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
+              {{ $targetURL := (printf "/%s/" .Lang) }}
+              {{ if not $isCurrent }}
+                {{ range $.Translations }}
+                  {{ if eq .Language.Lang $.Site.Language.Lang | not }}
+                    {{ $targetURL = .RelPermalink }}
+                  {{ end }}
                 {{ end }}
               {{ end }}
+              {{ $flag := "fi-gb" }}{{ if eq .Lang "da" }}{{ $flag = "fi-dk" }}{{ end }}
+              {{ if $isCurrent }}
+                <span class="cursor-default" title="{{ .LanguageName }}">
+                  <span class="fi {{ $flag }} text-xl leading-none"></span>
+                </span>
+              {{ else }}
+                <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="opacity-50 hover:opacity-100 transition-opacity duration-200 rounded-sm" title="{{ .LanguageName }}">
+                  <span class="fi {{ $flag }} text-xl leading-none"></span>
+                </a>
+              {{ end }}
             {{ end }}
-            {{ $flag := "fi-gb" }}{{ if eq .Lang "da" }}{{ $flag = "fi-dk" }}{{ end }}
-            {{ if $isCurrent }}
-              <span class="cursor-default" title="{{ .LanguageName }}">
-                <span class="fi {{ $flag }} text-xl leading-none"></span>
-              </span>
-            {{ else }}
-              <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="opacity-50 hover:opacity-100 transition-opacity duration-200 rounded-sm" title="{{ .LanguageName }}">
-                <span class="fi {{ $flag }} text-xl leading-none"></span>
-              </a>
-            {{ end }}
-          {{ end }}
-        </div>
-        {{/* Settings gear dropdown */}}
-        {{ partial "shared/settings" . }}
-        {{/* Account dropdown — Desktop */}}
-        <div class="hidden xl:block relative group/account">
-          <button class="bg-accent hover:bg-accent-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200">
-            {{ i18n "join_us" }}
-            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="invisible opacity-0 group-hover/account:visible group-hover/account:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
-            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-48">
-              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
-              </a>
-              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
-              </a>
+          </div>
+          {{/* Settings */}}
+          {{ partial "shared/settings" . }}
+          {{/* Join Us dropdown */}}
+          <div class="relative group/account">
+            <button class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200">
+              {{ i18n "join_us" }}
+              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div class="invisible opacity-0 group-hover/account:visible group-hover/account:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+              <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-48">
+                <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
+                </a>
+                <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                  <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        {{/* Account dropdown — Mobile */}}
-        <div class="xl:hidden text-center">
-          <button
-            class="bg-accent hover:bg-accent-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200"
-            type="button"
-            onclick="let el = document.getElementById('accountDropdown'); el.classList.toggle('hidden');"
-          >
-            {{ i18n "join_us" }}
-            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div id="accountDropdown" class="hidden mt-2 text-left max-w-xs mx-auto">
-            <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2">
-              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
-              </a>
-              <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
-                <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
-              </a>
+      </div>
+
+      {{/* ── Burger button (mobile only) ── */}}
+      <button
+        class="cursor-pointer xl:hidden"
+        type="button"
+        onclick="let el = document.getElementById('mobileNav'); el.classList.toggle('hidden'); let icon = this.querySelector('.burger-icon'); let close = this.querySelector('.close-icon'); icon.classList.toggle('hidden'); close.classList.toggle('hidden');"
+        aria-label="{{ i18n "toggle_nav" }}"
+      >
+        <svg class="burger-icon h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg class="close-icon hidden h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    {{/* ── Mobile collapsible panel ── */}}
+    <div id="mobileNav" class="hidden xl:hidden border-t border-gray-200 pb-6">
+      {{/* Main menu links */}}
+      <ul class="flex flex-col gap-1 pt-4">
+        {{ range site.Menus.main }}
+          <li>
+            <a class="block px-2 py-3 text-secondary hover:text-accent font-bold transition-colors duration-200" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+          </li>
+        {{ end }}
+      </ul>
+
+      {{/* Info accordion */}}
+      <div class="mt-1">
+        <button
+          class="w-full flex items-center justify-between px-2 py-3 text-secondary hover:text-accent font-bold transition-colors duration-200 cursor-pointer"
+          type="button"
+          onclick="let el = document.getElementById('mobileInfoAccordion'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+        >
+          <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-info w-4 text-center"></i> Info</span>
+          <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <div id="mobileInfoAccordion" class="hidden pl-4 flex flex-col gap-1">
+          {{/* Getting Started accordion */}}
+          <div>
+            <button
+              class="w-full flex items-center justify-between py-2 px-2 text-sm font-semibold text-gray-dark hover:text-accent duration-200 cursor-pointer"
+              type="button"
+              onclick="let el = document.getElementById('mobileGsPages'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+            >
+              <span class="inline-flex items-center gap-2"><i class="fa-solid fa-rocket w-4 text-center"></i> {{ i18n "getting_started" }}</span>
+              <svg class="h-3 w-3 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            <div id="mobileGsPages" class="hidden pl-6 flex flex-col gap-1">
+              {{ $gsPage := site.GetPage "/getting-started" }}
+              {{ range $gsPage.Pages.ByWeight }}
+              <a href="{{ .RelPermalink }}" class="block py-1.5 text-sm text-gray-dark hover:text-accent duration-200">{{ .Title }}</a>
+              {{ end }}
+            </div>
+          </div>
+          {{/* Work Areas accordion */}}
+          <div>
+            <button
+              class="w-full flex items-center justify-between py-2 px-2 text-sm font-semibold text-gray-dark hover:text-accent duration-200 cursor-pointer"
+              type="button"
+              onclick="let el = document.getElementById('mobileWaPages'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+            >
+              <span class="inline-flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> {{ i18n "work_areas" }}</span>
+              <svg class="h-3 w-3 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            <div id="mobileWaPages" class="hidden pl-6 flex flex-col gap-1">
+              {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
+              {{ range $workAreas }}
+              <a href="{{ .RelPermalink }}" class="block py-1.5 text-sm text-gray-dark hover:text-accent duration-200">{{ .Title }}</a>
+              {{ end }}
+            </div>
+          </div>
+          {{/* Legal Documents accordion */}}
+          <div>
+            <button
+              class="w-full flex items-center justify-between py-2 px-2 text-sm font-semibold text-gray-dark hover:text-accent duration-200 cursor-pointer"
+              type="button"
+              onclick="let el = document.getElementById('mobileDocsPages'); el.classList.toggle('hidden'); this.querySelector('svg').classList.toggle('rotate-90');"
+            >
+              <span class="inline-flex items-center gap-2"><i class="fa-solid fa-file-lines w-4 text-center"></i> {{ i18n "legal_documents" }}</span>
+              <svg class="h-3 w-3 shrink-0 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+            <div id="mobileDocsPages" class="hidden pl-6 flex flex-col gap-1">
+              {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
+              {{ range $allDocs }}
+              <a href="{{ .RelPermalink }}" class="block py-1.5 text-sm text-gray-dark hover:text-accent duration-200">{{ .Title }}</a>
+              {{ end }}
             </div>
           </div>
         </div>
+      </div>
+
+      {{/* Extra links */}}
+      <ul class="flex flex-col gap-1">
+        <li>
+          <a href="{{ "/gallery/" | relLangURL }}" class="flex items-center gap-2 px-2 py-3 text-secondary hover:text-accent font-bold duration-200">
+            <i class="fa-solid fa-images w-4 text-center"></i> {{ i18n "gallery" }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ "/articles/" | relLangURL }}" class="flex items-center gap-2 px-2 py-3 text-secondary hover:text-accent font-bold duration-200">
+            <i class="fa-solid fa-newspaper w-4 text-center"></i> {{ i18n "articles" }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ "/news/" | relLangURL }}" class="flex items-center gap-2 px-2 py-3 text-secondary hover:text-accent font-bold duration-200">
+            <i class="fa-solid fa-bullhorn w-4 text-center"></i> {{ i18n "news" }}
+          </a>
+        </li>
+        <li>
+          <a href="{{ "/contact/" | relLangURL }}" class="flex items-center gap-2 px-2 py-3 text-secondary hover:text-accent font-bold duration-200">
+            <i class="fa-solid fa-envelope w-4 text-center"></i> {{ i18n "contact" }}
+          </a>
+        </li>
+      </ul>
+
+      {{/* Divider */}}
+      <div class="my-4 border-t border-gray-200"></div>
+
+      {{/* Bottom row: language switcher + settings + join us */}}
+      <div class="flex items-center justify-between px-2">
+        <div class="flex items-center gap-4">
+          {{/* Language switcher */}}
+          <div class="flex items-center gap-2">
+            {{ range .Site.Languages }}
+              {{ $isCurrent := eq $.Site.Language.Lang .Lang }}
+              {{ $targetURL := (printf "/%s/" .Lang) }}
+              {{ if not $isCurrent }}
+                {{ range $.Translations }}
+                  {{ if eq .Language.Lang $.Site.Language.Lang | not }}
+                    {{ $targetURL = .RelPermalink }}
+                  {{ end }}
+                {{ end }}
+              {{ end }}
+              {{ $flag := "fi-gb" }}{{ if eq .Lang "da" }}{{ $flag = "fi-dk" }}{{ end }}
+              {{ if $isCurrent }}
+                <span class="cursor-default" title="{{ .LanguageName }}">
+                  <span class="fi {{ $flag }} text-xl leading-none"></span>
+                </span>
+              {{ else }}
+                <a href="{{ $targetURL }}" onclick="localStorage.setItem('otm-lang','{{ .Lang }}')" class="opacity-50 hover:opacity-100 transition-opacity duration-200 rounded-sm" title="{{ .LanguageName }}">
+                  <span class="fi {{ $flag }} text-xl leading-none"></span>
+                </a>
+              {{ end }}
+            {{ end }}
+          </div>
+          {{/* Settings */}}
+          {{ partial "shared/settings" . }}
+        </div>
+        {{/* Join Us */}}
+        <a href="{{ .Site.Params.memberPortalUrl }}" class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium transition-colors duration-200">
+          {{ i18n "join_us" }}
+        </a>
       </div>
     </div>
   </div>

@@ -1,11 +1,15 @@
 {{ define "main" }}
+<section class="pt-16">
+  <div class="container mx-auto px-4">
+    <h1 class="text-secondary mb-4 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
+    {{ with .Params.description }}
+      <p class="mx-auto mb-8 text-center text-gray-dark xl:max-w-[50%]">{{ . }}</p>
+    {{ end }}
+  </div>
+</section>
+{{ partial "virtual-tour-map.html" . }}
 <section class="py-16">
   <div class="container mx-auto px-4">
-    <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
-    {{ with .Params.description }}
-      <p class="mx-auto mb-16 text-center text-gray-dark xl:max-w-[50%]">{{ . }}</p>
-    {{ end }}
-
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {{ range .Pages.ByWeight }}
       <a href="{{ .RelPermalink }}" class="group flex items-center justify-center bg-surface rounded-[10px] border border-gray-200 p-6 hover:border-accent hover:shadow-md transition-all duration-200 text-center">

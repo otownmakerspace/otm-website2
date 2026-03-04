@@ -102,9 +102,8 @@
   </div>
 </section>
 {{ end }}
-
-<!-- TL;DR -->
-<section id="join" class="bg-primary py-16">
+<!-- TL;DR (hidden) -->
+<section id="join" class="hidden bg-primary py-16">
   <div class="container mx-auto px-4">
     {{/* Subsection: What Members Get */}}
     <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "tldr_what_members_get" }}</h2>
@@ -179,8 +178,8 @@
       <a href="{{ "/getting-started/first-steps/" | relLangURL }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-8 py-3 font-medium text-white duration-300">
         {{ i18n "become_a_member" }}
       </a>
-      <a href="{{ "/about/" | relLangURL }}" class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-8 py-3 font-medium duration-300 hover:text-white">
-        {{ i18n "learn_more" }}
+      <a href="{{ "/gallery/" | relLangURL }}" class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-8 py-3 font-medium duration-300 hover:text-white">
+        {{ i18n "gallery" }}
       </a>
     </div>
   </div>

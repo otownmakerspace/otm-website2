@@ -4,11 +4,15 @@ weight: 20
 ---
 If you're new to the makerspace and want to understand how to become part of the community, here is the simple path to get started:
 
-## 1. Get Familiar With the Makerspace
+## 1. Come to our Open House
+
+The first step is to visit us in person. Attend one of our open‑house sessions. Here you can tour the physical space, ask questions, and get a real sense of the environment and community. Check our [Events](/events/) page to find the next open house date.
+
+## 2. Get Familiar With the Makerspace
 
 Browse our website to learn what the makerspace offers. Visit the [Work Areas](/work-areas/) section to see the different tools, physical work tables, and specialized areas available. This step helps you understand what you can work with and whether the space fits your needs.
 
-## 2. Know the Rules (**Important**)
+## 3. Know the Rules (**Important**)
 
 Before going any further, take the time to familiarize yourself with the makerspace rules and policies. Knowing what is expected of you as a member is essential. You can find everything in the [Documents](/docs/) section of the website, including:
 
@@ -18,17 +22,13 @@ Before going any further, take the time to familiarize yourself with the makersp
 
 Understanding these documents helps ensure a smooth experience for you and everyone in the community.
 
-## 3. Join an Orientation Day
-
-When you feel that the makerspace is something you'd like to be part of, the next step is to visit us in person. Attend one of our orientation days during an open‑house session. Here you can tour the physical space, ask questions, and get a real sense of the environment and community.
-
 ## 4. Become a Member
 
 Once you've decided you want full access, here's how to get started:
 
 1. **Sign up for a membership** — Register as a paying member on our [membership portal](https://members.theotowngarage.com/subscribe/200)
 2. **Join the Discord** — Connect with the community on the [makerspace Discord](https://discord.gg/HDR8jsUp)
-3. **Come by on Open House** — Attend an Open House session to get the official introduction and orientation from a board member
+3. **Get your introduction** — Receive a formal introduction on how to enter and leave the space, as well as introductions to the different tools and work areas
 
 ## 5. Your First Introduction
 
