@@ -38,6 +38,9 @@ func main() {
 		return
 	}
 	err = initDatabase(db)
+	if isTest {
+		seedTestUser(db)
+	}
 
 	// Serve the static website built with Hugo
 	http.Handle("/", http.FileServer(http.Dir("../public")))
@@ -204,6 +207,27 @@ func initDatabase(db *sql.DB) error {
 	}
 	log.Print("Databases created")
 	return nil
+}
+
+func seedTestUser(db *sql.DB) {
+	const testEmail = "test@test.com"
+	var exists int
+	db.QueryRow("SELECT COUNT(*) FROM user WHERE email = ?", testEmail).Scan(&exists)
+	if exists > 0 {
+		return
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
+	if err != nil {
+		log.Print("Failed to seed test user: ", err)
+		return
+	}
+	_, err = db.Exec("INSERT INTO user (email, name, phone, password, active, customer_id) VALUES (?, ?, ?, ?, ?, ?)",
+		testEmail, "Test User", "", hashedPassword, 1, "cus_test_000")
+	if err != nil {
+		log.Print("Failed to seed test user: ", err)
+		return
+	}
+	log.Print("Seeded test user: test@test.com / password")
 }
 
 func emailExists(request *http.Request, isTest bool) (bool, error) {
