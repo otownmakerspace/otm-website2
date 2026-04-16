@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -56,10 +58,33 @@ type Config struct {
 	Email   emailConf
 }
 
-// envOverride replaces a config value with an environment variable if set.
+// secretOverride sets a config field from (in priority order):
+// 1. Environment variable
+// 2. Secret file at /run/secrets/<filename>
+// 3. Existing config value (unchanged)
+func secretOverride(field *string, envKey string, secretFile string) {
+	if val, ok := os.LookupEnv(envKey); ok && len(val) > 0 {
+		*field = val
+		return
+	}
+	if data, err := os.ReadFile("/run/secrets/" + secretFile); err == nil {
+		if val := strings.TrimSpace(string(data)); len(val) > 0 {
+			*field = val
+		}
+	}
+}
+
 func envOverride(field *string, envKey string) {
 	if val, ok := os.LookupEnv(envKey); ok && len(val) > 0 {
 		*field = val
+	}
+}
+
+func envOverrideInt(field *int, envKey string) {
+	if val, ok := os.LookupEnv(envKey); ok && len(val) > 0 {
+		if n, err := strconv.Atoi(val); err == nil {
+			*field = n
+		}
 	}
 }
 
@@ -72,13 +97,18 @@ func LoadConfig() Config {
 	}
 
 	// Environment variables override file-based config
-	envOverride(&parseconf.Backend.CookiePrivateKey, "COOKIE_STORE_KEY")
-	envOverride(&parseconf.Stripe.Key, "STRIPE_KEY")
-	envOverride(&parseconf.Stripe.EndpointSecret, "STRIPE_WEBSOCK_KEY")
-	envOverride(&parseconf.Email.Password, "EMAIL_PASSWORD")
+	envOverride(&parseconf.Backend.Host, "BACKEND_HOST")
+	envOverride(&parseconf.Backend.Protocol, "BACKEND_PROTOCOL")
+	envOverrideInt(&parseconf.Backend.Port, "BACKEND_PORT")
+
+	// Secrets: env var > /run/secrets/<file> > config.toml
+	secretOverride(&parseconf.Backend.CookiePrivateKey, "COOKIE_STORE_KEY", "cookie_store_key")
+	secretOverride(&parseconf.Stripe.Key, "STRIPE_KEY", "stripe_key")
+	secretOverride(&parseconf.Stripe.EndpointSecret, "STRIPE_WEBSOCK_KEY", "stripe_webhook_secret")
+	secretOverride(&parseconf.Email.Password, "EMAIL_PASSWORD", "email_password")
 
 	if len(parseconf.Backend.CookiePrivateKey) == 0 {
-		log.Fatal("COOKIE_STORE_KEY must be set via environment variable or config file")
+		log.Fatal("COOKIE_STORE_KEY must be set via environment variable, secret file, or config")
 	}
 
 	return parseconf
