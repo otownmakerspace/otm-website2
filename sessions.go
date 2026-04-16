@@ -15,7 +15,13 @@ import (
 )
 
 // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-var store = sessions.NewCookieStore([]byte(config.Backend.CookiePrivateKey))
+var store = func() *sessions.CookieStore {
+	s := sessions.NewCookieStore([]byte(config.Backend.CookiePrivateKey))
+	s.Options.MaxAge = 86400 * 7 // 7 days
+	s.Options.HttpOnly = true
+	s.Options.SameSite = http.SameSiteLaxMode
+	return s
+}()
 
 func redirect_to_when_logged_in(destination string) http.HandlerFunc {
 	return func(w http.ResponseWriter, request *http.Request) {

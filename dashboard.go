@@ -94,9 +94,18 @@ func CancelSubscriptionHandler() http.HandlerFunc {
 		}
 		SubID := r.URL.Query().Get("sub_id")
 
+		// Verify the subscription belongs to the logged-in user
+		customerID, _ := session.Values["customer_id"].(string)
+		sub, err := subscription.Get(SubID, nil)
+		if err != nil || sub.Customer.ID != customerID {
+			log.Printf("Subscription ownership check failed for sub %s by customer %s", SubID, customerID)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
 		// Cancel the subscription immediately (or set CancelAtPeriodEnd = true to cancel later)
 		params := &stripe.SubscriptionCancelParams{}
-		_, err := subscription.Cancel(SubID, params)
+		_, err = subscription.Cancel(SubID, params)
 		if err != nil {
 			log.Printf("Failed to cancel subscription: %v", err)
 			http.Error(w, "Failed to cancel subscription", http.StatusInternalServerError)

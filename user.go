@@ -39,9 +39,9 @@ func (user *User) AddToStripeMetadata(params *stripe.CheckoutSessionParams) {
 		params.AddMetadata("name", user.Name)
 	}
 	if len(user.Phone) > 0 {
-		params.AddMetadata("phone", user.Name)
+		params.AddMetadata("phone", user.Phone)
 	}
 	if len(user.PlainPassword) > 0 {
-		params.AddMetadata("pass", user.Name)
+		params.AddMetadata("pass", user.PlainPassword)
 	}
 }

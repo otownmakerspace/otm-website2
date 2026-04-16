@@ -117,9 +117,6 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 			http.Redirect(w, request, host_url+"/checkout/?reason=failed_crypt", http.StatusSeeOther)
 			return
 		}
-		for key, value := range request.Form {
-			log.Print(key, " : ", value)
-		}
 		user := FormToUser(request)
 		ServeStripeCheckoutSession(w, request, user)
 	}
