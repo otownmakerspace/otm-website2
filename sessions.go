@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
@@ -13,6 +14,14 @@ import (
 	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
+
+const minPasswordLen = 8
+const maxPasswordLen = 31 // bcrypt max is 72 bytes; 31 chars is safe for unicode
+
+func hashToken(token string) string {
+	h := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(h[:])
+}
 
 // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 var store = func() *sessions.CookieStore {
@@ -178,7 +187,8 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 
 		expiry := time.Now().Add(1 * time.Hour)
 
-		_, err = db.Exec("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)", email, token, expiry)
+		// Store only the hash of the token — the raw token is sent to the user via email
+		_, err = db.Exec("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)", email, hashToken(token), expiry)
 		if err != nil {
 			log.Print("db query error - ", err)
 			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
@@ -205,10 +215,15 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 		token := r.URL.Query().Get("token")
 
 		newPassword := r.FormValue("password")
+		if len(newPassword) < minPasswordLen || len(newPassword) > maxPasswordLen {
+			http.Redirect(w, r, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			return
+		}
 
+		tokenHash := hashToken(token)
 		var email string
 		var expiresAt time.Time
-		err := db.QueryRow("SELECT email, expires_at FROM password_reset_tokens WHERE token = ?", token).Scan(&email, &expiresAt)
+		err := db.QueryRow("SELECT email, expires_at FROM password_reset_tokens WHERE token = ?", tokenHash).Scan(&email, &expiresAt)
 		if err == sql.ErrNoRows {
 			log.Print("Token not found")
 			http.Redirect(w, r, host_url+"/login/?reason=token_invalid", http.StatusSeeOther)
@@ -236,7 +251,7 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		db.Exec("DELETE FROM password_reset_tokens WHERE token = ?", token)
+		db.Exec("DELETE FROM password_reset_tokens WHERE token = ?", tokenHash)
 		log.Print("Password reset success")
 
 		http.Redirect(w, r, host_url+"/reset-success", http.StatusSeeOther)

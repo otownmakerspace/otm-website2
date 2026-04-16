@@ -98,6 +98,11 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 			http.Redirect(w, request, host_url+"/checkout/", http.StatusSeeOther)
 			return
 		}
+		pass := request.Form.Get("pass")
+		if len(pass) < minPasswordLen || len(pass) > maxPasswordLen {
+			http.Redirect(w, request, host_url+"/checkout/", http.StatusSeeOther)
+			return
+		}
 		exists, err := emailExists(request, isTest)
 		if err != nil {
 			fmt.Println("Failed to check if email exists??:", err)
