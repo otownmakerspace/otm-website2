@@ -58,11 +58,10 @@ func main() {
 	http.HandleFunc("POST /reset-password/", resetPasswordHandler(db))      // sessions.go
 	http.HandleFunc("POST /reset-password", resetPasswordHandler(db))       // sessions.go
 
-	log.Printf("Listening on %s", host_url)
 	if err != nil {
 		log.Fatal("Could not initialise DB ", err)
-		os.Exit(1)
 	}
+	log.Printf("Listening on %s", host_url)
 	log.Fatal(http.ListenAndServe(host_addr, nil))
 }
 
@@ -95,8 +94,7 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 		// Serve checkout session for a brand new Customer
 
 		if request.ParseForm() != nil || !validateInput(request.Form) {
-			log.Fatal("malformed request") // highlight - potential attack
-			// do not give reason for a failure (on purpose)
+			log.Print("malformed checkout request")
 			http.Redirect(w, request, host_url+"/checkout/", http.StatusSeeOther)
 			return
 		}
@@ -109,15 +107,15 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 			http.Redirect(w, request, host_url+"/checkout/?reason=email_exists", http.StatusSeeOther)
 			return
 		}
-		// Only hashing the password at this stage to make sure it doesn't error out after the payment is done
-		// We do not use the result of the hash to avoid sending the final hashed pw through the internet pipes
-		_, err = bcrypt.GenerateFromPassword([]byte(request.Form.Get("pass")), bcrypt.DefaultCost)
+		// Hash the password now so only the bcrypt hash (not the plain password) transits through Stripe metadata
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Form.Get("pass")), bcrypt.DefaultCost)
 		if err != nil {
 			fmt.Println("Encryption failed:", err)
 			http.Redirect(w, request, host_url+"/checkout/?reason=failed_crypt", http.StatusSeeOther)
 			return
 		}
 		user := FormToUser(request)
+		user.Password = hashedPassword
 		ServeStripeCheckoutSession(w, request, user)
 	}
 }
@@ -343,33 +341,24 @@ func FulfillCheckout(checkout_session string) error {
 	params.AddExpand("line_items")
 	session, err := session.Get(checkout_session, params)
 	if err != nil {
-		// TODO this should never happen
-		log.Fatal("Failed to retrieve metadata from payment checkout:", err)
-		// At this point we could create a secondary user creation page, but not worth it
+		log.Print("Failed to retrieve metadata from payment checkout: ", err)
 		return err
 	}
-	// Retrieve the metadata injected before the checkout
+	// Retrieve the metadata injected before the checkout.
+	// meta["pass"] is already a bcrypt hash — use it directly.
 	meta := session.Metadata
-	// Hashing the password again after the payment to avoid sending the stored hashed pw through the internet pipes
-	hashedPassword, err := hash_and_salt(meta["pass"])
-	if err != nil {
-		// TODO this should be an absolute failure, because we already tried to encrypt it beforehand
-		log.Fatal("Encryption failed:", err)
-		return err
-	}
 
 	user := User{
 		Name:       meta["name"],
 		Email:      meta["email"],
 		Phone:      meta["phone"],
 		Active:     true,
-		Password:   hashedPassword,
+		Password:   []byte(meta["pass"]),
 		CustomerID: session.Customer.ID,
 	}
 	dbErr := addUser(user, isTest)
 	if dbErr != nil {
-		log.Fatal("Error while creating the user - ", dbErr)
-		// maybe forward all the Fatal exceptions via email?
+		log.Print("Error while creating the user - ", dbErr)
 		return dbErr
 	}
 	// Send email to our ourselves

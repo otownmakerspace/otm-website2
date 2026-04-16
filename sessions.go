@@ -74,8 +74,8 @@ func login(db *sql.DB) http.HandlerFunc {
 			http.Redirect(w, request, host_url+"/login/?reason=combo_fail", http.StatusSeeOther)
 			return
 		} else if err != nil {
-			log.Fatal("User not found: ", err)
-			// TODO handle this ?
+			log.Print("DB error during login: ", err)
+			http.Redirect(w, request, host_url+"/login/?reason=misc", http.StatusSeeOther)
 			return
 		}
 
@@ -154,26 +154,25 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// look up user
+		// Always redirect to reset-sent regardless of whether email exists,
+		// to prevent email enumeration attacks.
 		result := 0
 		err := db.QueryRow("SELECT 1 FROM user WHERE email = ?;", email).Scan(&result)
 
 		if err == sql.ErrNoRows {
-			log.Print("result : ", result)
-			log.Print("Email not found : ", email)
-			http.Redirect(w, r, host_url+"/login/?reason=wrong_email", http.StatusSeeOther)
+			log.Print("Password reset requested for non-existent email")
+			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
 			return
 		} else if err != nil {
-			http.Redirect(w, r, host_url+"/login/?reason=misc", http.StatusSeeOther)
-			log.Fatal("Db error: ", err)
-			// TODO handle this ?
+			log.Print("Db error during password reset: ", err)
+			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
 			return
 		}
 
 		token, err := generateToken()
 		if err != nil {
 			log.Print("Failed to generate token")
-			http.Redirect(w, r, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
 			return
 		}
 
@@ -182,14 +181,13 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 		_, err = db.Exec("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)", email, token, expiry)
 		if err != nil {
 			log.Print("db query error - ", err)
-			http.Redirect(w, r, host_url+"/login/?reason=db_query", http.StatusSeeOther)
+			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
 			return
 		}
 
 		err = sendResetEmail(email, token)
 		if err != nil {
-			http.Redirect(w, r, host_url+"/login/?reason=email", http.StatusSeeOther)
-			return
+			log.Print("Failed to send reset email: ", err)
 		}
 
 		http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)

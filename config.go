@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/BurntSushi/toml"
 )
@@ -10,9 +11,8 @@ var config = LoadConfig()
 
 var defaultConfig = Config{
 	Backend: BackendConf{
-		Host:             "localhost",
-		Protocol:         "http",
-		CookiePrivateKey: "cookieMonster",
+		Host:     "localhost",
+		Protocol: "http",
 	},
 	Stripe: stripeConf{
 		Key:            "",
@@ -56,12 +56,30 @@ type Config struct {
 	Email   emailConf
 }
 
+// envOverride replaces a config value with an environment variable if set.
+func envOverride(field *string, envKey string) {
+	if val, ok := os.LookupEnv(envKey); ok && len(val) > 0 {
+		*field = val
+	}
+}
+
 func LoadConfig() Config {
 	var parseconf Config
 	_, err := toml.DecodeFile("../config/_default/config.toml", &parseconf)
 	if err != nil {
-		log.Print("Failed to load confg - ", err)
+		log.Print("Failed to load config - ", err)
 		parseconf = defaultConfig
 	}
+
+	// Environment variables override file-based config
+	envOverride(&parseconf.Backend.CookiePrivateKey, "COOKIE_STORE_KEY")
+	envOverride(&parseconf.Stripe.Key, "STRIPE_KEY")
+	envOverride(&parseconf.Stripe.EndpointSecret, "STRIPE_WEBSOCK_KEY")
+	envOverride(&parseconf.Email.Password, "EMAIL_PASSWORD")
+
+	if len(parseconf.Backend.CookiePrivateKey) == 0 {
+		log.Fatal("COOKIE_STORE_KEY must be set via environment variable or config file")
+	}
+
 	return parseconf
 }
