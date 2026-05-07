@@ -1,3 +1,5 @@
 /.idea/modules.xml
 /.idea/otm-website.iml
 /.idea/vcs.xml
+/docs/
+/.hugo_build.lock
