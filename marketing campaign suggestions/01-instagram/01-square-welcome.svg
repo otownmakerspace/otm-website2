@@ -5,58 +5,281 @@
   Layout: top half hero photo with navy gradient overlay, bottom half cream
   panel with cube mark + headline + tagline. Friendly + clear.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-     viewBox="0 0 1080 1080" width="1080" height="1080">
-  <defs>
-    <linearGradient id="navyOverlay" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.40"/>
-      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.85"/>
+
+<svg
+   viewBox="0 0 1080 1080"
+   width="1080"
+   height="1080"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="01-square-welcome.svg"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview24"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.1055556"
+     inkscape:cx="539.54774"
+     inkscape:cy="647.18593"
+     inkscape:window-width="2560"
+     inkscape:window-height="1374"
+     inkscape:window-x="2560"
+     inkscape:window-y="29"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24" />
+  <defs
+     id="defs4">
+    <linearGradient
+       id="navyOverlay"
+       x1="0"
+       y1="0"
+       x2="0"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#0D1A63"
+         stop-opacity="0.40"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-color="#0D1A63"
+         stop-opacity="0.85"
+         id="stop2" />
     </linearGradient>
-    <linearGradient id="topShineSQ" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.20"/>
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    <linearGradient
+       id="topShineSQ"
+       x1="0"
+       y1="0"
+       x2="0"
+       y2="1">
+      <stop
+         offset="0"
+         stop-color="#FFFFFF"
+         stop-opacity="0.20"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#FFFFFF"
+         stop-opacity="0"
+         id="stop4" />
     </linearGradient>
   </defs>
-
   <!-- Top half: photo + overlay -->
-  <image xlink:href="../../assets/images/socials/11_busy_workshop.jpg"
-         x="0" y="0" width="1080" height="640" preserveAspectRatio="xMidYMid slice"/>
-  <rect x="0" y="0" width="1080" height="640" fill="url(#navyOverlay)"/>
-
+  <image
+     xlink:href="../../assets/images/socials/11_busy_workshop.jpg"
+     x="0"
+     y="0"
+     width="1080"
+     height="640"
+     preserveAspectRatio="xMidYMid slice"
+     id="image4" />
+  <rect
+     x="0"
+     y="0"
+     width="1080"
+     height="640"
+     fill="url(#navyOverlay)"
+     id="rect4" />
   <!-- Headline on photo -->
-  <text x="60" y="320" font-family="Inter Display, Inter, sans-serif"
-        font-weight="800" font-size="76" fill="#FFFFFF" letter-spacing="-2">Make stuff.</text>
-  <text x="60" y="400" font-family="Inter Display, Inter, sans-serif"
-        font-weight="800" font-size="76" fill="#F68048" letter-spacing="-2">Make friends.</text>
-  <text x="60" y="480" font-family="Inter Display, Inter, sans-serif"
-        font-weight="800" font-size="76" fill="#FFFFFF" letter-spacing="-2">Make Odense.</text>
-
+  <text
+     x="60"
+     y="320"
+     font-family="Inter Display, Inter, sans-serif"
+     font-weight="800"
+     font-size="76"
+     fill="#FFFFFF"
+     letter-spacing="-2"
+     id="text4">Make stuff.</text>
+  <text
+     x="60"
+     y="400"
+     font-family="Inter Display, Inter, sans-serif"
+     font-weight="800"
+     font-size="76"
+     fill="#F68048"
+     letter-spacing="-2"
+     id="text5">Make friends.</text>
+  <text
+     x="60"
+     y="480"
+     font-family="Inter Display, Inter, sans-serif"
+     font-weight="800"
+     font-size="76"
+     fill="#FFFFFF"
+     letter-spacing="-2"
+     id="text6">Make Odense.</text>
   <!-- Bottom panel: cream -->
-  <rect x="0" y="640" width="1080" height="440" fill="#EDF2F8"/>
-
-  <!-- Cube mark, small, top-left of bottom panel -->
-  <g transform="translate(170, 820) scale(0.55)">
-    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
-    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="url(#topShineSQ)"/>
-    <rect x="-44" y="-134" width="88" height="88" fill="#0D1A63" rx="8" ry="8"/>
-    <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#0D1A63"/>
-    <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
-    <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
-    <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
-      <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#0D1A63"/>
+  <rect
+     x="0"
+     y="640"
+     width="1080"
+     height="440"
+     fill="#EDF2F8"
+     id="rect6" />
+  <!-- Gear mark (gear-mark.svg colorway), top-left of bottom panel -->
+  <g
+     transform="matrix(0.36,0,0,0.36,170.90452,800.67839)"
+     id="g20">
+    <g
+       fill="#0d1a63"
+       stroke="#0d1a63"
+       stroke-width="14"
+       stroke-linejoin="round"
+       stroke-linecap="round"
+       id="g17">
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         id="polygon6" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(30)"
+         id="polygon7" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(60)"
+         id="polygon8" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(90)"
+         id="polygon9" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(120)"
+         id="polygon10" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(150)"
+         id="polygon11" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="scale(-1)"
+         id="polygon12" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(-150)"
+         id="polygon13" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(-120)"
+         id="polygon14" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(-90)"
+         id="polygon15" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(-60)"
+         id="polygon16" />
+      <polygon
+         points="32,-345 40,-290 -40,-290 -32,-345 "
+         transform="rotate(-30)"
+         id="polygon17" />
     </g>
+    <circle
+       r="290"
+       fill="#0d1a63"
+       id="circle17"
+       cx="0"
+       cy="0" />
+    <circle
+       r="220"
+       fill="#edf2f8"
+       id="circle18"
+       cx="0"
+       cy="0" />
+    <circle
+       r="220"
+       fill="none"
+       stroke="#0d1a63"
+       stroke-width="12"
+       id="circle19"
+       cx="0"
+       cy="0" />
+    <text
+       x="0"
+       y="-10"
+       font-family="'Inter Display', Inter, sans-serif"
+       font-weight="900"
+       font-size="270px"
+       fill="#f68048"
+       stroke="#f68048"
+       stroke-width="14"
+       stroke-linejoin="round"
+       stroke-linecap="round"
+       text-anchor="middle"
+       letter-spacing="-4"
+       id="text19">T</text>
+    <text
+       x="0"
+       y="185"
+       font-family="'Inter Display', Inter, sans-serif"
+       font-weight="900"
+       font-size="230px"
+       fill="#0d1a63"
+       stroke="#0d1a63"
+       stroke-width="14"
+       stroke-linejoin="round"
+       stroke-linecap="round"
+       text-anchor="middle"
+       letter-spacing="-4"
+       id="text20">M</text>
   </g>
-
   <!-- Wordmark + tagline + handle -->
-  <text x="320" y="780" font-family="Inter Display, Inter, sans-serif"
-        font-weight="800" font-size="64" fill="#0D1A63" letter-spacing="-2">O'Town Makerspace</text>
-  <text x="320" y="830" font-family="Inter, sans-serif" font-weight="500"
-        font-size="30" fill="#1A2CA3" letter-spacing="0">Community workshop in central Odense.</text>
-  <text x="320" y="870" font-family="Inter, sans-serif" font-weight="500"
-        font-size="30" fill="#1A2CA3" letter-spacing="0">3D printers · laser · CNC · wood · electronics.</text>
-
+  <text
+     x="320"
+     y="780"
+     font-family="Inter Display, Inter, sans-serif"
+     font-weight="800"
+     font-size="64"
+     fill="#0D1A63"
+     letter-spacing="-2"
+     id="text21">O'Town Makerspace</text>
+  <text
+     x="320"
+     y="830"
+     font-family="Inter, sans-serif"
+     font-weight="500"
+     font-size="30"
+     fill="#1A2CA3"
+     letter-spacing="0"
+     id="text22">Community workshop in central Odense.</text>
+  <text
+     x="320"
+     y="870"
+     font-family="Inter, sans-serif"
+     font-weight="500"
+     font-size="30"
+     fill="#1A2CA3"
+     letter-spacing="0"
+     id="text23">3D printers · laser · CNC · wood · electronics.</text>
   <!-- CTA bar -->
-  <rect x="60" y="950" width="960" height="80" rx="40" ry="40" fill="#F68048"/>
-  <text x="540" y="1004" font-family="Inter, sans-serif" font-weight="700"
-        font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">DROP IN FOR A FREE TOUR  →  makerspace.olaru.dk</text>
+  <rect
+     x="60"
+     y="950"
+     width="960"
+     height="80"
+     rx="40"
+     ry="40"
+     fill="#F68048"
+     id="rect23" />
+  <text
+     x="540"
+     y="1004"
+     font-family="Inter, sans-serif"
+     font-weight="700"
+     font-size="34px"
+     fill="#ffffff"
+     text-anchor="middle"
+     letter-spacing="2"
+     id="text24">DROP IN FOR A FREE TOUR →otownmakerspace.dk</text>
 </svg>

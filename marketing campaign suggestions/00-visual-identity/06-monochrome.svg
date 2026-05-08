@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  Monochrome / single-ink lockup.
-  Uses the outline gear + outline wordmark from the static folder, so the
-  whole composition reads as line-art only — ideal for embroidery, etching,
-  embossing, single-ink printing, watermarks.
+  Monochrome lockup — outline gear above outline wordmark, plus tagline.
+  Single-stroke line-art only, no fills.
+
+  Use for: laser engraving, embroidery, embossing, single-ink printing,
+  watermarks, etched signage. Anything where the production process can
+  only render strokes (a laser cutter cuts a line; an embroidery machine
+  follows a path; a single-PMS printer lays one ink).
+
+  Canvas: 800 × 1000 (4:5) — same proportions as 03-vertical-lockup.svg
+  so the monochrome version is a drop-in substitute when production
+  constraints disallow filled colour.
+
+  Both pieces reference the canonical outline variants in this folder.
+  If you want a non-navy outline (white for dark engraving substrates,
+  black for high-contrast etching), edit the local copies and re-render.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
-  <!-- Gear (outline) -->
-  <image href="../../static/images/branding/logos/gear-mark-outline.svg"
-         x="100" y="40" width="600" height="600"/>
+  <!-- Gear (outline), top -->
+  <image href="gear-mark-outline.svg" x="100" y="40" width="600" height="600"/>
 
-  <!-- Wordmark (outline), below -->
-  <image href="../../static/images/branding/logos/wordmark-outline.svg"
-         x="40" y="680" width="720" height="192"/>
+  <!-- Wordmark (outline), bottom -->
+  <image href="wordmark-outline.svg" x="40" y="680" width="720" height="192"/>
 
   <!-- Tagline -->
   <text x="400" y="940" font-family="Inter, sans-serif" font-weight="500"

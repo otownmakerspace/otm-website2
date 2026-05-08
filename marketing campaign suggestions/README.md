@@ -5,13 +5,16 @@ This folder contains the visual-identity refresh and a set of social-media brand
 ```
 marketing campaign suggestions/
 ├── README.md                         <- you are here
-├── 00-visual-identity/               <- logo improvements + brand spec
+├── 00-visual-identity/               <- canonical logo set + BRAND_GUIDELINES.md
 ├── 01-instagram/
 ├── 02-facebook/
 ├── 03-google-business/
 ├── 04-google-ads/
 └── _render/                          <- generated PNGs at platform-correct sizes
 ```
+
+The brand logos in `00-visual-identity/` mirror `static/images/branding/logos/`
+exactly — edit either set and copy the change to the other.
 
 ## Brand voice — friendly, safe, enthusiastic
 
@@ -41,7 +44,7 @@ Two cuts of the same family — paired intentionally so site + logo feel like on
 - **Inter Display, 900** — logo wordmark, large headlines, hero text (≥24 px)
 - **Inter, 400–600** — body, UI, paragraphs (already loaded by the site theme)
 
-See `00-visual-identity/BRAND_GUIDELINES.md` § *Type system* for the full rationale, the loading-status note (Inter Display isn't currently shipped by the site), and the stroke-padding × letter-spacing rule.
+See `00-visual-identity/BRAND_GUIDELINES.md` § *Typography* for the full rationale, the rounded-corner stroke trick, and the stroke-padding × letter-spacing rule. (Note: Inter Display is not yet loaded by the site theme — the wordmark falls back to Inter at body weights until the @font-face is added.)
 
 ---
 
@@ -116,6 +119,7 @@ These are the assets uploaded to a single Responsive Display Ad; Google composes
 
 ## Production notes
 
-- All source files in this folder are **SVG**. Edit text and colours directly; re-export PNGs with the `_render/render.sh` script (run it from the repo root).
-- The current site logo is `static/images/branding/otown_logo_2.svg`. Improved variants (see `00-visual-identity/`) are intended as additions, not replacements — adopt them gradually.
+- All source files in this folder are **SVG**. Edit text and colours directly; re-export PNGs with the `_render/render.sh` script (run it from anywhere — it resolves paths relative to itself).
+- The canonical logo set lives in `static/images/branding/logos/` and is mirrored into `00-visual-identity/` for quick reference. Use `gear-mark.svg` as the primary symbol and `wordmark-consolidated.svg` as the primary type lockup; pick variants per `BRAND_GUIDELINES.md` § *Pairing matrix*.
 - Photography for posts: prefer the existing `assets/images/socials/` and `assets/images/workspace/` collections — they already capture the friendly, hands-on, real-people energy we want.
+- Tool category icons (3D printer, laser, CNC, etc.) live in `assets/images/icons/` (renamed from `assets/images/logos/` — update any references you copy from older drafts).

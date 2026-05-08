@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-  Google Ads — leaderboard banner (728x90)
+  Gear mark — MONO ORANGE variant on a navy rounded tile.
+  The original mono-orange used a cream tile, but orange-on-cream is the
+  brand's weakest contrast pair (orange's brightness is only marginally
+  above cream's). Pairing the orange gear and orange letters with a navy
+  tile + navy cap gives high contrast at every layer. The orange inner
+  ring stroke now reads as a bright frame between the orange gear body
+  and the navy interior.
 -->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 728 90" width="728" height="90">
-  <rect x="0" y="0" width="728" height="90" fill="#0D1A63"/>
-
-  <!-- Gear mark left (gear-mark-white.svg colorway, knockout on navy) -->
-  <g transform="translate(58, 45) scale(0.11)">
-    <g fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <rect width="800" height="800" rx="120" ry="120" fill="#0D1A63"/>
+  <g transform="translate(400, 400)">
+    <g fill="#F68048" stroke="#F68048" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
       <polygon points="-32,-345 32,-345 40,-290 -40,-290"/>
       <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(30)"/>
       <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(60)"/>
@@ -21,23 +25,14 @@
       <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(300)"/>
       <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(330)"/>
     </g>
-    <circle r="290" fill="#FFFFFF"/>
+    <circle r="290" fill="#F68048"/>
     <circle r="220" fill="#0D1A63"/>
-    <circle r="220" fill="none" stroke="#FFFFFF" stroke-width="12"/>
+    <circle r="220" fill="none" stroke="#F68048" stroke-width="12"/>
     <text x="0" y="-10" font-family="Inter Display, Inter, sans-serif" font-weight="900" font-size="270"
-          fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"
+          fill="#F68048" stroke="#F68048" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"
           text-anchor="middle" letter-spacing="-4">T</text>
     <text x="0" y="185" font-family="Inter Display, Inter, sans-serif" font-weight="900" font-size="230"
-          fill="#FFFFFF" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"
+          fill="#F68048" stroke="#F68048" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"
           text-anchor="middle" letter-spacing="-4">M</text>
   </g>
-
-  <text x="125" y="42" font-family="Inter Display, Inter, sans-serif"
-        font-weight="800" font-size="22" fill="#FFFFFF" letter-spacing="-1">Got an idea? We have the tools.</text>
-  <text x="125" y="68" font-family="Inter, sans-serif" font-weight="500"
-        font-size="14" fill="#EDF2F8">O'Town Makerspace · 3D · Laser · CNC · Wood · Electronics</text>
-
-  <rect x="540" y="25" width="160" height="40" rx="20" fill="#F68048"/>
-  <text x="620" y="51" font-family="Inter, sans-serif" font-weight="700"
-        font-size="14" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">FREE TOUR</text>
 </svg>

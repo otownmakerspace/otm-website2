@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Wordmark — consolidated with gear-mark.svg design system.
+
+  Source: static/images/branding/otown_logo_2.svg (the production wordmark
+  referenced by hugo.toml).
+
+  Original styling:
+    Font           Arial Black 900 (outlined paths, not editable text)
+    Blue           #3B4BA0   (older un-harmonised brand blue)
+    Orange         #FF5722   ("hot" orange)
+    Letter-spacing 20 (O'TOWN)  /  -2 (MAKERSPACE)
+    Corners        sharp
+    Layout         O'TOWN above MAKERSPACE, both all-caps
+
+  Consolidated styling (changes that align with gear-mark.svg):
+    Font           Inter Display 900     ← matches gear's TM letters
+    Navy           #0D1A63               ← matches gear navy
+    Warm orange    #F68048               ← matches gear orange
+    Letter-spacing -4 across both lines  ← matches gear (-4)
+    Corners        rounded via stroke trick (linejoin+linecap=round),
+                   stroke-width proportional to font-size:
+                     O'TOWN     200 → 12 (≈6% ratio)
+                     MAKERSPACE 130 → 8  (same ratio)
+    Layout         preserved (O'TOWN above MAKERSPACE, all-caps)
+
+  Why <text> not paths during iteration: editable inline. When the design
+  is finalised, open in Inkscape and run Path → Object to Path so the SVG
+  renders identically on machines without Inter Display installed.
+
+  Canvas: 1200 × 320 (original was 1200 × 300; added 20 px for breathing
+  room around the rounded-stroke-padded letters).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320">
+  <!--
+    Letter-spacing values must compensate for stroke padding.
+    Each glyph grows by stroke-width/2 on every side, so adjacent letters
+    lose stroke-width pixels of gap. Adding back +stroke-width restores
+    the natural visual spacing; we then bias slightly tight (+8 for O'TOWN,
+    +4 for MAKERSPACE) to keep the modern-display feel of the gear's TM
+    without letters colliding.
+  -->
+
+  <!-- O'TOWN — navy, larger, top -->
+  <text x="600" y="155"
+        font-family="Inter Display, Inter, sans-serif"
+        font-weight="900" font-size="200"
+        fill="#0D1A63" stroke="#0D1A63" stroke-width="12"
+        stroke-linejoin="round" stroke-linecap="round"
+        text-anchor="middle" letter-spacing="8">O'TOWN</text>
+
+  <!-- MAKERSPACE — warm orange, smaller, bottom -->
+  <text x="600" y="290"
+        font-family="Inter Display, Inter, sans-serif"
+        font-weight="900" font-size="130"
+        fill="#F68048" stroke="#F68048" stroke-width="8"
+        stroke-linejoin="round" stroke-linecap="round"
+        text-anchor="middle" letter-spacing="4">MAKERSPACE</text>
+</svg>

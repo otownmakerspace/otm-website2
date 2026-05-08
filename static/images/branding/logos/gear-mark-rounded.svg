@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Concept 06 v2: Gear Orbit (typographic refinement)
+  Outer 12-tooth gear acts as a frame.
+  Inside: O is implied by the gear's circular hub; T and M sit cleanly stacked.
+  Doubled-M from v1 fixed: now a single proper M with V-notches.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <rect width="800" height="800" rx="120" ry="120" fill="#EDF2F8"/>
+
+  <g transform="translate(400, 400)">
+    <!--
+      Gear teeth: 12 evenly spaced trapezoidal teeth.
+      Trapezoid points (clockwise from tooth top-left):
+        outer-left, outer-right, base-right, base-left.
+      Wide base sits flush against the gear body at r=290; narrow tip
+      reaches to r=345.
+
+      The shared <g> applies a navy stroke matching the fill, with
+      stroke-linejoin="round" — every corner of every polygon is rounded
+      with radius = stroke-width/2 = 7 px. The stroke also adds 7 px of
+      chunk to every edge, contributing to the overall heavier feel.
+    -->
+    <g fill="#0D1A63" stroke="#0D1A63" stroke-width="14"
+       stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(30)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(60)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(90)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(120)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(150)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(180)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(210)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(240)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(270)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(300)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(330)"/>
+    </g>
+
+    <!-- Outer gear body — chunkier ring (r=290, was 270) -->
+    <circle r="290" fill="#0D1A63"/>
+    <!-- Inner cream face (the implied O — letters live in here) -->
+    <circle r="220" fill="#EDF2F8"/>
+    <!-- Inner navy ring frame — slightly thicker too (12, was 8) -->
+    <circle r="220" fill="none" stroke="#0D1A63" stroke-width="12"/>
+
+    <!--
+      T and M as real type — Inter Display 900 (a heavy display weight from
+      the same family used in the wordmark). Both letters share stroke
+      weight, terminals, and optical proportions because they're cut from
+      the same typeface — no more style mismatch.
+
+      Note: when you finalise this mark, convert these <text> elements to
+      <path> in Inkscape (Path → Object to Path) so the SVG renders the
+      same on machines without Inter Display installed.
+
+      text-anchor="middle" centres each letter on x=0.
+      The y attribute sets the baseline — each glyph extends roughly
+      0.72 × font-size above the baseline (Inter's cap-height ratio).
+    -->
+    <!--
+      Letter layout — sized to fill the cream area while clearing all edges.
+
+      Two pinch-points constrain max size:
+        - T's crossbar is widest at the cap-top, where cream tapers (top of circle).
+        - M is widest at the baseline, where cream tapers (bottom of circle).
+      Plus a 14-px-min gap between T baseline and M cap-top (to avoid the
+      stroke-padded glyphs merging visually).
+
+      Font-size 230 is the largest that satisfies all three at once.
+
+      Rounded corners come from the same stroke trick used on the teeth:
+      stroke matches the fill colour, with linejoin+linecap = round.
+      Stroke-width 14 gives ~7 px corner radius — visibly soft, not blobby.
+    -->
+    <text x="0" y="-10"
+          font-family="Inter Display, Inter, sans-serif"
+          font-weight="900" font-size="270"
+          fill="#F68048" stroke="#F68048" stroke-width="14"
+          stroke-linejoin="round" stroke-linecap="round"
+          text-anchor="middle" letter-spacing="-4">T</text>
+
+    <text x="0" y="185"
+          font-family="Inter Display, Inter, sans-serif"
+          font-weight="900" font-size="230"
+          fill="#0D1A63" stroke="#0D1A63" stroke-width="14"
+          stroke-linejoin="round" stroke-linecap="round"
+          text-anchor="middle" letter-spacing="-4">M</text>
+  </g>
+</svg>

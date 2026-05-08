@@ -20,33 +20,33 @@
     <!-- Row 1 -->
     <g transform="translate(180, 380)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/3d-print.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/3d-print.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">3D Printing</text>
     </g>
     <g transform="translate(540, 380)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/lasercutter.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/lasercutter.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">Laser Cutting</text>
     </g>
     <g transform="translate(900, 380)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/cnc.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/cnc.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">CNC</text>
     </g>
     <!-- Row 2 -->
     <g transform="translate(180, 720)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/wood-workshop.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/wood-workshop.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">Woodwork</text>
     </g>
     <g transform="translate(540, 720)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/electronics.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/electronics.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">Electronics</text>
     </g>
     <g transform="translate(900, 720)">
       <circle r="100" fill="#FFFFFF" stroke="#1A2CA3" stroke-width="3"/>
-      <image xlink:href="../../assets/images/logos/sewing.svg" x="-70" y="-70" width="140" height="140"/>
+      <image xlink:href="../../assets/images/icons/sewing.svg" x="-70" y="-70" width="140" height="140"/>
       <text y="170">Textiles</text>
     </g>
   </g>
