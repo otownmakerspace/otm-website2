@@ -4,8 +4,14 @@
       <div class="flex flex-col items-center gap-4 xl:col-span-4 xl:items-start">
         <a class="flex items-center gap-2" href="{{ site.BaseURL }}">
           {{ with site.Params.logo }}
-          <img src="{{ . | absURL }}" alt="{{ site.Title }}" class="h-10 w-auto xl:h-12">
-          {{ else }}
+          <img src="{{ . | absURL }}" alt="{{ site.Title }}"
+               class="site-logo site-logo--light h-10 w-auto xl:h-12">
+          {{ end }}
+          {{ with site.Params.logoDark }}
+          <img src="{{ . | absURL }}" alt="{{ site.Title }}"
+               class="site-logo site-logo--dark h-10 w-auto xl:h-12">
+          {{ end }}
+          {{ if and (not site.Params.logo) (not site.Params.logoDark) }}
           <span class="text-secondary text-xl font-semibold uppercase xl:text-2xl">{{ site.Title }}</span>
           {{ end }}
         </a>

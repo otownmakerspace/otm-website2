@@ -14,6 +14,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ "images/branding/logos/gear-mark.svg" | relURL }}" />
+
+    <!--
+      Light/dark logo swap.
+      The site logo is rendered TWICE in header.html and footer.html
+      (once with .site-logo--light, once with .site-logo--dark). These
+      rules show only one at a time based on whether <html> has the
+      .dark class — toggled by toggleDarkMode() further down.
+    -->
+    <style>
+      .site-logo--dark { display: none; }
+      html.dark .site-logo--light { display: none; }
+      html.dark .site-logo--dark  { display: block; }
+    </style>
+
     {{ $description := "" }}
     {{ if .IsHome }}
       {{ $description = .Site.Params.description }}
@@ -356,6 +372,9 @@
       function toggleDarkMode(on) {
         document.querySelectorAll('#darkToggleDesktop,#darkToggleMobile').forEach(function(el) { el.checked = on; });
         var root = document.documentElement;
+        // Class hook for CSS rules (e.g. site-logo light/dark swap in <head>).
+        // Done first so the logo flips at the same moment the colours do.
+        root.classList.toggle('dark', on);
         var keys = ['accent','accent-2','primary','primary-2','secondary','secondary-2','gray-light','gray-dark','tertiary','surface'];
         if (on) {
           savedLightRgb = {};

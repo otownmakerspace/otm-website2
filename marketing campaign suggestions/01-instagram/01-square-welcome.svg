@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Instagram square feed post (1080x1080)
+  Use case: pinned welcome / "what is O'Town Makerspace" card
+  Layout: top half hero photo with navy gradient overlay, bottom half cream
+  panel with cube mark + headline + tagline. Friendly + clear.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1080 1080" width="1080" height="1080">
+  <defs>
+    <linearGradient id="navyOverlay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.40"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="topShineSQ" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top half: photo + overlay -->
+  <image xlink:href="../../assets/images/socials/11_busy_workshop.jpg"
+         x="0" y="0" width="1080" height="640" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="1080" height="640" fill="url(#navyOverlay)"/>
+
+  <!-- Headline on photo -->
+  <text x="60" y="320" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="76" fill="#FFFFFF" letter-spacing="-2">Make stuff.</text>
+  <text x="60" y="400" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="76" fill="#F68048" letter-spacing="-2">Make friends.</text>
+  <text x="60" y="480" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="76" fill="#FFFFFF" letter-spacing="-2">Make Odense.</text>
+
+  <!-- Bottom panel: cream -->
+  <rect x="0" y="640" width="1080" height="440" fill="#EDF2F8"/>
+
+  <!-- Cube mark, small, top-left of bottom panel -->
+  <g transform="translate(170, 820) scale(0.55)">
+    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
+    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="url(#topShineSQ)"/>
+    <rect x="-44" y="-134" width="88" height="88" fill="#0D1A63" rx="8" ry="8"/>
+    <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#0D1A63"/>
+    <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
+    <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
+    <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
+      <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#0D1A63"/>
+    </g>
+  </g>
+
+  <!-- Wordmark + tagline + handle -->
+  <text x="320" y="780" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="64" fill="#0D1A63" letter-spacing="-2">O'Town Makerspace</text>
+  <text x="320" y="830" font-family="Inter, sans-serif" font-weight="500"
+        font-size="30" fill="#1A2CA3" letter-spacing="0">Community workshop in central Odense.</text>
+  <text x="320" y="870" font-family="Inter, sans-serif" font-weight="500"
+        font-size="30" fill="#1A2CA3" letter-spacing="0">3D printers · laser · CNC · wood · electronics.</text>
+
+  <!-- CTA bar -->
+  <rect x="60" y="950" width="960" height="80" rx="40" ry="40" fill="#F68048"/>
+  <text x="540" y="1004" font-family="Inter, sans-serif" font-weight="700"
+        font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">DROP IN FOR A FREE TOUR  →  makerspace.olaru.dk</text>
+</svg>

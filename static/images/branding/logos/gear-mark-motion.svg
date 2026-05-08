@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Gear mark — motion variant.
+  Same gear as gear-mark.svg, plus three trailing arc strokes on the right
+  side suggesting clockwise rotation. Arcs sit just outside the teeth at
+  r=380, in the brand orange so they read as accent, not structure.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <rect width="800" height="800" fill="#EDF2F8"/>
+
+  <g transform="translate(400, 400)">
+    <!-- Gear teeth -->
+    <g fill="#0D1A63" stroke="#0D1A63" stroke-width="14"
+       stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(30)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(60)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(90)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(120)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(150)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(180)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(210)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(240)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(270)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(300)"/>
+      <polygon points="-32,-345 32,-345 40,-290 -40,-290" transform="rotate(330)"/>
+    </g>
+    <!-- Outer body -->
+    <circle r="290" fill="#0D1A63"/>
+    <!-- Inner cream face -->
+    <circle r="220" fill="#EDF2F8"/>
+    <!-- Inner ring -->
+    <circle r="220" fill="none" stroke="#0D1A63" stroke-width="12"/>
+    <!-- T (large, touches the wheel) -->
+    <text x="0" y="-10" font-family="Inter Display, Inter, sans-serif"
+          font-weight="900" font-size="270"
+          fill="#F68048" stroke="#F68048" stroke-width="14"
+          stroke-linejoin="round" stroke-linecap="round"
+          text-anchor="middle" letter-spacing="-4">T</text>
+    <!-- M -->
+    <text x="0" y="185" font-family="Inter Display, Inter, sans-serif"
+          font-weight="900" font-size="230"
+          fill="#0D1A63" stroke="#0D1A63" stroke-width="14"
+          stroke-linejoin="round" stroke-linecap="round"
+          text-anchor="middle" letter-spacing="-4">M</text>
+
+    <!--
+      Motion streaks — three concentric arcs on the right side, suggesting
+      clockwise rotation. Arcs at r=380 (just outside teeth at r≈352
+      with stroke padding), spanning 20° each, stepped at -45→-25, -10→10,
+      25→45 (degrees from positive x-axis).
+    -->
+    <g fill="none" stroke="#F68048" stroke-width="16" stroke-linecap="round">
+      <path d="M 269,-269 A 380,380 0 0 1 344,-161"/>
+      <path d="M 374,-66 A 380,380 0 0 1 374,66"/>
+      <path d="M 344,161 A 380,380 0 0 1 269,269"/>
+    </g>
+  </g>
+</svg>

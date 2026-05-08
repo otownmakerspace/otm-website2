@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Google Ads — half-page banner (300x600)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 300 600" width="300" height="600">
+  <defs>
+    <linearGradient id="hpOverlay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.20"/>
+      <stop offset="0.5" stop-color="#0D1A63" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.98"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="300" height="600" fill="#0D1A63"/>
+
+  <!-- Photo upper half -->
+  <image xlink:href="../../assets/images/socials/16_ida_laser.jpg"
+         x="0" y="0" width="300" height="350" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="300" height="350" fill="url(#hpOverlay)"/>
+
+  <!-- Cube mark -->
+  <g transform="translate(150, 80) scale(0.17)">
+    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
+    <rect x="-44" y="-134" width="88" height="88" fill="#FFFFFF" rx="8" ry="8"/>
+    <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#1A2CA3"/>
+    <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
+    <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
+    <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
+      <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <text x="150" y="170" font-family="Inter, sans-serif" font-weight="700"
+        font-size="14" fill="#F68048" text-anchor="middle" letter-spacing="3">O'TOWN MAKERSPACE</text>
+
+  <!-- Headline -->
+  <text x="150" y="400" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">Make</text>
+  <text x="150" y="440" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="34" fill="#F68048" text-anchor="middle" letter-spacing="-1">things.</text>
+  <text x="150" y="480" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="34" fill="#FFFFFF" text-anchor="middle" letter-spacing="-1">In Odense.</text>
+
+  <text x="150" y="520" font-family="Inter, sans-serif" font-weight="500"
+        font-size="13" fill="#EDF2F8" text-anchor="middle">3D · Laser · CNC · Wood · Electronics</text>
+
+  <rect x="40" y="540" width="220" height="40" rx="20" fill="#F68048"/>
+  <text x="150" y="566" font-family="Inter, sans-serif" font-weight="700"
+        font-size="14" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BOOK A FREE TOUR</text>
+</svg>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Facebook Event cover (1920x1005, ~1.91:1)
+  Mobile crops to centre 16:9. Keep type centred and within central 1080-wide zone.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1920 1005" width="1920" height="1005">
+  <defs>
+    <linearGradient id="evOverlay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.92"/>
+    </linearGradient>
+  </defs>
+
+  <image xlink:href="../../assets/images/socials/07_meet_panorama.jpg"
+         x="0" y="0" width="1920" height="1005" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="1920" height="1005" fill="url(#evOverlay)"/>
+
+  <!-- Centred content within mobile-safe zone (x=420..1500, ~1080 wide) -->
+
+  <!-- Tag pill -->
+  <rect x="820" y="220" width="280" height="60" rx="30" fill="#F68048"/>
+  <text x="960" y="262" font-family="Inter, sans-serif" font-weight="700"
+        font-size="28" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">OPEN HOUSE</text>
+
+  <!-- Big headline -->
+  <text x="960" y="430" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="120" fill="#FFFFFF" text-anchor="middle"
+        letter-spacing="-3">Saturday, June 14</text>
+  <text x="960" y="560" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="120" fill="#F68048" text-anchor="middle"
+        letter-spacing="-3">14:00 — 17:00</text>
+
+  <!-- Subline -->
+  <text x="960" y="660" font-family="Inter, sans-serif" font-weight="500"
+        font-size="36" fill="#EDF2F8" text-anchor="middle">Tour the workshop · Meet the makers · Coffee + cake</text>
+
+  <!-- Dotted divider -->
+  <line x1="600" y1="730" x2="1320" y2="730" stroke="#F68048" stroke-width="2" stroke-dasharray="6 8"/>
+
+  <!-- Address -->
+  <text x="960" y="800" font-family="Inter, sans-serif" font-weight="700"
+        font-size="32" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">HAVNEGADE 57 · 5000 ODENSE C</text>
+  <text x="960" y="850" font-family="Inter, sans-serif" font-weight="500"
+        font-size="28" fill="#EDF2F8" text-anchor="middle">Free entry · All ages welcome · No registration needed</text>
+</svg>

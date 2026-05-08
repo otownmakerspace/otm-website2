@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Google Ads Responsive Display — square marketing image (1200x1200)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <linearGradient id="adS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.40"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.92"/>
+    </linearGradient>
+  </defs>
+
+  <image xlink:href="../../assets/images/socials/16_ida_laser.jpg"
+         x="0" y="0" width="1200" height="1200" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="1200" height="1200" fill="url(#adS)"/>
+
+  <!-- Cube mark + name top -->
+  <g transform="translate(80, 130)">
+    <g transform="translate(0, 0) scale(0.32)">
+      <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
+      <rect x="-44" y="-134" width="88" height="88" fill="#FFFFFF" rx="8" ry="8"/>
+      <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#1A2CA3"/>
+      <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
+      <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
+      <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
+        <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#FFFFFF"/>
+      </g>
+    </g>
+    <text x="100" y="34" font-family="Inter, sans-serif" font-weight="700" font-size="36"
+          fill="#FFFFFF">O'Town Makerspace</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="780" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="100" fill="#FFFFFF" letter-spacing="-3">Maker tools</text>
+  <text x="80" y="900" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="100" fill="#F68048" letter-spacing="-3">in central Odense.</text>
+
+  <text x="80" y="980" font-family="Inter, sans-serif" font-weight="500"
+        font-size="36" fill="#EDF2F8">Community workshop · 24/7 member access</text>
+
+  <rect x="80" y="1050" width="380" height="80" rx="40" fill="#F68048"/>
+  <text x="270" y="1102" font-family="Inter, sans-serif" font-weight="700"
+        font-size="28" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">BOOK A FREE TOUR</text>
+</svg>

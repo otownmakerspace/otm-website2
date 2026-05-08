@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Facebook / Open Graph link share card (1200x630, 1.91:1)
+  Replaces or supplements static/images/og-default.jpg.
+  Same dimensions also work for: LinkedIn link share, Twitter summary_large_image.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="ogOverlay" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.92"/>
+      <stop offset="0.65" stop-color="#0D1A63" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <image xlink:href="../../assets/images/workspace/main_area/DSC02750.jpg"
+         x="0" y="0" width="1200" height="630" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="1200" height="630" fill="url(#ogOverlay)"/>
+
+  <!-- Brand mark + name top-left -->
+  <g transform="translate(80, 80)">
+    <g transform="translate(0, 0) scale(0.22)">
+      <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
+      <rect x="-44" y="-134" width="88" height="88" fill="#FFFFFF" rx="8" ry="8"/>
+      <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#1A2CA3"/>
+      <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
+      <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
+      <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
+        <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#FFFFFF"/>
+      </g>
+    </g>
+    <text x="78" y="30" font-family="Inter, sans-serif" font-weight="700" font-size="26"
+          fill="#FFFFFF">O'Town Makerspace</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="340" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="76" fill="#FFFFFF" letter-spacing="-2">Make what you</text>
+  <text x="80" y="420" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="76" fill="#F68048" letter-spacing="-2">imagine.</text>
+
+  <!-- Subline -->
+  <text x="80" y="490" font-family="Inter, sans-serif" font-weight="500"
+        font-size="28" fill="#EDF2F8">A community workshop in central Odense.</text>
+  <text x="80" y="528" font-family="Inter, sans-serif" font-weight="500"
+        font-size="28" fill="#EDF2F8">Tools, training, and 24/7 access for members.</text>
+
+  <!-- Domain pill -->
+  <rect x="80" y="560" width="320" height="46" rx="23" fill="#FFFFFF" fill-opacity="0.15"
+        stroke="#F68048" stroke-width="2"/>
+  <text x="240" y="591" font-family="Inter, sans-serif" font-weight="700" font-size="22"
+        fill="#FFFFFF" text-anchor="middle" letter-spacing="2">makerspace.olaru.dk</text>
+</svg>

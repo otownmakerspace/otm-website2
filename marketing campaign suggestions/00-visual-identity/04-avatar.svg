@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  04 — circular avatar / profile-picture variant.
+  Just the gear-mark, full canvas. Square crop is intentional so social
+  platforms can apply their own circular mask without losing the mark.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <image href="../../static/images/branding/logos/gear-mark.svg"
+         x="0" y="0" width="800" height="800"/>
+</svg>

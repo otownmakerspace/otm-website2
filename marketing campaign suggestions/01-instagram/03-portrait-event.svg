@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Instagram portrait feed post (1080x1350) — 4:5 aspect
+  Use case: event announcement (open house, workshop, social night)
+  Editable text fields are surrounded by easy-to-find tokens.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1080 1350" width="1080" height="1350">
+  <defs>
+    <linearGradient id="navyDeep" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1A2CA3"/>
+      <stop offset="1" stop-color="#0D1A63"/>
+    </linearGradient>
+    <linearGradient id="photoOverlay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1A63" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#0D1A63" stop-opacity="0.80"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1080" height="1350" fill="url(#navyDeep)"/>
+
+  <!-- Photo strip (top 60%) -->
+  <image xlink:href="../../assets/images/socials/12_assemble_arcade_frame.jpg"
+         x="0" y="0" width="1080" height="810" preserveAspectRatio="xMidYMid slice"/>
+  <rect x="0" y="0" width="1080" height="810" fill="url(#photoOverlay)"/>
+
+  <!-- Tag pill -->
+  <rect x="60" y="80" width="240" height="56" rx="28" fill="#F68048"/>
+  <text x="180" y="118" font-family="Inter, sans-serif" font-weight="700"
+        font-size="26" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">EVENT</text>
+
+  <!-- Date block -->
+  <text x="60" y="700" font-family="Inter, sans-serif" font-weight="500"
+        font-size="38" fill="#FFFFFF" letter-spacing="6">SAT · 14 JUNE · 14:00</text>
+
+  <!-- Big headline -->
+  <text x="60" y="900" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="100" fill="#FFFFFF" letter-spacing="-3">Open House</text>
+  <text x="60" y="1010" font-family="Inter Display, Inter, sans-serif"
+        font-weight="800" font-size="100" fill="#F68048" letter-spacing="-3">+ Tour</text>
+
+  <!-- Subhead -->
+  <text x="60" y="1090" font-family="Inter, sans-serif" font-weight="500"
+        font-size="38" fill="#EDF2F8">Free. All ages welcome. Just turn up.</text>
+  <text x="60" y="1140" font-family="Inter, sans-serif" font-weight="500"
+        font-size="38" fill="#EDF2F8">Coffee, cake, and a workshop tour.</text>
+
+  <!-- Address bar -->
+  <rect x="60" y="1200" width="960" height="100" rx="14" fill="#FFFFFF"/>
+  <text x="90" y="1240" font-family="Inter, sans-serif" font-weight="700"
+        font-size="26" fill="#0D1A63" letter-spacing="3">WHERE</text>
+  <text x="90" y="1280" font-family="Inter, sans-serif" font-weight="500"
+        font-size="30" fill="#1A2CA3">Havnegade 57, 5000 Odense C</text>
+
+  <!-- Small cube mark, bottom-right -->
+  <g transform="translate(950, 1250) scale(0.30)">
+    <path d="M 0,-180 L 156,-90 L 0,0 L -156,-90 Z" fill="#F68048"/>
+    <rect x="-44" y="-134" width="88" height="88" fill="#0D1A63" rx="8" ry="8"/>
+    <path d="M -156,-90 L -156,180 L 0,270 L 0,0 Z" fill="#0D1A63"/>
+    <path d="M -110,30 L -78,46 L -78,210 L -110,194 Z" fill="#F68048"/>
+    <path d="M 0,0 L 0,270 L 156,180 L 156,-90 Z" fill="#FF5722"/>
+    <g transform="matrix(1, -0.577, 0, 1, 0, 0)">
+      <path d="M 18,55 L 42,55 L 78,165 L 114,55 L 138,55 L 138,225 L 114,225 L 114,130 L 90,200 L 66,200 L 42,130 L 42,225 L 18,225 Z" fill="#0D1A63"/>
+    </g>
+  </g>
+</svg>

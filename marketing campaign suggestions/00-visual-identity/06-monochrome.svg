@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Monochrome / single-ink lockup.
+  Uses the outline gear + outline wordmark from the static folder, so the
+  whole composition reads as line-art only — ideal for embroidery, etching,
+  embossing, single-ink printing, watermarks.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <!-- Gear (outline) -->
+  <image href="../../static/images/branding/logos/gear-mark-outline.svg"
+         x="100" y="40" width="600" height="600"/>
+
+  <!-- Wordmark (outline), below -->
+  <image href="../../static/images/branding/logos/wordmark-outline.svg"
+         x="40" y="680" width="720" height="192"/>
+
+  <!-- Tagline -->
+  <text x="400" y="940" font-family="Inter, sans-serif" font-weight="500"
+        font-size="22" fill="#0D1A63" text-anchor="middle" letter-spacing="6">ODENSE · DENMARK</text>
+</svg>
