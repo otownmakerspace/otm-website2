@@ -6,3 +6,5 @@
 /frontend/docs/
 /frontend/.hugo_build.lock
 /frontend/resources/_gen/
+/api/server
+/api/local.db
