@@ -1,0 +1,27 @@
+{{ define "main" }}
+<section class="py-16">
+  <div class="container mx-auto max-w-2xl px-4">
+    <h1 class="text-secondary mb-6 font-secondary text-3xl font-bold">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="text-gray-dark mb-8">{{ . }}</div>
+    {{ end }}
+
+    {{/* The /subscriptions endpoint returns an htmx fragment rendered by the
+         backend. If the user isn't authenticated, the backend sends an
+         HX-Redirect header so htmx routes the user to /login/. */}}
+    <div id="subscriptions"
+         hx-get="/subscriptions"
+         hx-trigger="load"
+         hx-swap="innerHTML"
+         class="rounded-[10px] bg-surface p-8 shadow-sm">
+      <p class="text-gray-dark text-center">Loading your membership…</p>
+    </div>
+
+    <div class="mt-8 text-center">
+      <a href="/logout" class="text-secondary-2 hover:text-accent text-sm">Sign out</a>
+    </div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+{{ end }}

@@ -1,0 +1,25 @@
+{{ define "main" }}
+<section class="py-16">
+  <div class="container mx-auto max-w-md px-4">
+    <h1 class="text-secondary mb-6 text-center font-secondary text-3xl font-bold">{{ .Title }}</h1>
+    {{ with .Content }}
+      <div class="text-gray-dark mb-8 text-center">{{ . }}</div>
+    {{ end }}
+
+    <form action="/request-reset" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm">
+      <div>
+        <label for="email" class="text-secondary mb-1 block text-sm font-medium">Email</label>
+        <input id="email" type="email" name="email" required autocomplete="email"
+               class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
+      </div>
+      <button type="submit"
+              class="bg-accent hover:bg-accent-2 w-full rounded-[10px] px-4 py-2 font-medium text-white transition-colors">
+        Send reset link
+      </button>
+      <div class="text-center text-sm">
+        <a href="/login/" class="text-secondary-2 hover:text-accent">Back to sign in</a>
+      </div>
+    </form>
+  </div>
+</section>
+{{ end }}
