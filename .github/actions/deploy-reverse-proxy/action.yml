@@ -1,0 +1,95 @@
+name: "Deploy Reverse Proxy (Traefik)"
+description: "Deploy or update a Traefik reverse proxy on a remote host"
+
+inputs:
+  deployment_remote_host:
+    description: "Remote host (IP or DNS)"
+    required: true
+  deployment_remote_username:
+    description: "SSH username on the remote host"
+    required: true
+  deployment_remote_ssh_private_key:
+    description: "Private SSH key for the remote host"
+    required: true
+  ssl_certificate_email:
+    description: "Email for ACME certificate registration"
+    required: true
+  network_name:
+    description: "Docker network name to attach Traefik to"
+    required: true
+  acme_dir:
+    description: "Directory on remote host to store ACME certs"
+    default: "/opt/traefik/letsencrypt"
+    required: false
+  log_level:
+    description: "Traefik log level"
+    default: "INFO"
+    required: false
+
+  # Network access via Tailscale
+  tailscale_oauth_client_id:
+    description: "Tailscale OAuth client ID (runner joins tailnet)"
+    required: true
+  tailscale_oauth_client_secret:
+    description: "Tailscale OAuth client secret (runner joins tailnet)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Tailscale connect & prime
+      id: ts
+      uses: ./.github/actions/tailscale-prime
+      with:
+        tailscale_oauth_client_id: ${{ inputs.tailscale_oauth_client_id }}
+        tailscale_oauth_client_secret: ${{ inputs.tailscale_oauth_client_secret }}
+        ssh_private_key: ${{ inputs.deployment_remote_ssh_private_key }}
+        remote_username: ${{ inputs.deployment_remote_username }}
+        remote_host: ${{ inputs.deployment_remote_host }}
+        tailscale_args: "--accept-dns=true --accept-routes=true --timeout=2m"
+
+    - name: Copy reverse proxy files to remote
+      shell: bash
+      run: |
+        set -euo pipefail
+        rsync -az --mkpath -e "ssh -o StrictHostKeyChecking=yes" \
+        --delete --force --rsync-path="sudo -n rsync" \
+        infra/reverse-proxy/ \
+        "${{ inputs.deployment_remote_username }}@${{ steps.ts.outputs.resolved_host }}:~/infra/reverse-proxy/"
+
+    - name: Setup remote environment (network, ACME dir)
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        script_stop: true
+        script: |
+          set -euo pipefail
+          cd "/home/${{ inputs.deployment_remote_username }}"
+          bash infra/reverse-proxy/setup.sh \
+          --network-name "${{ inputs.network_name }}" \
+          --acme-dir "${{ inputs.acme_dir }}" \
+          --username "${{ inputs.deployment_remote_username }}" \
+          --base-dir "/home/${{ inputs.deployment_remote_username }}/infra/reverse-proxy"
+
+    - name: Deploy Traefik via docker compose
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        script_stop: true
+        script: |
+          set -euo pipefail
+          cd "/home/${{ inputs.deployment_remote_username }}"
+          test -f infra/reverse-proxy/reverse-proxy.yml || { echo "ERROR: compose file missing" >&2; exit 1; }
+
+          export CERT_EMAIL='${{ inputs.ssl_certificate_email }}'
+          export NETWORK_NAME='${{ inputs.network_name }}'
+          export ACME_DIR='${{ inputs.acme_dir }}'
+          export LOG_LEVEL='${{ inputs.log_level }}'
+
+          docker compose --env-file /dev/null -f infra/reverse-proxy/reverse-proxy.yml pull
+          docker compose --env-file /dev/null -f infra/reverse-proxy/reverse-proxy.yml down || true
+          docker compose --env-file /dev/null -f infra/reverse-proxy/reverse-proxy.yml up -d --remove-orphans

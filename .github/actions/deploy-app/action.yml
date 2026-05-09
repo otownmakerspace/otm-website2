@@ -1,0 +1,158 @@
+name: "Deploy App"
+description: "Copies and deploys infra/app/docker-compose.yml and starts the app stack"
+
+inputs:
+  deployment_remote_host:
+    description: "Remote server host"
+    required: true
+  deployment_remote_username:
+    description: "Remote server username"
+    required: true
+  deployment_remote_ssh_private_key:
+    description: "SSH private key for the remote server"
+    required: true
+
+  # Network access via Tailscale
+  tailscale_oauth_client_id:
+    description: "Tailscale OAuth client ID (runner joins tailnet)"
+    required: true
+  tailscale_oauth_client_secret:
+    description: "Tailscale OAuth client secret (runner joins tailnet)"
+    required: true
+
+  # Image registry
+  ghcr_token:
+    description: "GitHub Container Registry token"
+    required: true
+  ghcr_image_tag:
+    description: "Fully-qualified GHCR image (e.g., ghcr.io/owner/repo:sha)"
+    required: true
+  image:
+    description: "Local image name to run (retag target)"
+    required: true
+
+  # App runtime secrets (written to secrets_folder on the VPS, bind-mounted read-only into the container)
+  stripe_key:
+    description: "Stripe secret API key (sk_live_... or sk_test_...)"
+    required: true
+  stripe_webhook_secret:
+    description: "Stripe webhook signing secret (whsec_...)"
+    required: true
+  cookie_store_key:
+    description: "Session cookie encryption key (32 bytes for AES-256)"
+    required: true
+  email_password:
+    description: "SMTP password for transactional mail"
+    required: true
+
+  subdomain:
+    description: "Subdomain for Traefik routing (e.g. staging, www)"
+    required: true
+  topdomain:
+    description: "Apex domain (e.g. makerspace.olaru.dk). Combined with subdomain for full host."
+    required: true
+  stripe_price_id:
+    description: "Stripe Price ID of the membership subscription (price_xxx)"
+    required: true
+  session_cookie_name:
+    description: "Cookie name for the session store"
+    required: false
+    default: "otm-session"
+  secrets_folder:
+    description: "Path for where the secrets will be stored on the host"
+    required: false
+    default: "/opt/secrets/app"
+  network_name:
+    description: "Shared Docker network name"
+    required: false
+    default: "app_network"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Tailscale connect & prime
+      id: ts
+      uses: ./.github/actions/tailscale-prime
+      with:
+        tailscale_oauth_client_id: ${{ inputs.tailscale_oauth_client_id }}
+        tailscale_oauth_client_secret: ${{ inputs.tailscale_oauth_client_secret }}
+        ssh_private_key: ${{ inputs.deployment_remote_ssh_private_key }}
+        remote_username: ${{ inputs.deployment_remote_username }}
+        remote_host: ${{ inputs.deployment_remote_host }}
+        tailscale_args: "--accept-dns=true --accept-routes=true --timeout=2m"
+
+    - name: Prepare remote infra directory
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        script_stop: true
+        script: |
+          set -Eeuo pipefail
+          BASE="/home/${{ inputs.deployment_remote_username }}/infra"
+          sudo mkdir -p "$BASE/app"
+          sudo chown -R "${{ inputs.deployment_remote_username }}":"${{ inputs.deployment_remote_username }}" "$BASE"
+          chmod -R u+rwX "$BASE"
+
+    - name: Copy app infra to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        source: "infra/app/**"
+        target: "/home/${{ inputs.deployment_remote_username }}"
+        overwrite: true
+
+    - name: Install secrets on remote host
+      uses: appleboy/ssh-action@v1.2.0
+      env:
+        STRIPE_KEY: ${{ inputs.stripe_key }}
+        STRIPE_WEBHOOK_SECRET: ${{ inputs.stripe_webhook_secret }}
+        COOKIE_STORE_KEY: ${{ inputs.cookie_store_key }}
+        EMAIL_PASSWORD: ${{ inputs.email_password }}
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_PASSWORD
+        script_stop: true
+        script: |
+          set -euo pipefail
+          sudo install -d -m 0700 ${{ inputs.secrets_folder }}
+          umask 077
+          printf '%s' "$STRIPE_KEY"            | sudo tee "${{ inputs.secrets_folder }}/stripe_key"            >/dev/null
+          printf '%s' "$STRIPE_WEBHOOK_SECRET" | sudo tee "${{ inputs.secrets_folder }}/stripe_webhook_secret" >/dev/null
+          printf '%s' "$COOKIE_STORE_KEY"      | sudo tee "${{ inputs.secrets_folder }}/cookie_store_key"      >/dev/null
+          printf '%s' "$EMAIL_PASSWORD"        | sudo tee "${{ inputs.secrets_folder }}/email_password"        >/dev/null
+          sudo chmod 600 "${{ inputs.secrets_folder }}"/*
+          sudo chown root:root "${{ inputs.secrets_folder }}"/*
+
+    - name: Deploy app
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ steps.ts.outputs.resolved_host }}
+        username: ${{ inputs.deployment_remote_username }}
+        key: ${{ inputs.deployment_remote_ssh_private_key }}
+        script_stop: true
+        script: |
+          set -Eeuo pipefail
+          cd "/home/${{ inputs.deployment_remote_username }}"
+
+          ENV_FILE="infra/app/.env.deploy"
+          printf '%s\n' 'NETWORK_NAME=${{ inputs.network_name }}'           >  "$ENV_FILE"
+          printf '%s\n' 'SECRETS_FOLDER=${{ inputs.secrets_folder }}'       >> "$ENV_FILE"
+          printf '%s\n' 'IMAGE=${{ inputs.image }}'                         >> "$ENV_FILE"
+          printf '%s\n' 'SUBDOMAIN=${{ inputs.subdomain }}'                 >> "$ENV_FILE"
+          printf '%s\n' 'TOPDOMAIN=${{ inputs.topdomain }}'                 >> "$ENV_FILE"
+          printf '%s\n' 'STRIPE_PRICE_ID=${{ inputs.stripe_price_id }}'     >> "$ENV_FILE"
+          printf '%s\n' 'SESSION_COOKIE_NAME=${{ inputs.session_cookie_name }}' >> "$ENV_FILE"
+          printf '%s\n' 'SITE_RELEASE=1'                                    >> "$ENV_FILE"
+
+          echo "${{ inputs.ghcr_token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker compose --env-file "$ENV_FILE" -f infra/app/docker-compose.yml down || true
+          docker pull '${{ inputs.ghcr_image_tag }}'
+          docker tag '${{ inputs.ghcr_image_tag }}' '${{ inputs.image }}'
+          docker compose --env-file "$ENV_FILE" -f infra/app/docker-compose.yml up -d --remove-orphans --force-recreate
+          docker logout ghcr.io

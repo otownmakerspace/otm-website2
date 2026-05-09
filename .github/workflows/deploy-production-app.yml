@@ -1,0 +1,95 @@
+name: "Deploy Production App"
+
+on:
+  push:
+    branches:
+      - production
+
+env:
+  GHCR_IMAGE_TAG: ghcr.io/${{ github.repository }}/${{ vars.IMAGE }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run tests
+        uses: ./.github/actions/test
+
+  build-hugo:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Hugo static site
+        env:
+          HUGO_VERSION: "0.161.1"
+        working-directory: frontend
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          hugo --minify --environment production --baseURL "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
+
+      - name: Upload frontend/docs/ artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-public
+          path: frontend/docs/
+
+  publish:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: build-hugo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Hugo output
+        uses: actions/download-artifact@v4
+        with:
+          name: hugo-public
+          path: frontend/docs/
+
+      - name: Build and Publish Docker Image
+        uses: ./.github/actions/publish
+        with:
+          ghcr_token: ${{ secrets.GHCR_TOKEN }}
+          ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    needs: publish
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy
+        uses: ./.github/actions/deploy-app
+        with:
+          deployment_remote_host: ${{ secrets.DEPLOYMENT_REMOTE_HOST }}
+          deployment_remote_username: ${{ secrets.DEPLOYMENT_REMOTE_USERNAME }}
+          deployment_remote_ssh_private_key: ${{ secrets.DEPLOYMENT_REMOTE_SSH_PRIVATE_KEY }}
+          ghcr_token: ${{ secrets.GHCR_TOKEN }}
+          ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
+          image: ${{ vars.IMAGE }}
+          subdomain: ${{ vars.SUBDOMAIN }}
+          topdomain: ${{ vars.TOPDOMAIN }}
+          stripe_price_id: ${{ vars.STRIPE_PRICE_ID }}
+          session_cookie_name: ${{ vars.SESSION_COOKIE_NAME }}
+          tailscale_oauth_client_id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale_oauth_client_secret: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
+          stripe_key: ${{ secrets.STRIPE_KEY }}
+          stripe_webhook_secret: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          cookie_store_key: ${{ secrets.COOKIE_STORE_KEY }}
+          email_password: ${{ secrets.EMAIL_PASSWORD }}

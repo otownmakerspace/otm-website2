@@ -1,0 +1,40 @@
+name: "Test backend and Hugo"
+description: "Run Go tests + build, and validate the Hugo static site builds"
+
+inputs:
+  hugo_version:
+    description: "Hugo extended version"
+    required: false
+    default: "0.161.1"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: api/go.mod
+        cache-dependency-path: api/go.sum
+
+    - name: Go test + build
+      shell: bash
+      working-directory: api
+      run: |
+        set -euo pipefail
+        go test ./...
+        go build ./cmd/server
+
+    - name: Install Hugo CLI
+      shell: bash
+      env:
+        HUGO_VERSION: ${{ inputs.hugo_version }}
+      run: |
+        set -euo pipefail
+        wget -O "${{ runner.temp }}/hugo.deb" \
+          "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+        sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+
+    - name: Hugo build (validation)
+      shell: bash
+      working-directory: frontend
+      run: hugo --minify

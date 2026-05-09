@@ -1,0 +1,29 @@
+name: "Deploy Staging Reverse Proxy"
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_proxy:
+        type: boolean
+        default: true
+        description: "Deploy/update the Traefik reverse proxy on the staging host"
+
+jobs:
+  deploy-reverse-proxy:
+    if: ${{ inputs.deploy_proxy == true }}
+    runs-on: ubuntu-latest
+    environment: Staging
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy
+        uses: ./.github/actions/deploy-reverse-proxy
+        with:
+          deployment_remote_host: ${{ secrets.DEPLOYMENT_REMOTE_HOST }}
+          deployment_remote_username: ${{ secrets.DEPLOYMENT_REMOTE_USERNAME }}
+          deployment_remote_ssh_private_key: ${{ secrets.DEPLOYMENT_REMOTE_SSH_PRIVATE_KEY }}
+          ssl_certificate_email: ${{ secrets.SSL_CERTIFICATE_EMAIL }}
+          network_name: app_network
+          tailscale_oauth_client_id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale_oauth_client_secret: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}

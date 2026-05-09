@@ -1,0 +1,19 @@
+name: "Default branch tests"
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run tests
+        uses: ./.github/actions/test

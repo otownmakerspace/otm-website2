@@ -1,0 +1,26 @@
+name: "Build and Publish Docker Image"
+description: "Builds a Docker image using Docker Buildx and pushes it to GitHub Container Registry"
+
+inputs:
+  ghcr_token:
+    description: "GitHub Container Registry (GHCR) token"
+    required: true
+  ghcr_image_tag:
+    description: "The full image name and tag"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GHCR
+      shell: bash
+      run: |
+        echo "${{ inputs.ghcr_token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+    - name: Build and Push Docker Image
+      shell: bash
+      run: |
+        docker buildx build --push -t ${{ inputs.ghcr_image_tag }} -f infra/app/Dockerfile .
