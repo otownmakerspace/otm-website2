@@ -37,7 +37,7 @@ func redirect_to_when_logged_in(destination string) http.HandlerFunc {
 		session, _ := store.Get(request, "theotowngarage.com")
 		// Check if user is authenticated
 		if auth, ok := session.Values["authenticated"].(bool); ok && auth {
-			http.Redirect(w, request, host_url+destination, http.StatusSeeOther)
+			http.Redirect(w, request, destination, http.StatusSeeOther)
 		} else {
 			// otherwise serve the normal login page
 			http.FileServer(http.Dir("../public")).ServeHTTP(w, request)
@@ -56,7 +56,7 @@ func login(db *sql.DB) http.HandlerFunc {
 		if request.ParseForm() != nil || !validateSignInInput(request.Form) {
 			log.Print("malformed request") // highlight - potential attack
 			// do not give reason for a failure (on purpose)
-			http.Redirect(w, request, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, request, "/login/?reason=misc", http.StatusSeeOther)
 			return
 		}
 		// look up user
@@ -80,22 +80,22 @@ func login(db *sql.DB) http.HandlerFunc {
 		err = db.QueryRow("SELECT password, customer_id FROM user WHERE email = ?", email).Scan(&password, &customer_id)
 		if err == sql.ErrNoRows {
 			log.Print("User not found")
-			http.Redirect(w, request, host_url+"/login/?reason=combo_fail", http.StatusSeeOther)
+			http.Redirect(w, request, "/login/?reason=combo_fail", http.StatusSeeOther)
 			return
 		} else if err != nil {
 			log.Print("DB error during login: ", err)
-			http.Redirect(w, request, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, request, "/login/?reason=misc", http.StatusSeeOther)
 			return
 		}
 
 		err = bcrypt.CompareHashAndPassword(password, []byte(request.Form.Get("password")))
 		if err == bcrypt.ErrMismatchedHashAndPassword {
 			log.Print("Psw mismatch")
-			http.Redirect(w, request, host_url+"/login/?reason=combo_fail", http.StatusFound)
+			http.Redirect(w, request, "/login/?reason=combo_fail", http.StatusFound)
 			return
 		} else if err != nil {
 			fmt.Println("Encryption failed:", err)
-			http.Redirect(w, request, host_url+"/login/?reason=failed_crypt", http.StatusFound)
+			http.Redirect(w, request, "/login/?reason=failed_crypt", http.StatusFound)
 			return
 		}
 
@@ -105,7 +105,7 @@ func login(db *sql.DB) http.HandlerFunc {
 		session.Values["email"] = email
 		session.Save(request, w)
 		log.Print("Auth successful", err)
-		http.Redirect(w, request, host_url+"/dashboard", http.StatusSeeOther)
+		http.Redirect(w, request, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -115,7 +115,7 @@ func logout(w http.ResponseWriter, request *http.Request) {
 	// Revoke users authentication
 	session.Values["authenticated"] = false
 	session.Save(request, w)
-	http.Redirect(w, request, host_url, http.StatusSeeOther)
+	http.Redirect(w, request, "/", http.StatusSeeOther)
 }
 
 func validateSignInInput(form url.Values) bool {
@@ -159,7 +159,7 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 		email := r.FormValue("email")
 		if len(email) == 0 {
 			log.Print("Form submitted with empty or none email")
-			http.Redirect(w, r, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
 			return
 		}
 
@@ -170,18 +170,18 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 
 		if err == sql.ErrNoRows {
 			log.Print("Password reset requested for non-existent email")
-			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
 			return
 		} else if err != nil {
 			log.Print("Db error during password reset: ", err)
-			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
 			return
 		}
 
 		token, err := generateToken()
 		if err != nil {
 			log.Print("Failed to generate token")
-			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
 			return
 		}
 
@@ -191,7 +191,7 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 		_, err = db.Exec("INSERT INTO password_reset_tokens (email, token, expires_at) VALUES (?, ?, ?)", email, hashToken(token), expiry)
 		if err != nil {
 			log.Print("db query error - ", err)
-			http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
 			return
 		}
 
@@ -200,7 +200,7 @@ func requestPasswordResetHandler(db *sql.DB) http.HandlerFunc {
 			log.Print("Failed to send reset email: ", err)
 		}
 
-		http.Redirect(w, r, host_url+"/reset-sent", http.StatusSeeOther)
+		http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
 	}
 }
 
@@ -208,7 +208,7 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !r.URL.Query().Has("token") {
 			log.Print("Token not in request - ", r.URL.Query())
-			http.Redirect(w, r, host_url+"/login/?reason=token_invalid", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=token_invalid", http.StatusSeeOther)
 			return
 		}
 		log.Print("Password reset request")
@@ -216,7 +216,7 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 
 		newPassword := r.FormValue("password")
 		if len(newPassword) < minPasswordLen || len(newPassword) > maxPasswordLen {
-			http.Redirect(w, r, host_url+"/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
 			return
 		}
 
@@ -226,12 +226,12 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 		err := db.QueryRow("SELECT email, expires_at FROM password_reset_tokens WHERE token = ?", tokenHash).Scan(&email, &expiresAt)
 		if err == sql.ErrNoRows {
 			log.Print("Token not found")
-			http.Redirect(w, r, host_url+"/login/?reason=token_invalid", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=token_invalid", http.StatusSeeOther)
 			return
 		}
 		if err != nil {
 			log.Print("db query error - ", err)
-			http.Redirect(w, r, host_url+"/login/?reason=db_query", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=db_query", http.StatusSeeOther)
 			return
 		}
 
@@ -242,18 +242,18 @@ func resetPasswordHandler(db *sql.DB) http.HandlerFunc {
 
 		hashed_psw, err := hash_and_salt(newPassword)
 		if err != nil {
-			http.Redirect(w, r, host_url+"/login/?reason=failed_crypt", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=failed_crypt", http.StatusSeeOther)
 			return
 		}
 		_, err = db.Exec("UPDATE user SET password = ? WHERE email = ?", hashed_psw, email)
 		if err != nil {
-			http.Redirect(w, r, host_url+"/login/?reason=db_update", http.StatusSeeOther)
+			http.Redirect(w, r, "/login/?reason=db_update", http.StatusSeeOther)
 			return
 		}
 
 		db.Exec("DELETE FROM password_reset_tokens WHERE token = ?", tokenHash)
 		log.Print("Password reset success")
 
-		http.Redirect(w, r, host_url+"/reset-success", http.StatusSeeOther)
+		http.Redirect(w, r, "/reset-success", http.StatusSeeOther)
 	}
 }
