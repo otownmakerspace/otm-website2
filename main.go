@@ -19,7 +19,7 @@ import (
 )
 
 var host_addr string = config.Backend.Host + ":" + strconv.Itoa(config.Backend.Port)
-var host_url string = config.Backend.Protocol + "://" + host_addr
+var host_url string = config.Backend.PublicURL
 var isTest bool
 
 func main() {
@@ -31,6 +31,8 @@ func main() {
 	} else {
 		log.Printf("Starting RELEASE backend")
 	}
+
+	stripe.Key = config.Stripe.Key
 
 	db, err := openDB(isTest)
 	if err != nil {
@@ -64,7 +66,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Could not initialise DB ", err)
 	}
-	log.Printf("Listening on %s", host_url)
+	log.Printf("Listening on %s (public URL: %s)", host_addr, host_url)
 	log.Fatal(http.ListenAndServe(host_addr, nil))
 }
 
@@ -85,7 +87,7 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 			log.Print("New member signup request")
 		} else if session.Values["active"] != nil && session.Values["active"].(bool) {
 			log.Print(session.Values["email"].(string), " wants to sign up, but they already have an active membership")
-			http.Redirect(w, request, host_url+"/dashboard?error=already_active", http.StatusSeeOther)
+			http.Redirect(w, request, "/dashboard?error=already_active", http.StatusSeeOther)
 			return
 		} else {
 			log.Print(session.Values["email"].(string), " wants to sign up again?")
@@ -98,12 +100,12 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 
 		if request.ParseForm() != nil || !validateInput(request.Form) {
 			log.Print("malformed checkout request")
-			http.Redirect(w, request, host_url+"/checkout/", http.StatusSeeOther)
+			http.Redirect(w, request, "/checkout/", http.StatusSeeOther)
 			return
 		}
 		pass := request.Form.Get("pass")
 		if len(pass) < minPasswordLen || len(pass) > maxPasswordLen {
-			http.Redirect(w, request, host_url+"/checkout/", http.StatusSeeOther)
+			http.Redirect(w, request, "/checkout/", http.StatusSeeOther)
 			return
 		}
 		exists, err := emailExists(request, isTest)
@@ -112,14 +114,14 @@ func createCheckoutSession(db *sql.DB) http.HandlerFunc {
 			return
 		}
 		if exists {
-			http.Redirect(w, request, host_url+"/checkout/?reason=email_exists", http.StatusSeeOther)
+			http.Redirect(w, request, "/checkout/?reason=email_exists", http.StatusSeeOther)
 			return
 		}
 		// Hash the password now so only the bcrypt hash (not the plain password) transits through Stripe metadata
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Form.Get("pass")), bcrypt.DefaultCost)
 		if err != nil {
 			fmt.Println("Encryption failed:", err)
-			http.Redirect(w, request, host_url+"/checkout/?reason=failed_crypt", http.StatusSeeOther)
+			http.Redirect(w, request, "/checkout/?reason=failed_crypt", http.StatusSeeOther)
 			return
 		}
 		user := FormToUser(request)
@@ -156,7 +158,7 @@ func ServeStripeCheckoutSession(w http.ResponseWriter, request *http.Request, us
 	stripeSession, err := session.New(params)
 	if err != nil {
 		log.Printf("session.New: %v", err)
-		http.Redirect(w, request, host_url+"/checkout/?reason=failed_session", http.StatusSeeOther)
+		http.Redirect(w, request, "/checkout/?reason=failed_session", http.StatusSeeOther)
 		return
 	}
 	http.Redirect(w, request, stripeSession.URL, http.StatusSeeOther)

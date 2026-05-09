@@ -13,8 +13,8 @@ var config = LoadConfig()
 
 var defaultConfig = Config{
 	Backend: BackendConf{
-		Host:     "localhost",
-		Protocol: "http",
+		Host:      "localhost",
+		PublicURL: "http://localhost:4242",
 	},
 	Stripe: stripeConf{
 		Key:            "",
@@ -43,11 +43,11 @@ type emailConf struct {
 }
 
 type BackendConf struct {
-	// localhost, 10.11.12.13, theotowngarage.com
+	// Bind address (e.g. 0.0.0.0, localhost) — not the externally-reachable host.
 	Host string
-	// http, https
-	Protocol string
-	Port     int
+	Port int
+	// Externally-reachable URL behind any reverse proxy, used for Stripe redirects and email links.
+	PublicURL string
 	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 	CookiePrivateKey string
 }
@@ -98,7 +98,7 @@ func LoadConfig() Config {
 
 	// Environment variables override file-based config
 	envOverride(&parseconf.Backend.Host, "BACKEND_HOST")
-	envOverride(&parseconf.Backend.Protocol, "BACKEND_PROTOCOL")
+	envOverride(&parseconf.Backend.PublicURL, "BACKEND_PUBLIC_URL")
 	envOverrideInt(&parseconf.Backend.Port, "BACKEND_PORT")
 
 	// Secrets: env var > /run/secrets/<file> > config.toml
