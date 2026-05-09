@@ -1,0 +1,57 @@
+networks:
+  app_network:
+    external: true
+    name: ${NETWORK_NAME}
+
+services:
+  app:
+    image: ${IMAGE}
+    container_name: otm-app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.otm-app.rule=Host(`${SUBDOMAIN}.${TOPDOMAIN}`)"
+      - "traefik.http.routers.otm-app.entrypoints=websecure"
+      - "traefik.http.routers.otm-app.tls.certresolver=myresolver"
+      - "traefik.http.services.otm-app.loadbalancer.server.port=4242"
+    environment:
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "4242"
+      BACKEND_PUBLIC_URL: "https://${SUBDOMAIN}.${TOPDOMAIN}"
+      STRIPE_PRICE_ID: "${STRIPE_PRICE_ID:-}"
+      SITE_RELEASE: "${SITE_RELEASE:-}"
+      SESSION_COOKIE_NAME: "${SESSION_COOKIE_NAME:-otm-session}"
+    networks: [ app_network ]
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ${SECRETS_FOLDER}/cookie_store_key
+        target: /run/secrets/cookie_store_key
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/stripe_key
+        target: /run/secrets/stripe_key
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/stripe_webhook_secret
+        target: /run/secrets/stripe_webhook_secret
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/email_password
+        target: /run/secrets/email_password
+        read_only: true
+      - ../../db:/app/db
+
+  stripe-cli:
+    image: stripe/stripe-cli
+    entrypoint: /bin/sh
+    command: -c 'stripe listen --forward-to http://otm-app:4242/webhook --api-key $$(cat /run/secrets/stripe_key)'
+    container_name: otm-stripe-cli
+    networks: [ app_network ]
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ${SECRETS_FOLDER}/stripe_key
+        target: /run/secrets/stripe_key
+        read_only: true
+    profiles:
+      - dev

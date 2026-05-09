@@ -1,0 +1,47 @@
+networks:
+  app_network:
+    external: true
+    name: ${NETWORK_NAME}
+
+services:
+  reverse-proxy:
+    image: traefik:latest
+    container_name: reverse-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data/letsencrypt:/letsencrypt
+      - ./data/dynamic:/etc/traefik/dynamic:ro
+      - ./data/log:/var/log/traefik
+
+    command:
+      - --providers.docker=true
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email=${CERT_EMAIL}
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --api.insecure=false
+      - --log.level=${LOG_LEVEL:-INFO}
+      - --accesslog=true
+      - --accesslog.format=json
+      - --accesslog.filepath=/var/log/traefik/access.log
+
+    labels:
+      - 'traefik.http.routers.block-dotenv.rule=HostRegexp(`{host:.+}`) && PathRegexp(`(?i)^/(?:.*?/)?\.env(?:\..*)?$`)'
+      - 'traefik.http.routers.block-dotenv.entrypoints=web,websecure'
+      - 'traefik.http.routers.block-dotenv.priority=10000'
+      - 'traefik.http.routers.block-dotenv.middlewares=block-dotenv'
+      - 'traefik.http.middlewares.block-dotenv.directresponse.statuscode=403'
+      - 'traefik.http.middlewares.block-dotenv.directresponse.body=Forbidden'
+
+    networks: [ app_network ]
