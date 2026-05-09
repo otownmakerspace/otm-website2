@@ -19,6 +19,7 @@ var defaultConfig = Config{
 	Stripe: stripeConf{
 		Key:            "",
 		EndpointSecret: "",
+		PriceID:        "",
 	},
 	Email: emailConf{
 		User:     "info@theotowngarage.com",
@@ -33,6 +34,8 @@ type stripeConf struct {
 	Key string
 	// whsec_xxx...xxx
 	EndpointSecret string
+	// price_xxx — Stripe Price ID of the membership subscription. Test-mode and live-mode prices have different IDs.
+	PriceID string
 }
 
 type emailConf struct {
@@ -104,7 +107,8 @@ func LoadConfig() Config {
 	// Secrets: env var > /run/secrets/<file> > config.toml
 	secretOverride(&parseconf.Backend.CookiePrivateKey, "COOKIE_STORE_KEY", "cookie_store_key")
 	secretOverride(&parseconf.Stripe.Key, "STRIPE_KEY", "stripe_key")
-	secretOverride(&parseconf.Stripe.EndpointSecret, "STRIPE_WEBSOCK_KEY", "stripe_webhook_secret")
+	secretOverride(&parseconf.Stripe.EndpointSecret, "STRIPE_WEBHOOK_SECRET", "stripe_webhook_secret")
+	envOverride(&parseconf.Stripe.PriceID, "STRIPE_PRICE_ID")
 	secretOverride(&parseconf.Email.Password, "EMAIL_PASSWORD", "email_password")
 
 	if len(parseconf.Backend.CookiePrivateKey) == 0 {

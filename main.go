@@ -13,6 +13,8 @@ import (
 
 	"github.com/stripe/stripe-go/v82"
 	"github.com/stripe/stripe-go/v82/checkout/session"
+	"github.com/stripe/stripe-go/v82/customer"
+	stripesub "github.com/stripe/stripe-go/v82/subscription"
 	"github.com/stripe/stripe-go/v82/webhook"
 	_ "github.com/tursodatabase/go-libsql"
 	"golang.org/x/crypto/bcrypt"
@@ -137,7 +139,7 @@ func ServeStripeCheckoutSession(w http.ResponseWriter, request *http.Request, us
 		Mode:       stripe.String(string(stripe.CheckoutSessionModeSubscription)),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			&stripe.CheckoutSessionLineItemParams{
-				Price: stripe.String("price_1S79v8EFGoOPzKA9JlFqQE34"),
+				Price: stripe.String(config.Stripe.PriceID),
 				// For usage-based billing, don't pass quantity
 				Quantity: stripe.Int64(1),
 			},
@@ -213,23 +215,66 @@ func initDatabase(db *sql.DB) error {
 
 func seedTestUser(db *sql.DB) {
 	const testEmail = "test@test.com"
-	var exists int
-	db.QueryRow("SELECT COUNT(*) FROM user WHERE email = ?", testEmail).Scan(&exists)
-	if exists > 0 {
+
+	if config.Stripe.Key == "" || config.Stripe.Key == "REPLACE_ME" {
+		log.Print("Skipping test user seed: STRIPE_KEY not configured. Put a real test-mode key in secrets/app/stripe_key.")
 		return
 	}
+	if config.Stripe.PriceID == "" {
+		log.Print("Skipping test user seed: STRIPE_PRICE_ID not configured.")
+		return
+	}
+
+	// Stale rows from the prior synthetic-ID seed must be replaced
+	var existingCustomerID string
+	err := db.QueryRow("SELECT customer_id FROM user WHERE email = ?", testEmail).Scan(&existingCustomerID)
+	if err == nil {
+		if existingCustomerID == "cus_test_000" {
+			log.Print("Removing stale test user (synthetic customer_id) for re-seed")
+			db.Exec("DELETE FROM user WHERE email = ?", testEmail)
+		} else {
+			return
+		}
+	} else if err != sql.ErrNoRows {
+		log.Print("Failed to check for existing test user: ", err)
+		return
+	}
+
+	cust, err := customer.New(&stripe.CustomerParams{
+		Email:         stripe.String(testEmail),
+		Name:          stripe.String("Test User"),
+		PaymentMethod: stripe.String("pm_card_visa"),
+		InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
+			DefaultPaymentMethod: stripe.String("pm_card_visa"),
+		},
+	})
+	if err != nil {
+		log.Print("Failed to create Stripe test customer: ", err)
+		return
+	}
+
+	_, err = stripesub.New(&stripe.SubscriptionParams{
+		Customer: stripe.String(cust.ID),
+		Items: []*stripe.SubscriptionItemsParams{
+			{Price: stripe.String(config.Stripe.PriceID)},
+		},
+	})
+	if err != nil {
+		log.Print("Failed to create Stripe test subscription: ", err)
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	if err != nil {
 		log.Print("Failed to seed test user: ", err)
 		return
 	}
 	_, err = db.Exec("INSERT INTO user (email, name, phone, password, active, customer_id) VALUES (?, ?, ?, ?, ?, ?)",
-		testEmail, "Test User", "", hashedPassword, 1, "cus_test_000")
+		testEmail, "Test User", "", hashedPassword, 1, cust.ID)
 	if err != nil {
 		log.Print("Failed to seed test user: ", err)
 		return
 	}
-	log.Print("Seeded test user: test@test.com / password")
+	log.Printf("Seeded test user: %s / password (Stripe customer: %s)", testEmail, cust.ID)
 }
 
 func emailExists(request *http.Request, isTest bool) (bool, error) {
