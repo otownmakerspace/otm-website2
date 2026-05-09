@@ -1,0 +1,13 @@
+[traefik-404]
+enabled  = true
+filter   = traefik-404
+port     = http,https
+logpath  = /var/log/traefik/access.log
+backend  = auto
+
+maxretry = 5
+findtime = 90s
+bantime  = 12h
+
+banaction = ufw
+action    = ufw

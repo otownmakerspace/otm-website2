@@ -1,0 +1,4 @@
+[Definition]
+# Match lines like: "kernel: [UFW BLOCK] ... SRC=1.2.3.4 ... DPT=443"
+failregex = ^.*\bUFW BLOCK\b.*\bSRC=<HOST>\b.*$
+ignoreregex =

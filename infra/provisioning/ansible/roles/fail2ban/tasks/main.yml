@@ -1,0 +1,66 @@
+---
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+    state: present
+
+- name: Deploy ufw-blocked filter
+  ansible.builtin.template:
+    src: ufw-blocked.conf.j2
+    dest: /etc/fail2ban/filter.d/ufw-blocked.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Deploy traefik-404 filter
+  ansible.builtin.template:
+    src: traefik-404.conf.j2
+    dest: /etc/fail2ban/filter.d/traefik-404.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Deploy sshd jail
+  ansible.builtin.template:
+    src: jail-sshd.conf.j2
+    dest: /etc/fail2ban/jail.d/00-sshd.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Deploy ufw-blocked jail
+  ansible.builtin.template:
+    src: jail-ufw-blocked.conf.j2
+    dest: /etc/fail2ban/jail.d/10-ufw-blocked.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Deploy traefik-404 jail
+  ansible.builtin.template:
+    src: jail-traefik-404.conf.j2
+    dest: /etc/fail2ban/jail.d/20-traefik-404-blocked.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Deploy recidive jail
+  ansible.builtin.template:
+    src: jail-recidive.conf.j2
+    dest: /etc/fail2ban/jail.d/20-recidive.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Enable and start fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban
+    enabled: true
+    state: started
+

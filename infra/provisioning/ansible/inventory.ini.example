@@ -1,0 +1,10 @@
+[makerspace_staging]
+# Replace with the IP printed by `terraform output server_ip` after apply.
+203.0.113.1 ansible_user=myuser
+
+[makerspace_production]
+# Filled in after the production server is provisioned.
+
+[servers:children]
+makerspace_staging
+makerspace_production

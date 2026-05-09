@@ -1,0 +1,19 @@
+# Hetzner Cloud API token
+# Get from: Hetzner Cloud Console -> Security -> API Tokens -> Generate API Token (read+write)
+hcloud_token = "YOUR_HCLOUD_TOKEN_HERE"
+
+# Server configuration
+server_name = "otm-staging"
+server_type = "cpx32"   # 4 vCPU (AMD), 8GB RAM, 80GB disk
+location    = "hel1"     # Helsinki (alternatives: fsn1, nbg1, ash, hil)
+image       = "ubuntu-24.04"
+
+# SSH public key path (local file)
+ssh_public_key_path = "~/.ssh/id_to_otm.pub"
+ssh_private_key_path = "~/.ssh/id_to_otm"
+
+# Linux user to create
+user_name = "your_username"
+
+# Password hash -- generate with: openssl passwd -6
+user_password_hash = "YOUR_PASSWORD_HASH_HERE"

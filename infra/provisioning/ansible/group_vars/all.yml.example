@@ -1,0 +1,24 @@
+---
+# Linux user (must match what Terraform created)
+ansible_user: your_username
+user_name: your_username
+user_email: you@example.com
+
+# Server hostname (used by Tailscale)
+server_hostname: otm-staging
+
+# Tailscale auth key -- encrypt with: ansible-vault encrypt_string 'tskey-auth-...' --name tailscale_auth_key
+# Get from: Tailscale Admin Console -> Settings -> Keys -> Generate auth key
+tailscale_auth_key: !vault |
+          PASTE_YOUR_VAULT_ENCRYPTED_KEY_HERE
+
+# UFW allowed ports (besides defaults)
+ufw_allowed_ports:
+  - { port: 80, proto: tcp }
+  - { port: 41641, proto: udp }
+
+# UFW rules restricted to tailscale0 interface
+ufw_tailscale_ports:
+  - { port: 22, proto: tcp }
+  - { port: 5432, proto: tcp }
+  - { port: 18789, proto: tcp }

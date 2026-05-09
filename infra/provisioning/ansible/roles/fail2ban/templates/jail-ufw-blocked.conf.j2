@@ -1,0 +1,14 @@
+[ufw-blocked]
+enabled = true
+filter = ufw-blocked
+backend = systemd
+journalmatch = _TRANSPORT=kernel
+
+port = anyport
+protocol = all
+
+findtime = 11m
+maxretry = 3
+bantime = 12h
+
+action = ufw

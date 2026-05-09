@@ -1,0 +1,12 @@
+---
+- name: Provision server
+  hosts: servers
+  become: true
+
+  roles:
+    - { role: base, tags: ['base'] }
+    - { role: docker, tags: ['docker'] }
+    - { role: tailscale, tags: ['tailscale'] }
+    - { role: firewall, tags: ['firewall'] }
+    - { role: fail2ban, tags: ['fail2ban'] }
+    - { role: github_runner_key, tags: ['github_runner_key'] }

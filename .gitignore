@@ -10,3 +10,12 @@
 /api/local.db
 /infra/app/.env
 /infra/reverse-proxy/.env
+
+# Terraform / Ansible provisioning state and secrets
+/infra/provisioning/terraform/.terraform/
+/infra/provisioning/terraform/*.tfstate
+/infra/provisioning/terraform/*.tfstate.*
+/infra/provisioning/terraform/terraform.tfvars
+/infra/provisioning/ansible/inventory.ini
+/infra/provisioning/ansible/group_vars/all.yml
+/infra/provisioning/ansible/*.retry

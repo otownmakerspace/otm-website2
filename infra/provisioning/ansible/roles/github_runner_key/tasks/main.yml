@@ -1,0 +1,22 @@
+---
+- name: Generate SSH keypair for GitHub runner
+  community.crypto.openssh_keypair:
+    path: "/home/{{ user_name }}/.ssh/github_runner_id_rsa"
+    type: rsa
+    size: 4096
+    comment: "{{ user_email }}"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: "0600"
+
+- name: Read generated public key
+  ansible.builtin.slurp:
+    src: "/home/{{ user_name }}/.ssh/github_runner_id_rsa.pub"
+  register: github_runner_pubkey
+
+- name: Add GitHub runner public key to authorized_keys
+  ansible.posix.authorized_key:
+    user: "{{ user_name }}"
+    key: "{{ github_runner_pubkey.content | b64decode }}"
+    state: present
+
