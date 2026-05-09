@@ -1,3 +1,18 @@
+{{/*
+  Member-portal URLs.
+  - memberPortalUrl is for existing members signing in.
+  - memberSignupUrl is for new members starting checkout.
+  Production points both at the same external URL; dev/staging diverge into
+  /login/ and /checkout/.
+
+  Relative paths (e.g. /login/) are language-prefixed via relLangURL so DA
+  pages link to /da/login/. Absolute URLs (https://...) are passed through
+  unchanged.
+*/}}
+{{ $signinHref := .Site.Params.memberPortalUrl }}
+{{ if hasPrefix $signinHref "/" }}{{ $signinHref = $signinHref | relLangURL }}{{ end }}
+{{ $signupHref := .Site.Params.memberSignupUrl }}
+{{ if hasPrefix $signupHref "/" }}{{ $signupHref = $signupHref | relLangURL }}{{ end }}
 <nav class="sticky top-0 z-[9999] bg-surface/95 backdrop-blur-sm shadow-sm">
   <div class="container mx-auto px-4">
     {{/* ── Top bar: logo + desktop nav + burger ── */}}
@@ -158,10 +173,10 @@
             </button>
             <div class="invisible opacity-0 group-hover/account:visible group-hover/account:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
               <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-48">
-                <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                <a href="{{ $signinHref }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                   <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
                 </a>
-                <a href="{{ .Site.Params.memberPortalUrl }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
+                <a href="{{ $signupHref }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                   <i class="fa-solid fa-user-plus w-4 text-center"></i> {{ i18n "sign_up" }}
                 </a>
               </div>
@@ -328,7 +343,7 @@
           {{ partial "shared/settings" . }}
         </div>
         {{/* Join Us */}}
-        <a href="{{ .Site.Params.memberPortalUrl }}" class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium transition-colors duration-200">
+        <a href="{{ $signupHref }}" class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium transition-colors duration-200">
           {{ i18n "join_us" }}
         </a>
       </div>

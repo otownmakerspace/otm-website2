@@ -348,3 +348,137 @@ other = "Select an area on the map to see details"
 # ── 404 ──
 [page_not_found]
 other = "Page Not Found"
+
+
+# ── Member Portal ──
+# Login page
+[member_email]
+other = "Email"
+
+[member_password]
+other = "Password"
+
+[member_sign_in]
+other = "Sign in"
+
+[member_forgot_password]
+other = "Forgot your password?"
+
+[member_login_reason_combo_fail]
+other = "That email and password combination didn't match our records."
+
+[member_login_reason_misc]
+other = "Something went wrong. Please try again."
+
+[member_login_reason_failed_crypt]
+other = "We couldn't verify your password. Please try again."
+
+[member_login_reason_token_invalid]
+other = "That reset link is no longer valid. Request a new one below."
+
+[member_login_reason_db_query]
+other = "Temporary database error. Please try again."
+
+# Request password reset
+[member_send_reset_link]
+other = "Send reset link"
+
+[member_back_to_signin]
+other = "Back to sign in"
+
+# Reset password
+[member_new_password]
+other = "New password"
+
+[member_password_length_hint]
+other = "8&ndash;31 characters."
+
+[member_update_password]
+other = "Update password"
+
+# Checkout signup
+[member_full_name]
+other = "Full name"
+
+[member_phone_optional]
+other = "Phone (optional)"
+
+[member_password_signup_hint]
+other = "8&ndash;31 characters. You'll use this to sign in later."
+
+[member_continue_to_payment]
+other = "Continue to payment"
+
+[member_checkout_reason_email_exists]
+other = "An account with that email already exists. Try signing in."
+
+[member_checkout_reason_stripe_cancel]
+other = "Checkout was cancelled. No charge was made."
+
+[member_checkout_reason_failed_session]
+other = "We couldn't reach Stripe. Please try again."
+
+[member_checkout_reason_failed_crypt]
+other = "We couldn't process your password. Please try again."
+
+# Dashboard scaffolding
+[member_loading_membership]
+other = "Loading your membership&hellip;"
+
+[member_loading_profile]
+other = "Loading profile&hellip;"
+
+[member_loading_password]
+other = "Loading password settings&hellip;"
+
+[member_loading_billing]
+other = "Loading billing&hellip;"
+
+[member_sign_out]
+other = "Sign out"
+
+# Price selection (in checkout fragment from /checkout/prices)
+[member_select_membership]
+other = "Choose your membership"
+
+[member_no_prices_available]
+other = "No memberships are available right now. Please try again later."
+
+[member_loading_prices]
+other = "Loading membership options&hellip;"
+
+[member_checkout_reason_invalid_price]
+other = "That membership option isn't available. Please pick another."
+
+# Dashboard structure (layouts/page/dashboard.html)
+[member_account_menu]
+other = "Account"
+
+[member_back_to_site]
+other = "Back to site"
+
+[member_settings_section]
+other = "Account settings"
+
+# Auth-aware nav (header.html / data-auth-user variant)
+[member_dashboard]
+other = "Dashboard"
+
+# Consent checkboxes (checkout signup form)
+[member_accept_section]
+other = "Before joining"
+
+[member_accept_prefix]
+other = "I have read and accept the"
+
+[member_terms_label]
+other = "Terms of Membership"
+
+[member_waiver_label]
+other = "Liability Waiver"
+
+[member_privacy_label]
+other = "Privacy Policy"
+
+[member_checkout_reason_accept_required]
+other = "Please confirm you've read all required documents before continuing."

@@ -72,7 +72,7 @@ ensure_secrets() {
     warn "Secrets dir $secrets_dir does not exist."
     msg "Creating it with placeholder files..."
     mkdir -p "$secrets_dir"
-    for f in cookie_store_key stripe_key stripe_webhook_secret email_password; do
+    for f in cookie_store_key stripe_key stripe_publishable_key stripe_webhook_secret email_password; do
       if [[ ! -f "$secrets_dir/$f" ]]; then
         echo "REPLACE_ME" > "$secrets_dir/$f"
         warn "  Created $secrets_dir/$f — fill in the real value"
@@ -142,9 +142,10 @@ case "$cmd" in
     fi
 
     base_url="https://${SUBDOMAIN:-development}.${TOPDOMAIN:-makerspace.olaru.dk}"
-    msg "Building Hugo static site (baseURL: $base_url)..."
+    hugo_env="${HUGO_ENV:-development}"
+    msg "Building Hugo static site (env: $hugo_env, baseURL: $base_url)..."
     if command -v hugo >/dev/null 2>&1; then
-      (cd "$ROOT_DIR/frontend" && hugo build --minify -b "$base_url")
+      (cd "$ROOT_DIR/frontend" && hugo build --minify --cleanDestinationDir --environment "$hugo_env" -b "$base_url")
     else
       err "Hugo not found. Install Hugo first: https://gohugo.io/installation/"
       exit 1

@@ -9,43 +9,82 @@
     <p id="checkout-error" class="text-red-600 mb-4 text-center hidden"></p>
 
     <form action="/checkout/" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm">
+      {{/* Price selector — htmx-loaded fragment with active Stripe prices. */}}
+      <div id="checkout-prices" hx-get="/checkout/prices" hx-trigger="load" hx-swap="innerHTML">
+        <p class="text-sm text-gray-dark">{{ i18n "member_loading_prices" | safeHTML }}</p>
+      </div>
+
       <div>
-        <label for="name" class="text-secondary mb-1 block text-sm font-medium">Full name</label>
+        <label for="name" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_full_name" }}</label>
         <input id="name" type="text" name="name" required autocomplete="name"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
       </div>
       <div>
-        <label for="email" class="text-secondary mb-1 block text-sm font-medium">Email</label>
+        <label for="email" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_email" }}</label>
         <input id="email" type="email" name="email" required autocomplete="email"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
       </div>
       <div>
-        <label for="phone" class="text-secondary mb-1 block text-sm font-medium">Phone (optional)</label>
+        <label for="phone" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_phone_optional" }}</label>
         <input id="phone" type="tel" name="phone" autocomplete="tel"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
       </div>
       <div>
-        <label for="pass" class="text-secondary mb-1 block text-sm font-medium">Password</label>
+        <label for="pass" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_password" }}</label>
         <input id="pass" type="password" name="pass" required minlength="8" maxlength="31"
                autocomplete="new-password"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
-        <p class="mt-1 text-xs text-gray-dark">8&ndash;31 characters. You'll use this to sign in later.</p>
+        <p class="mt-1 text-xs text-gray-dark">{{ i18n "member_password_signup_hint" | safeHTML }}</p>
       </div>
+      {{/*
+        Consent checkboxes — required before payment. The labels include
+        links to the legal docs (open in new tab so the user doesn't lose
+        their form input). The backend re-validates these are all present
+        on POST, so a JS bypass can't skip them.
+      */}}
+      <fieldset class="space-y-3 border-t border-gray-200 pt-4">
+        <legend class="text-secondary mb-2 block text-sm font-medium">{{ i18n "member_accept_section" }}</legend>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" name="accept_terms" required class="mt-1 accent-accent">
+          <span class="text-sm text-secondary">
+            {{ i18n "member_accept_prefix" }}
+            <a href="{{ "/docs/terms-of-membership/" | relLangURL }}" target="_blank" rel="noopener" class="text-secondary-2 underline hover:text-accent">{{ i18n "member_terms_label" }}</a>
+          </span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" name="accept_waiver" required class="mt-1 accent-accent">
+          <span class="text-sm text-secondary">
+            {{ i18n "member_accept_prefix" }}
+            <a href="{{ "/docs/liability-waiver/" | relLangURL }}" target="_blank" rel="noopener" class="text-secondary-2 underline hover:text-accent">{{ i18n "member_waiver_label" }}</a>
+          </span>
+        </label>
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" name="accept_privacy" required class="mt-1 accent-accent">
+          <span class="text-sm text-secondary">
+            {{ i18n "member_accept_prefix" }}
+            <a href="{{ "/docs/cookies-and-privacy-policy/" | relLangURL }}" target="_blank" rel="noopener" class="text-secondary-2 underline hover:text-accent">{{ i18n "member_privacy_label" }}</a>
+          </span>
+        </label>
+      </fieldset>
+
       <button type="submit"
               class="bg-accent hover:bg-accent-2 w-full rounded-[10px] px-4 py-2 font-medium text-white transition-colors">
-        Continue to payment
+        {{ i18n "member_continue_to_payment" }}
       </button>
     </form>
   </div>
 </section>
 
+<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
 <script>
   (function () {
     var reasons = {
-      email_exists: "An account with that email already exists. Try signing in.",
-      stripe_cancel: "Checkout was cancelled. No charge was made.",
-      failed_session: "We couldn't reach Stripe. Please try again.",
-      failed_crypt: "We couldn't process your password. Please try again."
+      email_exists: {{ i18n "member_checkout_reason_email_exists" }},
+      stripe_cancel: {{ i18n "member_checkout_reason_stripe_cancel" }},
+      failed_session: {{ i18n "member_checkout_reason_failed_session" }},
+      failed_crypt: {{ i18n "member_checkout_reason_failed_crypt" }},
+      invalid_price: {{ i18n "member_checkout_reason_invalid_price" }},
+      accept_required: {{ i18n "member_checkout_reason_accept_required" }}
     };
     var params = new URLSearchParams(window.location.search);
     var reason = params.get('reason');

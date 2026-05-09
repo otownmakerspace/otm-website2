@@ -141,6 +141,34 @@ func GetByCustomerID(db *sql.DB, customerID string) (user.User, error) {
 	return u, err
 }
 
+// GetByEmail returns the user row for the given email.
+func GetByEmail(db *sql.DB, email string) (user.User, error) {
+	var u user.User
+	err := db.QueryRow(
+		"SELECT email, name, phone, password, active, customer_id FROM user WHERE email = ?",
+		email,
+	).Scan(&u.Email, &u.Name, &u.Phone, &u.Password, &u.Active, &u.CustomerID)
+	return u, err
+}
+
+// UpdateProfile updates name and phone for the user identified by email.
+func UpdateProfile(db *sql.DB, email, name, phone string) error {
+	_, err := db.Exec("UPDATE user SET name = ?, phone = ? WHERE email = ?", name, phone, email)
+	if err != nil {
+		return fmt.Errorf("db: UpdateProfile: %w", err)
+	}
+	return nil
+}
+
+// UpdatePassword writes a new bcrypt hash for the user identified by email.
+func UpdatePassword(db *sql.DB, email string, passwordHash []byte) error {
+	_, err := db.Exec("UPDATE user SET password = ? WHERE email = ?", passwordHash, email)
+	if err != nil {
+		return fmt.Errorf("db: UpdatePassword: %w", err)
+	}
+	return nil
+}
+
 // CountActive returns the number of users with active = 1.
 func CountActive(db *sql.DB) (int, error) {
 	var n int

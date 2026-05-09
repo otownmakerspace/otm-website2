@@ -348,3 +348,137 @@ other = "Vælg et område på kortet for at se detaljer"
 # ── 404 ──
 [page_not_found]
 other = "Siden blev ikke fundet"
+
+
+# ── Member Portal ──
+# Login page
+[member_email]
+other = "Email"
+
+[member_password]
+other = "Adgangskode"
+
+[member_sign_in]
+other = "Log ind"
+
+[member_forgot_password]
+other = "Glemt din adgangskode?"
+
+[member_login_reason_combo_fail]
+other = "Den email og adgangskode passer ikke med vores oplysninger."
+
+[member_login_reason_misc]
+other = "Noget gik galt. Prøv igen."
+
+[member_login_reason_failed_crypt]
+other = "Vi kunne ikke verificere din adgangskode. Prøv igen."
+
+[member_login_reason_token_invalid]
+other = "Det nulstillingslink er ikke længere gyldigt. Anmod om et nyt nedenfor."
+
+[member_login_reason_db_query]
+other = "Midlertidig databasefejl. Prøv igen."
+
+# Request password reset
+[member_send_reset_link]
+other = "Send nulstillingslink"
+
+[member_back_to_signin]
+other = "Tilbage til log ind"
+
+# Reset password
+[member_new_password]
+other = "Ny adgangskode"
+
+[member_password_length_hint]
+other = "8&ndash;31 tegn."
+
+[member_update_password]
+other = "Opdater adgangskode"
+
+# Checkout signup
+[member_full_name]
+other = "Fulde navn"
+
+[member_phone_optional]
+other = "Telefon (valgfrit)"
+
+[member_password_signup_hint]
+other = "8&ndash;31 tegn. Du bruger den til at logge ind senere."
+
+[member_continue_to_payment]
+other = "Fortsæt til betaling"
+
+[member_checkout_reason_email_exists]
+other = "Der findes allerede en konto med den email. Prøv at logge ind."
+
+[member_checkout_reason_stripe_cancel]
+other = "Betalingen blev annulleret. Intet beløb blev hævet."
+
+[member_checkout_reason_failed_session]
+other = "Vi kunne ikke nå Stripe. Prøv igen."
+
+[member_checkout_reason_failed_crypt]
+other = "Vi kunne ikke behandle din adgangskode. Prøv igen."
+
+# Dashboard scaffolding
+[member_loading_membership]
+other = "Henter dit medlemskab&hellip;"
+
+[member_loading_profile]
+other = "Henter profil&hellip;"
+
+[member_loading_password]
+other = "Henter adgangskodeindstillinger&hellip;"
+
+[member_loading_billing]
+other = "Henter betaling&hellip;"
+
+[member_sign_out]
+other = "Log ud"
+
+# Price selection (in checkout fragment from /checkout/prices)
+[member_select_membership]
+other = "Vælg dit medlemskab"
+
+[member_no_prices_available]
+other = "Der er ingen medlemskaber tilgængelige lige nu. Prøv igen senere."
+
+[member_loading_prices]
+other = "Henter medlemsmuligheder&hellip;"
+
+[member_checkout_reason_invalid_price]
+other = "Den medlemskabsmulighed er ikke tilgængelig. Vælg en anden."
+
+# Dashboard structure (layouts/page/dashboard.html)
+[member_account_menu]
+other = "Konto"
+
+[member_back_to_site]
+other = "Tilbage til hjemmesiden"
+
+[member_settings_section]
+other = "Kontoindstillinger"
+
+# Auth-aware nav (header.html / data-auth-user variant)
+[member_dashboard]
+other = "Dashboard"
+
+# Consent checkboxes (checkout signup form)
+[member_accept_section]
+other = "Inden du melder dig ind"
+
+[member_accept_prefix]
+other = "Jeg har læst og accepterer"
+
+[member_terms_label]
+other = "Medlemsbetingelserne"
+
+[member_waiver_label]
+other = "Ansvarsfraskrivelsen"
+
+[member_privacy_label]
+other = "Privatlivspolitikken"
+
+[member_checkout_reason_accept_required]
+other = "Bekræft venligst at du har læst alle påkrævede dokumenter for at fortsætte."

@@ -9,16 +9,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	dbpkg "github.com/iustin94/makerspace/api/internal/db"
+	"github.com/iustin94/makerspace/api/internal/i18n"
 )
 
 // Login returns the POST /login/ handler. Bad credentials redirect to
 // /login/?reason=combo_fail without revealing whether the email exists.
+//
+// Redirects respect the language of the page that submitted the form: a POST
+// from /da/login/ lands on /da/dashboard, /da/login/?reason=..., etc.
 func (s *Store) Login(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("Sign-in request")
+		lang := i18n.FromRequest(r)
 		if err := r.ParseForm(); err != nil || !validateSignInInput(r.Form) {
 			log.Print("login: malformed request")
-			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=misc"), http.StatusSeeOther)
 			return
 		}
 
@@ -26,22 +31,22 @@ func (s *Store) Login(database *sql.DB) http.HandlerFunc {
 		passwordHash, customerID, err := dbpkg.LookupForLogin(database, email)
 		if err == sql.ErrNoRows {
 			log.Print("login: user not found")
-			http.Redirect(w, r, "/login/?reason=combo_fail", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=combo_fail"), http.StatusSeeOther)
 			return
 		} else if err != nil {
 			log.Print("login: db error: ", err)
-			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=misc"), http.StatusSeeOther)
 			return
 		}
 
 		if err := bcrypt.CompareHashAndPassword(passwordHash, []byte(r.Form.Get("password"))); err != nil {
 			if err == bcrypt.ErrMismatchedHashAndPassword {
 				log.Print("login: password mismatch")
-				http.Redirect(w, r, "/login/?reason=combo_fail", http.StatusFound)
+				http.Redirect(w, r, i18n.Path(lang, "/login/?reason=combo_fail"), http.StatusFound)
 				return
 			}
 			log.Print("login: bcrypt error: ", err)
-			http.Redirect(w, r, "/login/?reason=failed_crypt", http.StatusFound)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=failed_crypt"), http.StatusFound)
 			return
 		}
 
@@ -51,7 +56,7 @@ func (s *Store) Login(database *sql.DB) http.HandlerFunc {
 		sess.Values["email"] = email
 		sess.Save(r, w)
 		log.Print("login: ok")
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		http.Redirect(w, r, i18n.Path(lang, "/dashboard"), http.StatusSeeOther)
 	}
 }
 

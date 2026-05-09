@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="{{ .Lang }}">
+<head>
+<title>{{ .S.Membership }} — O'Town Makerspace</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+{{/* Hugo-extracted head: Tailwind CDN, Tailwind config, fonts, theme tokens.
+     Falls back to a minimal Tailwind setup if Hugo's static index isn't
+     bundled (development without `hugo build`). */}}
+{{ if .Head }}
+  {{ .Head }}
+{{ else }}
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{{ end }}
+</head>
+<body class="bg-primary">
+
+{{/* ─────────────────────────────────────────────────────────────────────
+     Auth-aware header. Logo on the left links back to the marketing
+     site root. Profile menu on the right has the user's email + Sign Out.
+     No marketing nav (Home/About/Events/etc.) — this is a member surface.
+   ───────────────────────────────────────────────────────────────────── */}}
+<header class="sticky top-0 z-[9999] bg-surface/95 backdrop-blur-sm shadow-sm">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-4">
+      <a class="flex items-center gap-3" href="{{ .HomeURL }}">
+        <img src="/images/branding/logos/wordmark-consolidated.svg"
+             alt="O'Town Makerspace"
+             class="site-logo site-logo--light h-10 w-auto">
+        <img src="/images/branding/logos/wordmark-white-transparent.svg"
+             alt="O'Town Makerspace"
+             class="site-logo site-logo--dark h-10 w-auto">
+      </a>
+
+      {{/* Profile menu */}}
+      <div class="relative group/profile">
+        <button class="inline-flex items-center gap-2 rounded-[10px] border border-gray-300 bg-surface px-4 py-2 text-sm font-medium text-secondary transition-colors hover:border-accent hover:text-accent">
+          <i class="fa-solid fa-user-circle"></i>
+          <span class="max-w-[200px] truncate">{{ .UserEmail }}</span>
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div class="invisible opacity-0 group-hover/profile:visible group-hover/profile:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+          <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-56">
+            <a href="{{ .HomeURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent transition-colors">
+              <i class="fa-solid fa-house w-4 text-center"></i>
+              {{ .S.BackToSite }}
+            </a>
+            <a href="{{ .LogoutURL }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent transition-colors">
+              <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+              {{ .S.SignOut }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+{{/* ─────────────────────────────────────────────────────────────────────
+     Main dashboard content. Each card is loaded as an htmx fragment
+     (existing /dashboard/hero, /subscriptions, /profile, /profile/password,
+     /invoices endpoints). Skeleton placeholders are inlined directly.
+   ───────────────────────────────────────────────────────────────────── */}}
+<main class="py-10 lg:py-16">
+  <div class="container mx-auto max-w-5xl px-4">
+
+    {{/* Hero — greeting + headline membership status */}}
+    <div id="dashboard-hero"
+         hx-get="/dashboard/hero"
+         hx-trigger="load"
+         hx-swap="innerHTML"
+         class="mb-8">
+      <div class="space-y-3 animate-pulse" aria-hidden="true">
+        <div class="h-8 w-2/3 rounded bg-gray-200"></div>
+        <div class="h-5 w-1/2 rounded bg-gray-200"></div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      {{/* MEMBERSHIP — full-width hero card */}}
+      <div id="subscriptions"
+           hx-get="/subscriptions"
+           hx-trigger="load, membership-changed from:body"
+           hx-swap="innerHTML"
+           class="rounded-[10px] border border-accent/30 bg-surface p-6 sm:p-8 shadow-sm">
+        <div class="space-y-4 animate-pulse" aria-hidden="true">
+          <div class="flex items-center justify-between">
+            <div class="h-6 w-32 rounded bg-gray-200"></div>
+            <div class="h-6 w-16 rounded-full bg-gray-200"></div>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="space-y-2"><div class="h-3 w-12 rounded bg-gray-200"></div><div class="h-4 w-32 rounded bg-gray-200"></div></div>
+            <div class="space-y-2"><div class="h-3 w-16 rounded bg-gray-200"></div><div class="h-4 w-24 rounded bg-gray-200"></div></div>
+            <div class="space-y-2"><div class="h-3 w-20 rounded bg-gray-200"></div><div class="h-4 w-28 rounded bg-gray-200"></div></div>
+          </div>
+          <div class="h-4 w-3/4 rounded bg-gray-200"></div>
+          <div class="h-9 w-40 rounded-[10px] bg-gray-200"></div>
+        </div>
+      </div>
+
+      {{/* SETTINGS GROUP — Profile + Password side by side on desktop */}}
+      <div>
+        <h2 class="mb-3 font-secondary text-sm font-bold uppercase tracking-wide text-secondary-2">
+          {{ .S.SettingsSection }}
+        </h2>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div id="profile-card-wrapper"
+               hx-get="/profile"
+               hx-trigger="load"
+               hx-swap="innerHTML"
+               class="rounded-[10px] bg-surface p-6 sm:p-8 shadow-sm">
+            <div class="space-y-4 animate-pulse" aria-hidden="true">
+              <div class="h-6 w-20 rounded bg-gray-200"></div>
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="space-y-2"><div class="h-3 w-12 rounded bg-gray-200"></div><div class="h-4 w-32 rounded bg-gray-200"></div></div>
+                <div class="space-y-2"><div class="h-3 w-12 rounded bg-gray-200"></div><div class="h-4 w-40 rounded bg-gray-200"></div></div>
+                <div class="space-y-2"><div class="h-3 w-12 rounded bg-gray-200"></div><div class="h-4 w-28 rounded bg-gray-200"></div></div>
+              </div>
+              <div class="h-9 w-28 rounded-[10px] bg-gray-200"></div>
+            </div>
+          </div>
+
+          <div id="password-card-wrapper"
+               hx-get="/profile/password"
+               hx-trigger="load"
+               hx-swap="innerHTML"
+               class="rounded-[10px] bg-surface p-6 sm:p-8 shadow-sm">
+            <div class="space-y-4 animate-pulse" aria-hidden="true">
+              <div class="h-6 w-36 rounded bg-gray-200"></div>
+              <div class="space-y-2"><div class="h-3 w-24 rounded bg-gray-200"></div><div class="h-10 w-full rounded-[8px] bg-gray-200"></div></div>
+              <div class="space-y-2"><div class="h-3 w-20 rounded bg-gray-200"></div><div class="h-10 w-full rounded-[8px] bg-gray-200"></div></div>
+              <div class="space-y-2"><div class="h-3 w-28 rounded bg-gray-200"></div><div class="h-10 w-full rounded-[8px] bg-gray-200"></div></div>
+              <div class="h-9 w-32 rounded-[10px] bg-gray-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{/* BILLING — full-width list */}}
+      <div id="invoices"
+           hx-get="/invoices"
+           hx-trigger="load"
+           hx-swap="innerHTML"
+           class="rounded-[10px] bg-surface p-6 sm:p-8 shadow-sm">
+        <div class="space-y-4 animate-pulse" aria-hidden="true">
+          <div class="flex items-center justify-between">
+            <div class="h-6 w-20 rounded bg-gray-200"></div>
+            <div class="h-4 w-40 rounded bg-gray-200"></div>
+          </div>
+          {{/* Three identical skeleton rows. Unrolled rather than ranged
+               because Go's html/template lacks a slice/until/range-N helper. */}}
+          <div class="flex items-center justify-between border-t border-gray-100 py-3">
+            <div class="space-y-2">
+              <div class="h-4 w-44 rounded bg-gray-200"></div>
+              <div class="h-3 w-20 rounded bg-gray-200"></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="h-4 w-16 rounded bg-gray-200"></div>
+              <div class="h-4 w-12 rounded-full bg-gray-200"></div>
+              <div class="h-3 w-8 rounded bg-gray-200"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between border-t border-gray-100 py-3">
+            <div class="space-y-2">
+              <div class="h-4 w-44 rounded bg-gray-200"></div>
+              <div class="h-3 w-20 rounded bg-gray-200"></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="h-4 w-16 rounded bg-gray-200"></div>
+              <div class="h-4 w-12 rounded-full bg-gray-200"></div>
+              <div class="h-3 w-8 rounded bg-gray-200"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between border-t border-gray-100 py-3">
+            <div class="space-y-2">
+              <div class="h-4 w-44 rounded bg-gray-200"></div>
+              <div class="h-3 w-20 rounded bg-gray-200"></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="h-4 w-16 rounded bg-gray-200"></div>
+              <div class="h-4 w-12 rounded-full bg-gray-200"></div>
+              <div class="h-3 w-8 rounded bg-gray-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{/* Modal mount — cancellation modal lives here when opened */}}
+    <div id="modal-mount"></div>
+  </div>
+</main>
+
+{{/* Minimal footer — copyright only. The marketing footer's quick links etc.
+     belong on marketing pages, not the member portal. */}}
+<footer class="border-t border-gray-200 bg-surface py-6 mt-12">
+  <div class="container mx-auto px-4 text-center text-xs text-gray-dark">
+    © 2026 O'Town Makerspace
+  </div>
+</footer>
+
+<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+</body>
+</html>

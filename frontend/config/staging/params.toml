@@ -1,7 +1,5 @@
 # Staging environment overlay (activated via `hugo --environment staging`).
-# In Hugo's config-dir convention, params.toml's contents ARE the [params]
-# section — no [params] header needed; values here merge over _default/.
-#
-# Sign-in/Sign-up/Join-Us buttons in the header partial read this and become
-# local routes pointing at the api/ backend running on the same host.
-memberPortalUrl = "/login/"
+# The member portal lives on members.staging.makerspace.olaru.dk, served by
+# the Go backend. The marketing site links to it.
+memberPortalUrl = "https://members.staging.makerspace.olaru.dk/login/"
+memberSignupUrl = "https://members.staging.makerspace.olaru.dk/checkout/"

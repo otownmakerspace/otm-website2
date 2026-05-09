@@ -1,0 +1,56 @@
+{{/*
+  Cancellation confirmation modal. Mounted into #modal-mount on the dashboard.
+  Closing options:
+    - "Keep membership" → swaps innerHTML of #modal-mount with empty string
+      (the Close button posts to /cancel-modal/dismiss returning empty body)
+    - Backdrop click — same behaviour via _hyperscript-style trigger... we use
+      a plain hx-get to a no-op endpoint so we can stay framework-light.
+    - Confirm button → POST /cancel-subscription, server responds with empty
+      body + HX-Trigger:membership-changed. The membership card reloads.
+
+  No backdrop dismiss for now (would need a no-op endpoint or JS); user must
+  click Keep or Confirm. Acceptable for a destructive action.
+*/}}
+<div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+  {{/* Backdrop */}}
+  <div class="absolute inset-0 bg-black/50"></div>
+
+  {{/* Dialog */}}
+  <div class="relative w-full max-w-md rounded-[10px] bg-surface p-6 shadow-xl">
+    <h2 class="text-secondary mb-3 font-secondary text-xl font-bold">
+      {{ .S.CancelModalTitle }}
+    </h2>
+
+    <div class="space-y-3 text-sm text-gray-dark">
+      {{ if .EndsOn }}
+        <p>{{ printf .S.CancelModalKeepAccess .EndsOn }}</p>
+      {{ end }}
+      <p>{{ .S.CancelModalBelongings }}</p>
+    </div>
+
+    <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <button
+        type="button"
+        hx-get="/cancel-modal/dismiss"
+        hx-target="#modal-mount"
+        hx-swap="innerHTML"
+        class="rounded-[10px] border border-gray-300 px-4 py-2 text-sm font-medium text-secondary transition-colors hover:border-accent hover:text-accent"
+      >
+        {{ .S.CancelModalKeep }}
+      </button>
+      <button
+        type="button"
+        hx-post="/cancel-subscription?sub_id={{ .SubID }}"
+        hx-target="#modal-mount"
+        hx-swap="innerHTML"
+        class="rounded-[10px] bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+      >
+        {{ if .EndsOn }}
+          {{ printf .S.CancelModalConfirmDated .EndsOn }}
+        {{ else }}
+          {{ .S.CancelModalConfirm }}
+        {{ end }}
+      </button>
+    </div>
+  </div>
+</div>

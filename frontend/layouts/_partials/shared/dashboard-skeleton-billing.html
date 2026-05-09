@@ -1,0 +1,20 @@
+{{/* Skeleton matching invoices.html: header + 3 row items */}}
+<div class="space-y-4 animate-pulse" aria-hidden="true">
+  <div class="flex items-center justify-between">
+    <div class="h-6 w-20 rounded bg-gray-200"></div>
+    <div class="h-4 w-40 rounded bg-gray-200"></div>
+  </div>
+  {{ range $i := slice 1 2 3 }}
+    <div class="flex items-center justify-between border-t border-gray-100 py-3">
+      <div class="space-y-2">
+        <div class="h-4 w-44 rounded bg-gray-200"></div>
+        <div class="h-3 w-20 rounded bg-gray-200"></div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="h-4 w-16 rounded bg-gray-200"></div>
+        <div class="h-4 w-12 rounded-full bg-gray-200"></div>
+        <div class="h-3 w-8 rounded bg-gray-200"></div>
+      </div>
+    </div>
+  {{ end }}
+</div>

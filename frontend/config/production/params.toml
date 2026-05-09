@@ -2,6 +2,7 @@
 # Values here merge over _default/. No [params] header needed.
 #
 # Production keeps pointing at the existing external members system. Once the
-# new backend is verified on staging and DNS is flipped, this becomes "/login/"
-# and the external members.theotowngarage.com retires.
+# new backend is verified on staging and DNS is flipped, these become "/login/"
+# and "/checkout/", and the external members.theotowngarage.com retires.
 memberPortalUrl = "https://members.theotowngarage.com"
+memberSignupUrl = "https://members.theotowngarage.com"

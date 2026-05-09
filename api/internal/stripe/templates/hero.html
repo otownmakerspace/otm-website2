@@ -1,0 +1,36 @@
+{{/*
+  Dashboard hero — single welcoming line + one-glance membership status.
+  Sits above the cards. The visual "anchor" of the page.
+*/}}
+<div class="space-y-2">
+  <h1 class="text-secondary font-secondary text-3xl font-bold">
+    {{ if .FirstName }}
+      {{ printf .S.HeroGreetingNamed .FirstName }}
+    {{ else }}
+      {{ .S.HeroGreetingAnonymous }}
+    {{ end }}
+  </h1>
+  <p class="text-secondary text-lg">
+    {{ if .Active }}
+      {{ if .CancelAtEnd }}
+        <span class="inline-flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-yellow-500"></span>
+          {{ .StatusHeadline }}
+        </span>
+      {{ else }}
+        <span class="inline-flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-green-500"></span>
+          {{ .StatusHeadline }}
+        </span>
+      {{ end }}
+    {{ else }}
+      <span class="inline-flex items-center gap-2">
+        <span class="inline-block h-2 w-2 rounded-full bg-gray-400"></span>
+        {{ .StatusHeadline }}
+      </span>
+    {{ end }}
+  </p>
+  {{ with .StatusDetail }}
+    <p class="text-sm text-gray-dark">{{ . }}</p>
+  {{ end }}
+</div>

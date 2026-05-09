@@ -1,0 +1,43 @@
+<div class="space-y-4">
+  <div class="flex items-center justify-between">
+    <h2 class="text-secondary font-secondary text-xl font-bold">{{ .S.Billing }}</h2>
+    <a href="/billing-portal"
+       class="text-sm text-secondary-2 hover:text-accent transition-colors">
+      {{ .S.ManagePayment }}
+    </a>
+  </div>
+
+  {{ if .Empty }}
+    <p class="text-sm text-gray-dark">{{ .S.NoInvoicesYet }}</p>
+  {{ else }}
+    <ul class="divide-y divide-gray-200">
+      {{ range .Rows }}
+        <li class="flex items-center justify-between py-3">
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-secondary truncate" {{ with .Number }}title="{{ . }}"{{ end }}>
+              {{ .Title }}
+            </p>
+            <p class="text-xs text-gray-dark">{{ .Date }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-medium text-secondary">{{ .Amount }}</span>
+            {{ if eq .Status "paid" }}
+              <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">{{ $.S.InvoiceStatusPaid }}</span>
+            {{ else if eq .Status "open" }}
+              <span class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">{{ $.S.InvoiceStatusOpen }}</span>
+            {{ else }}
+              <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">{{ .Status }}</span>
+            {{ end }}
+            {{ with .PDFURL }}
+              <a href="{{ . }}" target="_blank" rel="noopener" class="text-xs text-secondary-2 hover:text-accent">{{ $.S.InvoicePDF }}</a>
+            {{ else }}
+              {{ with .HostedURL }}
+                <a href="{{ . }}" target="_blank" rel="noopener" class="text-xs text-secondary-2 hover:text-accent">{{ $.S.InvoiceView }}</a>
+              {{ end }}
+            {{ end }}
+          </div>
+        </li>
+      {{ end }}
+    </ul>
+  {{ end }}
+</div>

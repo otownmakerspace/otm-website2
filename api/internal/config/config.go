@@ -33,12 +33,24 @@ type BackendConf struct {
 	SessionCookieName string
 	// True for non-production deployments (skips production-only behaviour, enables seedTestUser).
 	IsTest bool
+	// MembersHost is the Host header for the member portal subdomain
+	// (e.g. "members.development.makerspace.olaru.dk"). The router registers
+	// dashboard + auth handlers on this host; the apex serves static Hugo
+	// content only. Empty disables host-based routing (falls back to
+	// any-host patterns — useful for tests / local stand-alone runs).
+	MembersHost string
+	// MarketingBaseURL is the full URL of the apex/marketing site
+	// (e.g. "https://development.makerspace.olaru.dk"). Used for cross-host
+	// redirects (logout returns the user to marketing). Empty falls back to
+	// PublicURL — fine for tests / local stand-alone runs.
+	MarketingBaseURL string
 }
 
 type StripeConf struct {
-	Key            string // sk_xxx...xxx
+	Key            string // sk_xxx...xxx — secret key, server-only.
+	PublishableKey string // pk_xxx...xxx — publishable key, safe to expose to the browser.
 	EndpointSecret string // whsec_xxx...xxx
-	PriceID        string // price_xxx — Stripe Price ID of the membership subscription.
+	PriceID        string // price_xxx — fallback price for re-checkout flows when the form doesn't carry a price_id (e.g. session-recovery). New signups should pick from /checkout/prices.
 }
 
 type EmailConf struct {
@@ -89,9 +101,12 @@ func Load() Config {
 	envOverride(&c.Backend.StaticDir, "BACKEND_STATIC_DIR")
 	envOverride(&c.Backend.DBPath, "BACKEND_DB_PATH")
 	envOverride(&c.Backend.SessionCookieName, "SESSION_COOKIE_NAME")
+	envOverride(&c.Backend.MembersHost, "MEMBERS_HOST")
+	envOverride(&c.Backend.MarketingBaseURL, "MARKETING_BASE_URL")
 
 	secretOverride(&c.Backend.CookiePrivateKey, "COOKIE_STORE_KEY", "cookie_store_key")
 	secretOverride(&c.Stripe.Key, "STRIPE_KEY", "stripe_key")
+	secretOverride(&c.Stripe.PublishableKey, "STRIPE_PUBLISHABLE_KEY", "stripe_publishable_key")
 	secretOverride(&c.Stripe.EndpointSecret, "STRIPE_WEBHOOK_SECRET", "stripe_webhook_secret")
 	envOverride(&c.Stripe.PriceID, "STRIPE_PRICE_ID")
 	secretOverride(&c.Email.Password, "EMAIL_PASSWORD", "email_password")

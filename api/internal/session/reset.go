@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/iustin94/makerspace/api/internal/email"
+	"github.com/iustin94/makerspace/api/internal/i18n"
 	"github.com/iustin94/makerspace/api/internal/user"
 )
 
@@ -40,13 +41,19 @@ func hashToken(token string) string {
 // RequestReset returns the POST /request-reset handler. To prevent email
 // enumeration, the user is always redirected to /reset-sent regardless of
 // whether the email exists.
+//
+// publicURL is the absolute base for the email's reset link; lang-aware paths
+// only apply to the redirects shown in the user's browser, not the link
+// embedded in the email (which the user clicks from their inbox and may have
+// opened in a different language session).
 func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("password reset requested")
+		lang := i18n.FromRequest(r)
 		emailAddr := r.FormValue("email")
 		if emailAddr == "" {
 			log.Print("reset: empty email")
-			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=misc"), http.StatusSeeOther)
 			return
 		}
 
@@ -55,18 +62,18 @@ func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string) http.H
 		err := database.QueryRow("SELECT 1 FROM user WHERE email = ?", emailAddr).Scan(&n)
 		if err == sql.ErrNoRows {
 			log.Print("reset: requested for non-existent email")
-			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
 			return
 		} else if err != nil {
 			log.Print("reset: db error: ", err)
-			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
 			return
 		}
 
 		token, err := generateToken()
 		if err != nil {
 			log.Print("reset: token generation failed: ", err)
-			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
 			return
 		}
 
@@ -76,16 +83,18 @@ func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string) http.H
 			emailAddr, hashToken(token), expiry,
 		); err != nil {
 			log.Print("reset: db insert: ", err)
-			http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
 			return
 		}
 
-		resetLink := fmt.Sprintf("%s/reset-password?token=%s", publicURL, token)
+		// The reset link drops the user on /reset-password (or /da/reset-password)
+		// based on the language they were on when they requested the reset.
+		resetLink := fmt.Sprintf("%s%s?token=%s", publicURL, i18n.Path(lang, "/reset-password"), token)
 		if err := mailer.Send(emailAddr, user.User{}, email.Reset, resetLink, struct{}{}); err != nil {
 			log.Print("reset: email send: ", err)
 		}
 
-		http.Redirect(w, r, "/reset-sent", http.StatusSeeOther)
+		http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
 	}
 }
 
@@ -93,17 +102,18 @@ func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string) http.H
 // token + expiry, hashes the new password, deletes the token row.
 func ResetPassword(database *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		lang := i18n.FromRequest(r)
 		token := r.URL.Query().Get("token")
 		if token == "" {
 			log.Print("reset: token missing in query: ", r.URL.Query())
-			http.Redirect(w, r, "/login/?reason=token_invalid", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=token_invalid"), http.StatusSeeOther)
 			return
 		}
 		log.Print("reset: applying new password")
 
 		newPassword := r.FormValue("password")
 		if len(newPassword) < MinPasswordLen || len(newPassword) > MaxPasswordLen {
-			http.Redirect(w, r, "/login/?reason=misc", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=misc"), http.StatusSeeOther)
 			return
 		}
 
@@ -116,12 +126,12 @@ func ResetPassword(database *sql.DB) http.HandlerFunc {
 		).Scan(&emailAddr, &expiresAt)
 		if err == sql.ErrNoRows {
 			log.Print("reset: unknown token")
-			http.Redirect(w, r, "/login/?reason=token_invalid", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=token_invalid"), http.StatusSeeOther)
 			return
 		}
 		if err != nil {
 			log.Print("reset: db error: ", err)
-			http.Redirect(w, r, "/login/?reason=db_query", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=db_query"), http.StatusSeeOther)
 			return
 		}
 
@@ -132,16 +142,16 @@ func ResetPassword(database *sql.DB) http.HandlerFunc {
 
 		hashed, err := HashAndSalt(newPassword)
 		if err != nil {
-			http.Redirect(w, r, "/login/?reason=failed_crypt", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=failed_crypt"), http.StatusSeeOther)
 			return
 		}
 		if _, err := database.Exec("UPDATE user SET password = ? WHERE email = ?", hashed, emailAddr); err != nil {
-			http.Redirect(w, r, "/login/?reason=db_update", http.StatusSeeOther)
+			http.Redirect(w, r, i18n.Path(lang, "/login/?reason=db_update"), http.StatusSeeOther)
 			return
 		}
 
 		database.Exec("DELETE FROM password_reset_tokens WHERE token = ?", tokenHash)
 		log.Print("reset: success")
-		http.Redirect(w, r, "/reset-success", http.StatusSeeOther)
+		http.Redirect(w, r, i18n.Path(lang, "/reset-success"), http.StatusSeeOther)
 	}
 }

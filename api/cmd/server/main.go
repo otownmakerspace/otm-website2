@@ -46,13 +46,13 @@ func main() {
 		db.SeedTest(database, cfg)
 	}
 
-	sessions := session.NewStore([]byte(cfg.Backend.CookiePrivateKey), cfg.Backend.SessionCookieName)
+	sessions := session.NewStore([]byte(cfg.Backend.CookiePrivateKey), cfg.Backend.SessionCookieName, cfg.Backend.MarketingBaseURL)
 	mailer := email.NewMailer(cfg.Email)
 	svc := stripe.NewService(cfg, database, sessions, mailer)
 
-	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, database, sessions, mailer, svc)
+	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, cfg.Backend.MembersHost, database, sessions, mailer, svc)
 
 	addr := cfg.Backend.HostAddr()
-	log.Printf("listening on %s (public URL: %s)", addr, cfg.Backend.PublicURL)
+	log.Printf("listening on %s (public URL: %s, members host: %s)", addr, cfg.Backend.PublicURL, cfg.Backend.MembersHost)
 	log.Fatal(stdhttp.ListenAndServe(addr, mux))
 }

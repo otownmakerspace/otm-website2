@@ -1,0 +1,5 @@
+# Development environment overlay (activated via `hugo --environment development`).
+# The member portal lives on a separate subdomain (members.development.makerspace.olaru.dk),
+# served by the Go backend. The marketing site (this Hugo build) only links to it.
+memberPortalUrl = "https://members.development.makerspace.olaru.dk/login/"
+memberSignupUrl = "https://members.development.makerspace.olaru.dk/checkout/"

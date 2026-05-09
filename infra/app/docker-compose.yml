@@ -9,14 +9,26 @@ services:
     container_name: otm-app
     labels:
       - "traefik.enable=true"
+      # Apex (marketing site, Hugo static): development.makerspace.olaru.dk
       - "traefik.http.routers.otm-app.rule=Host(`${SUBDOMAIN}.${TOPDOMAIN}`)"
       - "traefik.http.routers.otm-app.entrypoints=websecure"
       - "traefik.http.routers.otm-app.tls.certresolver=myresolver"
+      # Members (dashboard, auth flows, all dynamic): members.development.makerspace.olaru.dk
+      - "traefik.http.routers.otm-members.rule=Host(`members.${SUBDOMAIN}.${TOPDOMAIN}`)"
+      - "traefik.http.routers.otm-members.entrypoints=websecure"
+      - "traefik.http.routers.otm-members.tls.certresolver=myresolver"
+      # Both routers send to the same backend service (single Go binary).
       - "traefik.http.services.otm-app.loadbalancer.server.port=4242"
+      - "traefik.http.routers.otm-members.service=otm-app"
     environment:
       BACKEND_HOST: "0.0.0.0"
       BACKEND_PORT: "4242"
-      BACKEND_PUBLIC_URL: "https://${SUBDOMAIN}.${TOPDOMAIN}"
+      # Backend is reachable to users at the members subdomain. Stripe redirects,
+      # password-reset email links, and Customer Portal returns all use this.
+      BACKEND_PUBLIC_URL: "https://members.${SUBDOMAIN}.${TOPDOMAIN}"
+      # Apex / marketing host. Used for logout "back to site" redirects.
+      MARKETING_BASE_URL: "https://${SUBDOMAIN}.${TOPDOMAIN}"
+      MEMBERS_HOST: "members.${SUBDOMAIN}.${TOPDOMAIN}"
       STRIPE_PRICE_ID: "${STRIPE_PRICE_ID:-}"
       SITE_RELEASE: "${SITE_RELEASE:-}"
       SESSION_COOKIE_NAME: "${SESSION_COOKIE_NAME:-otm-session}"
@@ -30,6 +42,10 @@ services:
       - type: bind
         source: ${SECRETS_FOLDER}/stripe_key
         target: /run/secrets/stripe_key
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/stripe_publishable_key
+        target: /run/secrets/stripe_publishable_key
         read_only: true
       - type: bind
         source: ${SECRETS_FOLDER}/stripe_webhook_secret
