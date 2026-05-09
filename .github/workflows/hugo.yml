@@ -38,12 +38,13 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build site
+        working-directory: frontend
         run: hugo --minify --gc --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./frontend/docs
 
   deploy:
     needs: build
