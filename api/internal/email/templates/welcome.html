@@ -1,29 +1,46 @@
-<html>
-<body>
-    <p>
-        Hello {{.Name}}
-    </p>
-    <p>
-        Congratulations on becoming a member!
-    <br>
-        Be sure to check out the <a href="{{.Link}}">Discord community</a> 
-        What is next?
-        <ol>
-        <li>Present yourself on the Discord #General chat and ask for a tour of the place. For a slower alternative, you can contact us per mail info@theotowngarage.com.</li>
-        <li>We will show you around, explain the house rules and give you full access to the makerspace.</li>
-        </ol>
-        The place consists of members just like you, who are willing to help all newcomers
-        <br>
-        You can manage your subscription at <a href="https://theotowngarage.com/login">https://theotowngarage.com/login</a>
-        <br>
-        There you can check your subscription or change it at any time.
-    </p>
+{{define "email_preheader"}}Your {{.Brand.Name}} membership is active. Here's what's next.{{end}}
 
-    <p>The O'Town Garage</p>
-    Website : https://theotowngarage.com
-    <br>
-    Discord Community : {{.Link}}
-    <br>
-    email : info@theotowngarage.com
-</body>
-</html>
+{{define "email_content"}}
+  <h1 class="heading heading-1" style="margin: 0 0 16px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; line-height: 34px; font-weight: 800; color: #0D1A63;">
+    Welcome, {{.Name}}.
+  </h1>
+  <p class="body-text" style="margin: 0 0 16px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    You're in. Your membership is active and the doors of {{.Brand.Name}} are open to you 24/7.
+  </p>
+  <p class="body-text" style="margin: 0 0 28px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    The first step is meeting the community on Discord — say hello, ask for a tour, get oriented.
+  </p>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
+    <tr>
+      <td align="center" bgcolor="#F68048" class="button-cell" style="border-radius: 10px;">
+        <a href="{{.Link}}" style="display: inline-block; padding: 14px 32px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; line-height: 20px; color: #ffffff; text-decoration: none; background-color: #F68048; border-radius: 10px;">
+          Join the Discord →
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <h2 class="heading heading-2" style="margin: 36px 0 12px 0; font-family: 'Inter', sans-serif; font-size: 18px; line-height: 24px; font-weight: 700; color: #0D1A63;">
+    What's next?
+  </h2>
+  <ol class="body-text" style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    <li style="margin-bottom: 10px;">
+      Say hello in <em>#general</em> and ask for a tour. Prefer email?
+      <a href="mailto:info@theotowngarage.com" style="color: #F68048; text-decoration: underline;">Drop us a line.</a>
+    </li>
+    <li style="margin-bottom: 10px;">
+      We'll show you around, walk through the house rules, and unlock 24/7 access.
+    </li>
+    <li>
+      Manage your subscription anytime at
+      <a href="https://members.theotowngarage.com" style="color: #F68048; text-decoration: underline;">members.theotowngarage.com</a>.
+    </li>
+  </ol>
+
+  <p class="body-text" style="margin: 32px 0 0 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    Welcome to the workshop.
+  </p>
+{{end}}
+
+{{template "_layout.html" .}}

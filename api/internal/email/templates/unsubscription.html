@@ -1,17 +1,39 @@
-<html>
-<body>
-    <p>
-        The subscription of {{.Name}} ({{.Email}}) has been canceled.
-    </p>
-    <p>
-        We now have {{.Data.Number}} paying members.
-    </p>
+{{define "email_preheader"}}Membership cancelled: {{.Name}} ({{.Email}}){{end}}
 
-    <p>The O'Town Garage - Automated email</p>
-    Website : https://theotowngarage.com
-    <br>
-    Discord Community : 
-    <br>
-    email : info@theotowngarage.com
-</body>
-</html>
+{{define "email_content"}}
+  <h1 class="heading heading-1" style="margin: 0 0 8px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 24px; line-height: 30px; font-weight: 800; color: #0D1A63;">
+    Membership cancelled
+  </h1>
+  <p class="body-text" style="margin: 0 0 24px 0; font-size: 14px; line-height: 20px; color: #7681AB;">
+    A member just cancelled their subscription.
+  </p>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 16px 0; border: 1px solid #E1E9F4; border-radius: 8px;">
+    <tr class="data-table-row">
+      <td style="padding: 14px 18px; border-bottom: 1px solid #E1E9F4;">
+        <div class="footer-text" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #7681AB;">Name</div>
+        <div class="body-text" style="margin-top: 4px; font-size: 16px; line-height: 22px; color: #1A2CA3;">{{.Name}}</div>
+      </td>
+    </tr>
+    <tr class="data-table-row">
+      <td style="padding: 14px 18px; border-bottom: 1px solid #E1E9F4;">
+        <div class="footer-text" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #7681AB;">Email</div>
+        <div style="margin-top: 4px; font-size: 16px; line-height: 22px;">
+          <a href="mailto:{{.Email}}" style="color: #F68048; text-decoration: none;">{{.Email}}</a>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 14px 18px;">
+        <div class="footer-text" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: #7681AB;">Remaining paying members</div>
+        <div class="heading" style="margin-top: 4px; font-family: 'Inter', sans-serif; font-size: 28px; line-height: 32px; font-weight: 800; color: #0D1A63;">{{.Data.Number}}</div>
+      </td>
+    </tr>
+  </table>
+
+  <p class="footer-text" style="margin: 24px 0 0 0; font-size: 13px; line-height: 20px; color: #7681AB;">
+    Automated notification — no reply needed.
+  </p>
+{{end}}
+
+{{template "_layout.html" .}}

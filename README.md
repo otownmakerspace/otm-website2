@@ -61,43 +61,91 @@ resolve from the corresponding GitHub Environment.
 
 ## Required GitHub configuration
 
-### Repository variables (`Settings → Variables → Actions`)
+Both deploy workflows declare `environment: <Staging|Production>`. Variables
+and secrets must therefore be set under **Settings → Environments → \<env\>**
+(*not* repo-wide), so Staging and Production keep distinct credentials, DNS,
+and Stripe modes despite running identical workflow code.
 
-These are non-secret strings. They can be set per environment to differ
-between staging and production, or at the repo level to share.
+The two environments need the same *keys*; the *values* differ. Create both
+environments now even if you're only deploying Staging today — it stops
+later production pushes from failing on missing secrets.
 
-| Variable           | Used by | Example | Notes |
-|--------------------|---------|---------|-------|
-| `IMAGE`            | publish + deploy | `otm-website:latest` | Local Docker tag on the VPS; the GHCR image is retagged to this before `docker compose up`. |
-| `SUBDOMAIN`        | Hugo build + deploy | `staging` or `www` | Combined with TOPDOMAIN for full host. |
-| `TOPDOMAIN`        | Hugo build + deploy | `makerspace.olaru.dk` | Apex domain (no leading dot). |
-| `STRIPE_PRICE_ID`  | deploy | `price_1S…` | Test-mode in Staging, live-mode in Production. |
-| `SESSION_COOKIE_NAME` | deploy | `otm-session` | Distinct per deployment domain so sessions don't bleed. |
+### Setup order
 
-### Production environment secrets
+Don't fill the environments first. The values depend on infrastructure that
+doesn't exist yet:
 
-Both deploy workflows declare `environment: <Staging|Production>`, so the
-secrets below must be set at **Settings → Environments → \<env\>**, not at
-the repo level.
+1. **Provision the server** — `./infra/provisioning/scripts/setup.sh` (see
+   [infra/provisioning/README.md](infra/provisioning/README.md)). Output
+   gives you the IP, and the `otmadmin` SSH key pair you'll feed back in.
+2. **Generate a Tailscale OAuth client** at Tailscale Admin → Settings →
+   OAuth clients (scope `auth_keys` write, tag `tag:ci`). This is *separate*
+   from the auth key the playbook used to register the server; the OAuth
+   client lets each CI run mint a one-shot ephemeral key for the runner.
+3. **DNS**: point `<SUBDOMAIN>.<TOPDOMAIN>` at the server's public IPv4
+   (and IPv6 if you have one). Traefik handles cert provisioning on the
+   first request.
+4. **Register Stripe webhooks** at `https://<host>/webhook` for *each*
+   environment. Each endpoint emits its own `whsec_…` — staging and
+   production cannot share one.
+5. **Populate the GitHub Environment** with the variables and secrets below.
+6. **Push to `staging`** to trigger the first deploy. Workflow logs name
+   any missing secret/var on the spot.
 
-| Secret                                | Used by | What it is |
-|---------------------------------------|---------|------------|
-| `GHCR_TOKEN`                          | publish + deploy | GitHub PAT (classic) with `write:packages` (push) and `read:packages` (pull). |
-| `DEPLOYMENT_REMOTE_HOST`              | deploys | Hetzner VPS Tailscale MagicDNS name or `100.x.y.z` IPv4. |
-| `DEPLOYMENT_REMOTE_USERNAME`          | deploys | SSH login user on the VPS. Must have **passwordless `sudo`**. |
-| `DEPLOYMENT_REMOTE_SSH_PRIVATE_KEY`   | deploys | OpenSSH private key (full PEM body). The public half is in the deploy user's `authorized_keys`. |
-| `TAILSCALE_OAUTH_CLIENT_ID`           | deploys | Tailscale OAuth client ID (with `auth_keys` write scope, `tag:ci` permitted). |
-| `TAILSCALE_OAUTH_CLIENT_SECRET`       | deploys | Companion secret for the OAuth client. |
-| `SSL_CERTIFICATE_EMAIL`               | reverse-proxy deploys | Email Let's Encrypt registers ACME notifications under. |
-| `STRIPE_KEY`                          | app deploys | Stripe secret API key (`sk_test_…` for staging, `sk_live_…` for prod). |
-| `STRIPE_WEBHOOK_SECRET`               | app deploys | Stripe webhook signing secret (`whsec_…`). **Per-endpoint:** staging and production each need their own webhook registered in Stripe. |
-| `COOKIE_STORE_KEY`                    | app deploys | 32 random bytes (e.g. `openssl rand -hex 32`) for HMAC signing of session cookies. |
-| `EMAIL_PASSWORD`                      | app deploys | SMTP password for the Zoho account that sends transactional mail. |
+### Variables — 12 per environment
 
-These secrets are never written to the repo — the deploy step reads them from
-the runner's env and writes each into `/opt/secrets/app/<file>` on the VPS via
-SSH heredoc, then `chmod 600` + `chown root:root`. Inside the container they
-appear at `/run/secrets/<file>` via bind mounts.
+`Settings → Environments → <env> → Add variable`. Plain strings, visible
+in the GitHub UI.
+
+| Variable                  | Staging example          | Production example     | Notes |
+|---------------------------|--------------------------|------------------------|-------|
+| `IMAGE`                   | `otm-website:latest`     | `otm-website:latest`   | Local Docker tag on the VPS; the GHCR image is retagged to this before `docker compose up`. |
+| `SUBDOMAIN`               | `staging`                | `www`                  | Combined with `TOPDOMAIN` to form the full host. Used by Hugo `--baseURL` and Traefik routing. |
+| `TOPDOMAIN`               | `makerspace.olaru.dk`    | `makerspace.olaru.dk`  | Apex domain (no leading dot). |
+| `STRIPE_PRICE_ID`         | `price_…` (test mode)    | `price_…` (live mode)  | Stripe Dashboard → Products → choose product → copy price ID. |
+| `SESSION_COOKIE_NAME`     | `otm-session-staging`    | `otm-session`          | Distinct names stop staging/production cookies colliding if you ever browse both. |
+| `EMAIL_USER`              | `info@theotowngarage.com` | `info@theotowngarage.com` | SMTP username — the *full* email address. Also used as the default `From:` on outbound mail. The deploy step writes this to `/opt/secrets/app/email_address` on the VPS (same channel as the password); it's bind-mounted into the container at `/run/secrets/email_address`. Pairs with the `EMAIL_PASSWORD` secret. |
+| `EMAIL_HOST`              | `smtppro.zoho.com`       | `smtppro.zoho.com`     | Provider's SMTP host. `smtppro.zoho.com` for Zoho Mail Business, `smtp.zoho.com` for free/personal, `smtp.zoho.eu` for EU-datacenter accounts. |
+| `EMAIL_PORT`              | `465`                    | `465`                  | `465` for implicit-SSL, `587` for STARTTLS. Match what your provider documents. |
+| `BRAND_NAME`              | `O'Town Makerspace`      | `O'Town Makerspace`    | Public-facing brand displayed in transactional emails (footer, body copy, subject lines like *"Welcome to {brand}!"*). Optional — backend defaults to `O'Town Makerspace`. Set to override at rebrand. |
+| `BRAND_WORDMARK_LEADING`  | `O'TOWN`                 | `O'TOWN`               | Dark/primary part of the two-tone email wordmark. Optional — defaults to `O'TOWN`. |
+| `BRAND_WORDMARK_ACCENT`   | `MAKERSPACE`             | `MAKERSPACE`           | Orange-coloured second part of the wordmark. Optional — defaults to `MAKERSPACE`. |
+| `BRAND_LOGO_URL`          | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | Absolute URL to a horizontal wordmark image rendered at the top of every email (PNG or SVG). The site's marketing host serves this from `frontend/static/images/branding/logos/`. Empty disables the image — clients fall back to the text wordmark above. Optional — defaults to the production URL. |
+
+### Secrets — 11 per environment
+
+`Settings → Environments → <env> → Add secret`. Write-only, masked in logs.
+
+| Secret                              | Where to get the value                                                                                              | Notes |
+|-------------------------------------|---------------------------------------------------------------------------------------------------------------------|-------|
+| `GHCR_TOKEN`                        | GitHub Settings → Developer settings → PATs (classic), scopes `write:packages` + `read:packages`.                   | One token can serve both environments. |
+| `DEPLOYMENT_REMOTE_HOST`            | Tailscale MagicDNS name (`otm-staging.tailXXXX.ts.net`) or `100.x.y.z` IPv4 from `tailscale ip -4` on the server.   | Tailnet-internal; not the public IP. |
+| `DEPLOYMENT_REMOTE_USERNAME`        | The Linux user Terraform created — `otmadmin` (must have passwordless `sudo`, set up by the Ansible `base` role).   | Same in both envs unless you customised `user_name`. |
+| `DEPLOYMENT_REMOTE_SSH_PRIVATE_KEY` | Contents of the private key referenced by `ssh_private_key_path` in `terraform.tfvars` (full PEM, header→footer).   | The public half is already in `~otmadmin/.ssh/authorized_keys` on the server. |
+| `TAILSCALE_OAUTH_CLIENT_ID`         | Tailscale Admin → Settings → OAuth clients → Generate.                                                              | *Not* the same as the auth key in `group_vars/all.yml`. |
+| `TAILSCALE_OAUTH_CLIENT_SECRET`     | Same screen — shown once at creation; copy immediately.                                                             | Lose it = revoke and regenerate. |
+| `SSL_CERTIFICATE_EMAIL`             | Any address you receive Let's Encrypt expiry notices on.                                                            | Only used by the reverse-proxy workflow. |
+| `STRIPE_KEY`                        | Stripe Dashboard → Developers → API keys → Secret key. **Test mode** for Staging (`sk_test_…`), live for Production (`sk_live_…`). | Toggle the test/live switch in Stripe before copying. |
+| `STRIPE_WEBHOOK_SECRET`             | Stripe Dashboard → Developers → Webhooks → your endpoint → Signing secret (`whsec_…`).                              | **Per-endpoint** — each environment needs its own registered webhook. |
+| `COOKIE_STORE_KEY`                  | Generate fresh: `openssl rand -hex 32`.                                                                              | Use a *different* value in each environment. |
+| `EMAIL_PASSWORD`                    | SMTP password from your transactional-mail provider (Zoho).                                                         | One mailbox can serve both envs; consider separate accounts to scope blast radius. |
+
+### Reverse-proxy workflow (manual)
+
+`deploy-<env>-reverseproxy.yml` runs only on `workflow_dispatch`. It uses a
+subset of the secrets above:
+`DEPLOYMENT_REMOTE_*`, `TAILSCALE_OAUTH_*`, `SSL_CERTIFICATE_EMAIL`. Run it
+once after server provisioning to bring up Traefik + the `app_network`
+Docker network, then leave it alone — the app workflow doesn't touch the
+proxy.
+
+### How secrets reach the container
+
+Secrets never live in the repo or the image. The deploy step reads them from
+the runner's env, SSHes to the VPS, and writes each to `/opt/secrets/app/<file>`
+via heredoc with `chmod 600` + `chown root:root`. The container bind-mounts
+that directory read-only at `/run/secrets/`, where the Go server reads them
+at startup.
 
 ## Local dev
 

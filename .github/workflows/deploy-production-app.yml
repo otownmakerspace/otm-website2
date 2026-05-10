@@ -87,6 +87,13 @@ jobs:
           topdomain: ${{ vars.TOPDOMAIN }}
           stripe_price_id: ${{ vars.STRIPE_PRICE_ID }}
           session_cookie_name: ${{ vars.SESSION_COOKIE_NAME }}
+          email_user: ${{ vars.EMAIL_USER }}
+          email_host: ${{ vars.EMAIL_HOST }}
+          email_port: ${{ vars.EMAIL_PORT }}
+          brand_name: ${{ vars.BRAND_NAME }}
+          brand_wordmark_leading: ${{ vars.BRAND_WORDMARK_LEADING }}
+          brand_wordmark_accent: ${{ vars.BRAND_WORDMARK_ACCENT }}
+          brand_logo_url: ${{ vars.BRAND_LOGO_URL }}
           tailscale_oauth_client_id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           tailscale_oauth_client_secret: ${{ secrets.TAILSCALE_OAUTH_CLIENT_SECRET }}
           stripe_key: ${{ secrets.STRIPE_KEY }}

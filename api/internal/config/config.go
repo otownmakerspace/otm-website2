@@ -14,6 +14,7 @@ type Config struct {
 	Backend BackendConf
 	Stripe  StripeConf
 	Email   EmailConf
+	Brand   BrandConf
 }
 
 type BackendConf struct {
@@ -60,7 +61,28 @@ type EmailConf struct {
 	Password string
 }
 
+// BrandConf is the public-facing identity rendered into emails (and anywhere
+// the backend speaks for the organisation). Three text fields because the
+// wordmark is two-tone — keeping the split explicit avoids fragile
+// string-parsing in templates and lets a deploy choose its own casing/colours.
+//
+// LogoURL, when set, swaps the text wordmark for an <img> at the top of every
+// email. Email clients that block images fall back to the alt text styled to
+// look like the brand wordmark. Leave empty to keep the text wordmark only.
+type BrandConf struct {
+	Name            string // Full display name, e.g. "O'Town Makerspace". Used in body copy and the footer.
+	WordmarkLeading string // Dark/primary part of the text wordmark, e.g. "O'TOWN".
+	WordmarkAccent  string // Accent-coloured part of the text wordmark, e.g. "MAKERSPACE".
+	LogoURL         string // Absolute URL to a horizontal wordmark image (PNG or SVG). Empty = text wordmark only.
+}
+
 // Defaults applied when no config file is present and no env override is set.
+//
+// Email config (User/Host/Port) intentionally has no defaults — providers
+// and mailbox addresses are deployment-specific. Set via EMAIL_USER /
+// EMAIL_HOST / EMAIL_PORT env vars (CI/CD passes these from per-environment
+// GitHub variables) or via a TOML config file. The Go SMTP client surfaces
+// a clear error at first send if these are blank.
 var defaults = Config{
 	Backend: BackendConf{
 		Host:              "localhost",
@@ -69,10 +91,11 @@ var defaults = Config{
 		DBPath:            "./local.db",
 		SessionCookieName: "otm-session",
 	},
-	Email: EmailConf{
-		User: "info@theotowngarage.com",
-		Host: "smtppro.zoho.com",
-		Port: 465,
+	Brand: BrandConf{
+		Name:            "O'Town Makerspace",
+		WordmarkLeading: "O'TOWN",
+		WordmarkAccent:  "MAKERSPACE",
+		LogoURL:         "https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg",
 	},
 }
 
@@ -109,7 +132,15 @@ func Load() Config {
 	secretOverride(&c.Stripe.PublishableKey, "STRIPE_PUBLISHABLE_KEY", "stripe_publishable_key")
 	secretOverride(&c.Stripe.EndpointSecret, "STRIPE_WEBHOOK_SECRET", "stripe_webhook_secret")
 	envOverride(&c.Stripe.PriceID, "STRIPE_PRICE_ID")
+	envOverride(&c.Email.Host, "EMAIL_HOST")
+	envOverrideInt(&c.Email.Port, "EMAIL_PORT")
+	secretOverride(&c.Email.User, "EMAIL_USER", "email_address")
 	secretOverride(&c.Email.Password, "EMAIL_PASSWORD", "email_password")
+
+	envOverride(&c.Brand.Name, "BRAND_NAME")
+	envOverride(&c.Brand.WordmarkLeading, "BRAND_WORDMARK_LEADING")
+	envOverride(&c.Brand.WordmarkAccent, "BRAND_WORDMARK_ACCENT")
+	envOverride(&c.Brand.LogoURL, "BRAND_LOGO_URL")
 
 	// SITE_RELEASE presence (any value) marks production. Absence = test.
 	_, isRelease := os.LookupEnv("SITE_RELEASE")

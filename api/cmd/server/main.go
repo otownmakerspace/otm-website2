@@ -47,7 +47,7 @@ func main() {
 	}
 
 	sessions := session.NewStore([]byte(cfg.Backend.CookiePrivateKey), cfg.Backend.SessionCookieName, cfg.Backend.MarketingBaseURL)
-	mailer := email.NewMailer(cfg.Email)
+	mailer := email.NewMailer(cfg.Email, cfg.Brand)
 	svc := stripe.NewService(cfg, database, sessions, mailer)
 
 	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, cfg.Backend.MembersHost, database, sessions, mailer, svc)

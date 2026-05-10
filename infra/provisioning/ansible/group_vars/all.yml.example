@@ -20,5 +20,3 @@ ufw_allowed_ports:
 # UFW rules restricted to tailscale0 interface
 ufw_tailscale_ports:
   - { port: 22, proto: tcp }
-  - { port: 5432, proto: tcp }
-  - { port: 18789, proto: tcp }

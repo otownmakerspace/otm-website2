@@ -1,26 +1,30 @@
-<html>
-<body>
-    <p>
-        Hello {{.Name}}
-    </p>
-    <p>
-        We're sorry to see you go, but we hope you'll come back soon!
-    </p>
-    <p>
-        Your subscription has been cancelled and your membership access has been terminated. Make sure to collect your personal belongings so it leaves space for future members.
-    </p>
-    <p>
-        If you change your mind, you can always rejoin us at <a href="https://theotowngarage.com/login">https://theotowngarage.com/login</a>. You can always stay in touch on our Discord server
-    </p>
-    <p>
-        We hope to see you again soon!
-    </p>
+{{define "email_preheader"}}Your {{.Brand.Name}} membership has been cancelled. The door is open whenever you're ready.{{end}}
 
-    <p>The O'Town Garage</p>
-    Website : https://theotowngarage.com
-    <br>
-    Discord Community : {{.Link}}
-    <br>
-    email : info@theotowngarage.com
-</body>
-</html>
+{{define "email_content"}}
+  <h1 class="heading heading-1" style="margin: 0 0 16px 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; line-height: 34px; font-weight: 800; color: #0D1A63;">
+    See you again soon, {{.Name}}.
+  </h1>
+  <p class="body-text" style="margin: 0 0 16px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    Your membership has been cancelled and your access has ended. Please collect any personal belongings from the workshop so the space stays welcoming for the next builder.
+  </p>
+  <p class="body-text" style="margin: 0 0 28px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
+    Stay in touch on Discord — and the door is open whenever you're ready to come back.
+  </p>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
+    <tr>
+      <td align="center" bgcolor="#F68048" class="button-cell" style="border-radius: 10px;">
+        <a href="{{.Link}}" style="display: inline-block; padding: 14px 32px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; line-height: 20px; color: #ffffff; text-decoration: none; background-color: #F68048; border-radius: 10px;">
+          Stay on Discord
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <p class="footer-text" style="margin: 36px 0 0 0; font-size: 13px; line-height: 20px; color: #7681AB;">
+    Thanks for being part of {{.Brand.Name}}. To rejoin, head back to
+    <a href="https://members.theotowngarage.com" class="footer-link" style="color: #1A2CA3; text-decoration: underline;">members.theotowngarage.com</a>.
+  </p>
+{{end}}
+
+{{template "_layout.html" .}}

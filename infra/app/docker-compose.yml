@@ -32,6 +32,16 @@ services:
       STRIPE_PRICE_ID: "${STRIPE_PRICE_ID:-}"
       SITE_RELEASE: "${SITE_RELEASE:-}"
       SESSION_COOKIE_NAME: "${SESSION_COOKIE_NAME:-otm-session}"
+      # SMTP host/port are deployment-specific; no defaults.
+      # Username is bind-mounted as a secret (see volumes below).
+      EMAIL_HOST: "${EMAIL_HOST:-}"
+      EMAIL_PORT: "${EMAIL_PORT:-}"
+      # Brand identity rendered into emails. Backend has sane defaults; only
+      # set these to override per-deployment.
+      BRAND_NAME: "${BRAND_NAME:-}"
+      BRAND_WORDMARK_LEADING: "${BRAND_WORDMARK_LEADING:-}"
+      BRAND_WORDMARK_ACCENT: "${BRAND_WORDMARK_ACCENT:-}"
+      BRAND_LOGO_URL: "${BRAND_LOGO_URL:-}"
     networks: [ app_network ]
     restart: unless-stopped
     volumes:
@@ -50,6 +60,10 @@ services:
       - type: bind
         source: ${SECRETS_FOLDER}/stripe_webhook_secret
         target: /run/secrets/stripe_webhook_secret
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/email_address
+        target: /run/secrets/email_address
         read_only: true
       - type: bind
         source: ${SECRETS_FOLDER}/email_password
