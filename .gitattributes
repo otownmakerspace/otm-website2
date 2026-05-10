@@ -1,0 +1,23 @@
+# git-crypt encryption rules.
+#
+# Files matching these patterns are encrypted on commit and decrypted on
+# checkout. Anyone cloning the repo without the git-crypt key sees only
+# ciphertext for these paths. Run `git-crypt status` to audit which files
+# are protected.
+#
+# Patterns are intentionally explicit (no broad globs) so that companion
+# *.example template files are NOT encrypted — they need to stay readable
+# as a starting point for new contributors.
+
+# ── Ansible secrets ──
+infra/provisioning/ansible/group_vars/all.yml         filter=git-crypt diff=git-crypt
+infra/provisioning/ansible/group_vars/*.vault.yml     filter=git-crypt diff=git-crypt
+infra/provisioning/ansible/inventory.ini              filter=git-crypt diff=git-crypt
+
+# ── Terraform secrets ──
+infra/provisioning/terraform/terraform.tfvars         filter=git-crypt diff=git-crypt
+
+# ── Application secrets ──
+# Everything under secrets/ is encrypted. Don't put anything in here that
+# isn't a secret — encrypted files are opaque to anyone without the key.
+secrets/**                                            filter=git-crypt diff=git-crypt

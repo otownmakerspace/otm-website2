@@ -11,11 +11,16 @@
 /infra/app/.env
 /infra/reverse-proxy/.env
 
+# Traefik runtime state — ACME / Let's Encrypt certs (private keys!),
+# rotating logs, dynamically-generated config. Never commit.
+/infra/reverse-proxy/data/letsencrypt/
+/infra/reverse-proxy/data/log/
+/infra/reverse-proxy/data/dynamic/
+
 # Terraform / Ansible provisioning state and secrets
+# terraform.tfvars, ansible inventory, and group_vars/all.yml are committed
+# encrypted via git-crypt — see .gitattributes.
 /infra/provisioning/terraform/.terraform/
 /infra/provisioning/terraform/*.tfstate
 /infra/provisioning/terraform/*.tfstate.*
-/infra/provisioning/terraform/terraform.tfvars
-/infra/provisioning/ansible/inventory.ini
-/infra/provisioning/ansible/group_vars/all.yml
 /infra/provisioning/ansible/*.retry
