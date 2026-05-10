@@ -24,3 +24,5 @@
 /infra/provisioning/terraform/*.tfstate
 /infra/provisioning/terraform/*.tfstate.*
 /infra/provisioning/ansible/*.retry
+# Ansible vault password — local-only, never commit.
+/infra/provisioning/ansible/.vault_pass

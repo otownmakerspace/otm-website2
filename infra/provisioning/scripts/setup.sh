@@ -33,6 +33,8 @@ done
 
 echo "==> Running Ansible playbook..."
 cd "${REPO_ROOT}/ansible"
-ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
+# Vault password is supplied via vault_password_file in ansible.cfg
+# (resolves to ./.vault_pass after the cd above).
+ansible-playbook -i inventory.ini playbook.yml
 
 echo "==> Done! Server is provisioned."
