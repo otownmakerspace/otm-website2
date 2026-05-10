@@ -23,9 +23,9 @@
     enabled: true
     state: started
 
-- name: Check Tailscale login status
+- name: Read current Tailscale status (used to detect already-joined nodes)
   ansible.builtin.command:
-    cmd: tailscale status
+    cmd: tailscale status --json
   register: tailscale_status
   changed_when: false
   failed_when: false
@@ -37,5 +37,9 @@
       --authkey {{ tailscale_auth_key }}
       --hostname {{ server_hostname }}
       --operator {{ user_name }}
-  when: "'Logged out.' in tailscale_status.stdout or tailscale_status.rc != 0"
+  # Run unconditionally — `tailscale up` is idempotent: if the node is
+  # already authenticated with the same flags, it's a no-op. The earlier
+  # gating on "Logged out." in stdout silently skipped fresh installs that
+  # report "NoState" or empty JSON, leaving the server off the tailnet.
+  changed_when: "'BackendState\":\"Running\"' not in tailscale_status.stdout"
 

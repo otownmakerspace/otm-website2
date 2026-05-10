@@ -20,3 +20,11 @@ ufw_allowed_ports:
 # UFW rules restricted to tailscale0 interface
 ufw_tailscale_ports:
   - { port: 22, proto: tcp }
+
+# Public SSH keys authorized on the server for {{ user_name }}.
+# Managed by the 'authorized_keys' role — exclusive set, so keys NOT listed
+# here are REMOVED from authorized_keys on the next run. Add additional
+# devs / CI keys here as needed; rotate by replacing values.
+authorized_keys:
+  - "ssh-ed25519 AAAA...REPLACE_WITH_LAPTOP_PUBLIC_KEY... user@laptop"
+  # - "ssh-ed25519 AAAA...REPLACE_WITH_CI_PUBLIC_KEY... github-actions-ci"

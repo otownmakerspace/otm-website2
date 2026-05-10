@@ -41,4 +41,16 @@ resource "hcloud_server" "main" {
       - logger -t otm "[0.2] Cloud-init - SSH directory configured"
       - logger -t otm "[0.3] Cloud-init - complete, handing off to Ansible"
   CLOUDINIT
+
+  # Cloud-init runs exactly once at first boot — the SSH key it writes to
+  # authorized_keys is the bootstrap key. Subsequent key rotations are managed
+  # by Ansible (see roles/authorized_keys), so ignore drift on these fields
+  # to prevent Terraform from destroying the server when the local pubkey
+  # file changes.
+  lifecycle {
+    ignore_changes = [
+      user_data,
+      ssh_keys,
+    ]
+  }
 }

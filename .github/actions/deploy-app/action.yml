@@ -153,8 +153,11 @@ runs:
           printf '%s' "$COOKIE_STORE_KEY"      | sudo tee "${{ inputs.secrets_folder }}/cookie_store_key"      >/dev/null
           printf '%s' "$EMAIL_USER"            | sudo tee "${{ inputs.secrets_folder }}/email_address"         >/dev/null
           printf '%s' "$EMAIL_PASSWORD"        | sudo tee "${{ inputs.secrets_folder }}/email_password"        >/dev/null
-          sudo chmod 600 "${{ inputs.secrets_folder }}"/*
-          sudo chown root:root "${{ inputs.secrets_folder }}"/*
+          # Glob must expand as root (the dir is mode 0700 root-owned, otmadmin
+          # can't readdir for glob expansion). `sudo sh -c` runs the shell as
+          # root so glob expansion + the chmod/chown both see the real files.
+          sudo sh -c 'chmod 600 ${{ inputs.secrets_folder }}/*'
+          sudo sh -c 'chown root:root ${{ inputs.secrets_folder }}/*'
 
     - name: Deploy app
       uses: appleboy/ssh-action@v1.2.0

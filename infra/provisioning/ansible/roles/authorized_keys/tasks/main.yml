@@ -1,0 +1,19 @@
+---
+# Manages authorized_keys for {{ user_name }} on the live server.
+#
+# This is the canonical place for SSH-key changes AFTER the server is up.
+# Terraform's cloud-init only seeds the bootstrap key at first boot; this
+# role handles every subsequent addition / rotation / removal idempotently,
+# without server replacement.
+#
+# Public keys are listed in the `authorized_keys` variable (group_vars/all.yml).
+# Each entry is the literal contents of a `*.pub` file. The role enforces
+# `exclusive: true` so the set is authoritative — keys not listed get removed.
+
+- name: Ensure authorized_keys for {{ user_name }} matches the configured set
+  ansible.posix.authorized_key:
+    user: "{{ user_name }}"
+    key: "{{ authorized_keys | join('\n') }}"
+    state: present
+    exclusive: true
+  when: authorized_keys is defined and authorized_keys | length > 0

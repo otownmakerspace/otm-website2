@@ -10,3 +10,4 @@
     - { role: firewall, tags: ['firewall'] }
     - { role: fail2ban, tags: ['fail2ban'] }
     - { role: github_runner_key, tags: ['github_runner_key'] }
+    - { role: authorized_keys, tags: ['authorized_keys'] }
