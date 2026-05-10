@@ -26,3 +26,6 @@
 /infra/provisioning/ansible/*.retry
 # Ansible vault password — local-only, never commit.
 /infra/provisioning/ansible/.vault_pass
+
+# SQLite runtime DB (test data, container-mutated state — never commit).
+/db/
