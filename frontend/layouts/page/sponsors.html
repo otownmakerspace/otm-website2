@@ -1,0 +1,58 @@
+{{ define "main" }}
+<!-- Hero -->
+<section class="py-16 xl:py-24">
+  <div class="container mx-auto px-4">
+    <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ i18n "sponsors_page_title" }}</h1>
+    <p class="mx-auto mb-4 text-center text-lg text-gray-dark xl:max-w-3xl xl:text-xl">{{ i18n "sponsors_page_intro" }}</p>
+  </div>
+</section>
+
+<!-- Sponsor Cards -->
+{{ with .Site.Params.sponsor_items }}
+<section class="bg-primary py-16">
+  <div class="container mx-auto px-4">
+    <h2 class="text-secondary mb-12 text-center font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "our_sponsors" }}</h2>
+    <div class="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2 xl:grid-cols-3">
+      {{ range . }}
+      {{ $logo := resources.Get .logo }}
+      <article class="flex flex-col items-center rounded-[10px] bg-surface p-8 text-center shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
+        <div class="mb-6 flex h-28 w-full items-center justify-center">
+          {{ if $logo }}
+          <img src="{{ $logo.RelPermalink }}" alt="{{ .name }}" class="max-h-24 w-auto max-w-[80%] object-contain" />
+          {{ end }}
+        </div>
+        <h3 class="text-secondary mb-4 font-secondary text-xl font-bold">{{ .name }}</h3>
+        {{ with .url }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer"
+           class="text-accent hover:text-accent-2 mt-auto inline-flex items-center gap-2 font-semibold">
+          <span>{{ i18n "sponsors_visit" }}</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+        </a>
+        {{ end }}
+      </article>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<!-- Thank You -->
+<section class="py-16 xl:py-24">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-secondary mb-6 font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "sponsors_thank_you_title" }}</h2>
+    <p class="mx-auto max-w-3xl text-lg text-gray-dark xl:text-xl">{{ i18n "sponsors_thank_you_desc" }}</p>
+  </div>
+</section>
+
+<!-- Become a Sponsor CTA -->
+<section class="bg-primary py-16 xl:py-24">
+  <div class="container mx-auto px-4 text-center">
+    <h2 class="text-secondary mb-6 font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "sponsors_become_title" }}</h2>
+    <p class="mx-auto mb-10 max-w-3xl text-lg text-gray-dark xl:text-xl">{{ i18n "sponsors_become_desc" }}</p>
+    <a href="{{ "/contact/" | relLangURL }}"
+       class="bg-accent hover:bg-accent-2 inline-block rounded-[10px] px-8 py-3 font-medium text-white duration-300">
+      {{ i18n "sponsors_become_cta" }}
+    </a>
+  </div>
+</section>
+{{ end }}

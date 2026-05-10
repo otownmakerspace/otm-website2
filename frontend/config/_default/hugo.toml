@@ -164,6 +164,11 @@ defaultContentLanguage = 'en'
   url = "/contact/"
   weight = 8
 
+[[languages.en.menus.footer]]
+  name = "Sponsors"
+  url = "/sponsors/"
+  weight = 9
+
 # ── Danish menus ──
 
 [[languages.da.menus.main]]
@@ -220,3 +225,8 @@ defaultContentLanguage = 'en'
   name = "Kontakt"
   url = "/contact/"
   weight = 8
+
+[[languages.da.menus.footer]]
+  name = "Sponsorer"
+  url = "/sponsors/"
+  weight = 9

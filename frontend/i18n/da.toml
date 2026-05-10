@@ -192,6 +192,30 @@ other = "Når du er klar, registrer dig som medlem via vores onlineformular og f
 [our_sponsors]
 other = "Vores sponsorer"
 
+[sponsors_page_title]
+other = "Sponsorer og partnere"
+
+[sponsors_page_intro]
+other = "O'Town Makerspace er et non-profit, fællesskabsdrevet værksted. Virksomhederne og organisationerne nedenfor hjælper med at holde lyset tændt, printerne kørende og dørene åbne for alle, der vil bygge noget."
+
+[sponsors_visit]
+other = "Besøg hjemmeside"
+
+[sponsors_thank_you_title]
+other = "Tak"
+
+[sponsors_thank_you_desc]
+other = "Hver donation af udstyr, penge, tid eller ekspertise hjælper os med at vokse. Vi er dybt taknemmelige for de virksomheder og personer, der støtter makerspacet og gør vores fælles værksted muligt."
+
+[sponsors_become_title]
+other = "Bliv sponsor"
+
+[sponsors_become_desc]
+other = "Som sponsor af O'Town Makerspace bliver dit brand synligt for et aktivt fællesskab af byggere, hackere og opfindere — og du finansierer direkte værktøj og workshops i Odense. Kontakt os, så vi kan tale om et samarbejde."
+
+[sponsors_become_cta]
+other = "Kontakt os"
+
 [ready_to_build]
 other = "Klar til at bygge noget?"
 
