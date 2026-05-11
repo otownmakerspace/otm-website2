@@ -156,7 +156,10 @@ runs:
           # Glob must expand as root (the dir is mode 0700 root-owned, otmadmin
           # can't readdir for glob expansion). `sudo sh -c` runs the shell as
           # root so glob expansion + the chmod/chown both see the real files.
-          sudo sh -c 'chmod 600 ${{ inputs.secrets_folder }}/*'
+          # 0644 (not 0600) because the container runs as an unprivileged
+          # appuser (see infra/app/Dockerfile + entrypoint.sh's gosu drop).
+          # Host-side exposure is still gated by the 0700 parent directory.
+          sudo sh -c 'chmod 644 ${{ inputs.secrets_folder }}/*'
           sudo sh -c 'chown root:root ${{ inputs.secrets_folder }}/*'
 
     - name: Deploy app
