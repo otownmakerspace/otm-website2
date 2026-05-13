@@ -57,7 +57,7 @@ inputs:
   stripe_price_id:
     description: "Stripe Price ID of the membership subscription (price_xxx)"
     required: true
-  email_user:
+  email_address:
     description: "SMTP username (full email address used for AUTH and as From:)"
     required: true
   email_host:
@@ -139,14 +139,14 @@ runs:
         STRIPE_KEY: ${{ inputs.stripe_key }}
         STRIPE_WEBHOOK_SECRET: ${{ inputs.stripe_webhook_secret }}
         COOKIE_STORE_KEY: ${{ inputs.cookie_store_key }}
-        EMAIL_USER: ${{ inputs.email_user }}
+        EMAIL_ADDRESS: ${{ inputs.email_address }}
         EMAIL_PASSWORD: ${{ inputs.email_password }}
         ALTCHA_HMAC_KEY: ${{ inputs.altcha_hmac_key }}
       with:
         host: ${{ steps.ts.outputs.resolved_host }}
         username: ${{ inputs.deployment_remote_username }}
         key: ${{ inputs.deployment_remote_ssh_private_key }}
-        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_USER,EMAIL_PASSWORD,ALTCHA_HMAC_KEY
+        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_ADDRESS,EMAIL_PASSWORD,ALTCHA_HMAC_KEY
         script_stop: true
         script: |
           set -euo pipefail
@@ -155,7 +155,7 @@ runs:
           printf '%s' "$STRIPE_KEY"            | sudo tee "${{ inputs.secrets_folder }}/stripe_key"            >/dev/null
           printf '%s' "$STRIPE_WEBHOOK_SECRET" | sudo tee "${{ inputs.secrets_folder }}/stripe_webhook_secret" >/dev/null
           printf '%s' "$COOKIE_STORE_KEY"      | sudo tee "${{ inputs.secrets_folder }}/cookie_store_key"      >/dev/null
-          printf '%s' "$EMAIL_USER"            | sudo tee "${{ inputs.secrets_folder }}/email_address"         >/dev/null
+          printf '%s' "$EMAIL_ADDRESS"         | sudo tee "${{ inputs.secrets_folder }}/email_address"         >/dev/null
           printf '%s' "$EMAIL_PASSWORD"        | sudo tee "${{ inputs.secrets_folder }}/email_password"        >/dev/null
           printf '%s' "$ALTCHA_HMAC_KEY"       | sudo tee "${{ inputs.secrets_folder }}/altcha_hmac_key"       >/dev/null
           # Glob must expand as root (the dir is mode 0700 root-owned, otmadmin

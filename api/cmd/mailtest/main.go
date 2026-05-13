@@ -10,7 +10,7 @@
 //
 // Reads SMTP credentials from (in priority order):
 //  1. -user / -password / -host / -port flags
-//  2. EMAIL_USER / EMAIL_PASSWORD / EMAIL_HOST / EMAIL_PORT env vars
+//  2. EMAIL_ADDRESS / EMAIL_PASSWORD / EMAIL_HOST / EMAIL_PORT env vars
 //  3. Secret files under -secrets dir (default ../secrets/app)
 package main
 
@@ -52,7 +52,7 @@ func main() {
 	}
 
 	cfg := config.EmailConf{
-		User:     pickString(*user_, os.Getenv("EMAIL_USER"), readFile(*secretsDir, "email_address")),
+		User:     pickString(*user_, os.Getenv("EMAIL_ADDRESS"), readFile(*secretsDir, "email_address")),
 		Password: pickString(*password, os.Getenv("EMAIL_PASSWORD"), readFile(*secretsDir, "email_password")),
 		Host:     pickString(*host, os.Getenv("EMAIL_HOST")),
 		Port:     pickInt(*port, atoiSafe(os.Getenv("EMAIL_PORT"))),

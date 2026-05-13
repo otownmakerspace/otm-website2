@@ -87,10 +87,10 @@ type CaptchaConf struct {
 // Defaults applied when no config file is present and no env override is set.
 //
 // Email config (User/Host/Port) intentionally has no defaults — providers
-// and mailbox addresses are deployment-specific. Set via EMAIL_USER /
+// and mailbox addresses are deployment-specific. Set via EMAIL_ADDRESS /
 // EMAIL_HOST / EMAIL_PORT env vars (CI/CD passes these from per-environment
-// GitHub variables) or via a TOML config file. The Go SMTP client surfaces
-// a clear error at first send if these are blank.
+// GitHub secrets/variables) or via a TOML config file. The Go SMTP client
+// surfaces a clear error at first send if these are blank.
 var defaults = Config{
 	Backend: BackendConf{
 		Host:              "localhost",
@@ -142,7 +142,7 @@ func Load() Config {
 	envOverride(&c.Stripe.PriceID, "STRIPE_PRICE_ID")
 	envOverride(&c.Email.Host, "EMAIL_HOST")
 	envOverrideInt(&c.Email.Port, "EMAIL_PORT")
-	secretOverride(&c.Email.User, "EMAIL_USER", "email_address")
+	secretOverride(&c.Email.User, "EMAIL_ADDRESS", "email_address")
 	secretOverride(&c.Email.Password, "EMAIL_PASSWORD", "email_password")
 
 	envOverride(&c.Brand.Name, "BRAND_NAME")

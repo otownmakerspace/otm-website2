@@ -87,7 +87,8 @@ jobs:
           topdomain: ${{ vars.TOPDOMAIN }}
           stripe_price_id: ${{ vars.STRIPE_PRICE_ID }}
           session_cookie_name: ${{ vars.SESSION_COOKIE_NAME }}
-          email_user: ${{ vars.EMAIL_USER }}
+          email_address: ${{ secrets.EMAIL_ADDRESS }}
+          email_password: ${{ secrets.EMAIL_PASSWORD }}
           email_host: ${{ vars.EMAIL_HOST }}
           email_port: ${{ vars.EMAIL_PORT }}
           brand_name: ${{ vars.BRAND_NAME }}
@@ -99,5 +100,4 @@ jobs:
           stripe_key: ${{ secrets.STRIPE_KEY }}
           stripe_webhook_secret: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           cookie_store_key: ${{ secrets.COOKIE_STORE_KEY }}
-          email_password: ${{ secrets.EMAIL_PASSWORD }}
           altcha_hmac_key: ${{ secrets.ALTCHA_HMAC_KEY }}

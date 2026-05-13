@@ -92,7 +92,7 @@ doesn't exist yet:
 6. **Push to `staging`** to trigger the first deploy. Workflow logs name
    any missing secret/var on the spot.
 
-### Variables — 12 per environment
+### Variables — 11 per environment
 
 `Settings → Environments → <env> → Add variable`. Plain strings, visible
 in the GitHub UI.
@@ -104,7 +104,6 @@ in the GitHub UI.
 | `TOPDOMAIN`               | `makerspace.olaru.dk`    | `makerspace.olaru.dk`  | Apex domain (no leading dot). |
 | `STRIPE_PRICE_ID`         | `price_…` (test mode)    | `price_…` (live mode)  | Stripe Dashboard → Products → choose product → copy price ID. |
 | `SESSION_COOKIE_NAME`     | `otm-session-staging`    | `otm-session`          | Distinct names stop staging/production cookies colliding if you ever browse both. |
-| `EMAIL_USER`              | `info@theotowngarage.com` | `info@theotowngarage.com` | SMTP username — the *full* email address. Also used as the default `From:` on outbound mail. The deploy step writes this to `/opt/secrets/app/email_address` on the VPS (same channel as the password); it's bind-mounted into the container at `/run/secrets/email_address`. Pairs with the `EMAIL_PASSWORD` secret. |
 | `EMAIL_HOST`              | `smtppro.zoho.com`       | `smtppro.zoho.com`     | Provider's SMTP host. `smtppro.zoho.com` for Zoho Mail Business, `smtp.zoho.com` for free/personal, `smtp.zoho.eu` for EU-datacenter accounts. |
 | `EMAIL_PORT`              | `465`                    | `465`                  | `465` for implicit-SSL, `587` for STARTTLS. Match what your provider documents. |
 | `BRAND_NAME`              | `O'Town Makerspace`      | `O'Town Makerspace`    | Public-facing brand displayed in transactional emails (footer, body copy, subject lines like *"Welcome to {brand}!"*). Optional — backend defaults to `O'Town Makerspace`. Set to override at rebrand. |
@@ -112,7 +111,7 @@ in the GitHub UI.
 | `BRAND_WORDMARK_ACCENT`   | `MAKERSPACE`             | `MAKERSPACE`           | Orange-coloured second part of the wordmark. Optional — defaults to `MAKERSPACE`. |
 | `BRAND_LOGO_URL`          | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | Absolute URL to a horizontal wordmark image rendered at the top of every email (PNG or SVG). The site's marketing host serves this from `frontend/static/images/branding/logos/`. Empty disables the image — clients fall back to the text wordmark above. Optional — defaults to the production URL. |
 
-### Secrets — 12 per environment
+### Secrets — 13 per environment
 
 `Settings → Environments → <env> → Add secret`. Write-only, masked in logs.
 
@@ -128,6 +127,7 @@ in the GitHub UI.
 | `STRIPE_KEY`                        | Stripe Dashboard → Developers → API keys → Secret key. **Test mode** for Staging (`sk_test_…`), live for Production (`sk_live_…`). | Toggle the test/live switch in Stripe before copying. |
 | `STRIPE_WEBHOOK_SECRET`             | Stripe Dashboard → Developers → Webhooks → your endpoint → Signing secret (`whsec_…`).                              | **Per-endpoint** — each environment needs its own registered webhook. |
 | `COOKIE_STORE_KEY`                  | Generate fresh: `openssl rand -hex 32`.                                                                              | Use a *different* value in each environment. |
+| `EMAIL_ADDRESS`                     | The mailbox you authenticate to SMTP with — full email address (e.g. `info@theotowngarage.com`).                    | SMTP username *and* the default `From:` header on outbound mail. Deploy writes it to `/opt/secrets/app/email_address` (bind-mounted into the container at `/run/secrets/email_address`). Pairs with `EMAIL_PASSWORD`. |
 | `EMAIL_PASSWORD`                    | SMTP password from your transactional-mail provider (Zoho).                                                         | One mailbox can serve both envs; consider separate accounts to scope blast radius. |
 | `ALTCHA_HMAC_KEY`                   | Generate fresh: `openssl rand -hex 32`.                                                                              | HMAC key for the Altcha proof-of-work captcha on the signup + reset forms. **Different value per environment**; rotate to invalidate outstanding challenges. Leaving it empty disables captcha verification — the backend logs `captcha: DISABLED` at startup and accepts any submission. |
 
