@@ -69,6 +69,10 @@ services:
         source: ${SECRETS_FOLDER}/email_password
         target: /run/secrets/email_password
         read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/altcha_hmac_key
+        target: /run/secrets/altcha_hmac_key
+        read_only: true
       - ../../db:/app/db
 
   stripe-cli:
