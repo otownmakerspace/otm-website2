@@ -103,7 +103,7 @@ var defaults = Config{
 		Name:            "O'Town Makerspace",
 		WordmarkLeading: "O'TOWN",
 		WordmarkAccent:  "MAKERSPACE",
-		LogoURL:         "https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg",
+		LogoURL:         "https://makerspace.olaru.dk/images/branding/logos/wordmark-horizontal.svg",
 	},
 }
 
