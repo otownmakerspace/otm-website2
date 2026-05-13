@@ -1,7 +1,9 @@
 {{/*
-  Renders inside the signup form. Each radio button's value is the Stripe
-  price_id; the form posts price_id to /checkout/. The wrapping div carries
-  the publishable key as a data attribute for any client-side Stripe.js use.
+  Renders inside the signup form. The single configured membership tier is
+  displayed read-only; the actual price the user is charged is decided by
+  STRIPE_PRICE_ID server-side, not by anything submitted in this form. The
+  wrapping fieldset carries the publishable key as a data attribute for any
+  client-side Stripe.js use.
 */}}
 <fieldset class="space-y-2" data-stripe-pk="{{ .PublishableKey }}">
   <legend class="text-secondary mb-2 block text-sm font-medium">{{ .S.SelectMembership }}</legend>
@@ -10,15 +12,11 @@
       {{ .S.NoPricesAvailable }}
     </p>
   {{ else }}
-    {{ range .Options }}
-      <label class="flex items-start gap-3 rounded-[8px] border border-gray-300 bg-white p-3 cursor-pointer hover:border-accent transition-colors">
-        <input type="radio" name="price_id" value="{{ .ID }}" required {{ if .Selected }}checked{{ end }}
-               class="mt-1 accent-accent">
-        <span class="flex-1">
-          <span class="block text-sm font-medium text-secondary">{{ .Name }}</span>
-          <span class="block text-xs text-gray-dark">{{ .Amount }}</span>
-        </span>
-      </label>
-    {{ end }}
+    <div class="flex items-start gap-3 rounded-[8px] border border-gray-300 bg-white p-3">
+      <span class="flex-1">
+        <span class="block text-sm font-medium text-secondary">{{ .Option.Name }}</span>
+        <span class="block text-xs text-gray-dark">{{ .Option.Amount }}</span>
+      </span>
+    </div>
   {{ end }}
 </fieldset>

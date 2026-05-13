@@ -13,68 +13,66 @@ import (
 	"github.com/iustin94/makerspace/api/internal/i18n"
 )
 
-// priceOption is one row in the price selector — pre-formatted for the template.
+// priceOption is the single membership tier rendered into the signup form.
+// Pre-formatted for the template.
 type priceOption struct {
-	ID       string // price_xxx
-	Name     string // product name (with nickname suffix when distinct)
-	Amount   string // pre-formatted "200 DKK / month"
-	Selected bool   // first active recurring price gets selected by default
+	ID     string // price_xxx — kept for client-side Stripe.js use if needed
+	Name   string // product name (with nickname suffix when distinct)
+	Amount string // pre-formatted "200 DKK / month"
 }
 
 type pricesView struct {
-	Options        []priceOption
+	Option         priceOption
 	PublishableKey string
-	Empty          bool
+	Empty          bool // true when STRIPE_PRICE_ID is unset/invalid/archived
 	S              i18n.Strings
 }
 
-// ServePrices returns the GET /checkout/prices handler — htmx fragment listing
-// active recurring Stripe prices as radio buttons. Public (no auth) since it's
-// part of the signup flow.
+// ServePrices returns the GET /checkout/prices handler — htmx fragment that
+// displays the configured membership tier as a read-only card. Public (no
+// auth) since it's part of the signup flow.
 //
-// Stripe's Price.Product is an ID by default; we expand it so the template can
-// show the product name.
+// The displayed tier is whatever STRIPE_PRICE_ID points to. There is no
+// user-side selection: the canonical price is set by deployment config and
+// rendered for confirmation only. This avoids the tampering surface of
+// accepting a price_id from the form and matches the single-tier business
+// model the site actually operates.
+//
+// Stripe's Price.Product is an ID by default; we expand it so the template
+// can show the product name.
 func (s *Service) ServePrices() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		params := &stripepkg.PriceListParams{
-			Active: stripepkg.Bool(true),
-			Type:   stripepkg.String("recurring"),
-		}
-		params.AddExpand("data.product")
-		params.Limit = stripepkg.Int64(20)
-
 		view := pricesView{
 			PublishableKey: s.Cfg.Stripe.PublishableKey,
 			S:              i18n.For(i18n.FromRequest(r)),
 		}
 
-		iter := price.List(params)
-		first := true
-		for iter.Next() {
-			p := iter.Price()
-			// Only show prices whose parent product is active.
-			if p.Product == nil || !p.Product.Active {
-				continue
+		if s.Cfg.Stripe.PriceID == "" {
+			log.Print("prices: STRIPE_PRICE_ID is not configured")
+		} else {
+			params := &stripepkg.PriceParams{}
+			params.AddExpand("product")
+			p, err := price.Get(s.Cfg.Stripe.PriceID, params)
+			switch {
+			case err != nil:
+				log.Printf("prices: price.Get(%s): %v", s.Cfg.Stripe.PriceID, err)
+			case p == nil, !p.Active, p.Recurring == nil:
+				log.Printf("prices: %s is not an active recurring price", s.Cfg.Stripe.PriceID)
+			case p.Product == nil, !p.Product.Active:
+				log.Printf("prices: %s parent product is missing or inactive", s.Cfg.Stripe.PriceID)
+			default:
+				name := p.Product.Name
+				if p.Nickname != "" && p.Nickname != name {
+					name = name + " — " + p.Nickname
+				}
+				view.Option = priceOption{
+					ID:     p.ID,
+					Name:   name,
+					Amount: formatAmount(p.UnitAmount, p.Currency, p.Recurring.Interval),
+				}
 			}
-			if p.Recurring == nil {
-				continue
-			}
-			name := p.Product.Name
-			if p.Nickname != "" && p.Nickname != name {
-				name = name + " — " + p.Nickname
-			}
-			view.Options = append(view.Options, priceOption{
-				ID:       p.ID,
-				Name:     name,
-				Amount:   formatAmount(p.UnitAmount, p.Currency, p.Recurring.Interval),
-				Selected: first,
-			})
-			first = false
 		}
-		if err := iter.Err(); err != nil {
-			log.Print("prices: stripe list: ", err)
-		}
-		view.Empty = len(view.Options) == 0
+		view.Empty = view.Option.ID == ""
 
 		tmpl, err := template.ParseFS(templatesFS, "templates/prices.html")
 		if err != nil {

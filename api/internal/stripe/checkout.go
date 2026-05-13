@@ -15,7 +15,6 @@ import (
 
 	stripepkg "github.com/stripe/stripe-go/v82"
 	stripesession "github.com/stripe/stripe-go/v82/checkout/session"
-	"github.com/stripe/stripe-go/v82/price"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/iustin94/makerspace/api/internal/config"
@@ -94,17 +93,14 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 			return
 		}
 
-		// Validate the price the user chose. Re-fetching from Stripe ensures the
-		// ID exists, is active, and is recurring (subscription). Falls back to
-		// configured default if the form omits it (defence in depth — the form
-		// has the field marked required, so an empty value usually means the
-		// price selector failed to load).
-		priceID := r.Form.Get("price_id")
+		// Price is server-side authoritative: always the configured
+		// STRIPE_PRICE_ID. The form does not submit price_id (the prices.html
+		// fragment renders a read-only display, not a selector). Fail fast if
+		// deployment config is incomplete rather than handing Stripe an empty
+		// price.
+		priceID := s.Cfg.Stripe.PriceID
 		if priceID == "" {
-			priceID = s.Cfg.Stripe.PriceID
-		}
-		if !validatePriceID(priceID) {
-			log.Printf("checkout: rejected price_id=%q (not a valid active recurring price)", priceID)
+			log.Print("checkout: STRIPE_PRICE_ID is not configured")
 			http.Redirect(w, r, i18n.Path(lang, "/checkout/?reason=invalid_price"), http.StatusSeeOther)
 			return
 		}
@@ -131,21 +127,6 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 		u.Password = hashed
 		s.serveCheckout(w, r, u, priceID)
 	}
-}
-
-// validatePriceID confirms the given Stripe price ID exists, is active,
-// and is recurring (subscription-eligible). The check round-trips to Stripe
-// so a malicious form submission can't smuggle in a one-time or paused price.
-func validatePriceID(priceID string) bool {
-	if priceID == "" {
-		return false
-	}
-	p, err := price.Get(priceID, nil)
-	if err != nil {
-		log.Printf("checkout: price.Get(%s) failed: %v", priceID, err)
-		return false
-	}
-	return p != nil && p.Active && p.Recurring != nil
 }
 
 // serveCheckout creates a Stripe checkout session and redirects the user to it.
