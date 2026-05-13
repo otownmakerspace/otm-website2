@@ -9,3 +9,32 @@
   the new bytes when bumping the library version.
 */}}
 <script src="{{ "/js/vendor/altcha.min.js" | relURL }}" type="module" async defer></script>
+<script>
+  // Tie each captcha-protected form's submit button to the widget's verified
+  // state — purely UX: stops users clicking before the proof-of-work finishes.
+  // Server still authoritatively verifies on POST. Widget "error" re-enables
+  // the button so dev mode (HMAC key empty → /captcha/challenge 503) and
+  // transient network errors don't trap the user behind a permanently-disabled
+  // button.
+  (function () {
+    document.querySelectorAll('altcha-widget').forEach(function (widget) {
+      var form = widget.closest('form');
+      if (!form) return;
+      var buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+      if (!buttons.length) return;
+      function setDisabled(disabled) {
+        buttons.forEach(function (b) {
+          b.disabled = disabled;
+          b.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+          b.classList.toggle('opacity-50', disabled);
+          b.classList.toggle('cursor-not-allowed', disabled);
+        });
+      }
+      setDisabled(true);
+      widget.addEventListener('statechange', function (e) {
+        var state = e.detail && e.detail.state;
+        setDisabled(!(state === 'verified' || state === 'error'));
+      });
+    });
+  })();
+</script>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Wordmark — single-line "horizontal" variant.
+
+  Same Inter Display 900 + rounded-stroke styling as wordmark-consolidated.svg,
+  but with O'TOWN and MAKERSPACE laid out side-by-side on one row instead of
+  stacked. Built for tight vertical contexts: transactional email headers,
+  narrow nav bars, slim PDF watermarks.
+
+  Canvas: 2400 × 280 (aspect ≈ 8.57:1).
+  Both words baseline at y=195; font-size 180; stroke-width 11; letter-spacing
+  8/6. Tspan dx=60 gives a one-space-ish visual gap between the two words.
+
+  Why <text> not paths: keeps the source editable. Run Path → Object to Path
+  in Inkscape when the design is finalised so it renders identically on
+  systems without Inter Display installed.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 280" width="2400" height="280">
+  <text x="1200" y="195"
+        font-family="Inter Display, Inter, sans-serif"
+        font-weight="900" font-size="180"
+        stroke-linejoin="round" stroke-linecap="round"
+        text-anchor="middle">
+    <tspan fill="#0D1A63" stroke="#0D1A63" stroke-width="11" letter-spacing="8">O'TOWN</tspan>
+    <tspan fill="#F68048" stroke="#F68048" stroke-width="11" letter-spacing="6" dx="60">MAKERSPACE</tspan>
+  </text>
+</svg>
