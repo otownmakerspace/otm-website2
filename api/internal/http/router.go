@@ -93,6 +93,13 @@ func Mux(
 	mux.HandleFunc(onMembers("/re-checkout"), svc.CreateCheckoutSession())
 	mux.Handle(onMembers("GET /da/checkout/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 
+	// Stripe redirect target after successful payment. Handler verifies the
+	// session_id, runs fulfillment idempotently (covers the redirect-beats-
+	// webhook race), then delegates to the static Hugo success page which has
+	// a "Log in to your account" CTA.
+	mux.HandleFunc(onMembers("GET /checkout/success"), svc.ServeCheckoutSuccess(staticFallback))
+	mux.HandleFunc(onMembers("GET /da/checkout/success"), svc.ServeCheckoutSuccess(staticFallback))
+
 	// Auth flows (login, logout, password reset)
 	mux.HandleFunc(onMembers("/logout"), sessions.Logout)
 	mux.Handle(onMembers("GET /login/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))

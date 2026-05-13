@@ -75,6 +75,11 @@ func (s *Service) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 // fulfillCheckout reads the metadata from the completed Stripe checkout session
 // (which carries the bcrypt-hashed password and other signup fields) and
 // inserts the user row.
+//
+// Idempotent: callable from both the webhook and the post-checkout success
+// redirect. If a user with this email already exists, fulfillment is a no-op
+// (no duplicate insert, no resent welcome email). This matters because the
+// redirect and the webhook race — whichever arrives second must not error.
 func (s *Service) fulfillCheckout(checkoutSessionID string) error {
 	log.Print("webhook: fulfilling checkout")
 	params := &stripepkg.CheckoutSessionParams{}
@@ -93,6 +98,15 @@ func (s *Service) fulfillCheckout(checkoutSessionID string) error {
 		Active:     true,
 		Password:   []byte(meta["pass"]),
 		CustomerID: sess.Customer.ID,
+	}
+	exists, err := dbpkg.EmailExists(s.DB, u.Email)
+	if err != nil {
+		log.Print("webhook: EmailExists: ", err)
+		return err
+	}
+	if exists {
+		log.Printf("webhook: user %s already fulfilled; skipping", u.Email)
+		return nil
 	}
 	if err := dbpkg.AddUser(s.DB, u); err != nil {
 		log.Print("webhook: AddUser: ", err)

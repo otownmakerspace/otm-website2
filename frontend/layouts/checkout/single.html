@@ -6,8 +6,8 @@
       <div class="page-content text-gray-dark">{{ . }}</div>
     {{ end }}
     <div class="mt-8">
-      <a href="/" class="bg-accent hover:bg-accent-2 inline-block rounded-[10px] px-6 py-3 font-medium text-white transition-colors">
-        Back to homepage
+      <a href="{{ .Params.cta_href | default "/" }}" class="bg-accent hover:bg-accent-2 inline-block rounded-[10px] px-6 py-3 font-medium text-white transition-colors">
+        {{ .Params.cta_label | default "Back to homepage" }}
       </a>
     </div>
   </div>
