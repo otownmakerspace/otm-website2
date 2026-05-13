@@ -13,5 +13,5 @@ membership_items:
       - icon: ""
         txt: "Adgang til vores fællesskab af eksperter"
     button_txt: "Tilmeld dig"
-    subscribe_link: "https://members.theotowngarage.com/subscribe/200"
+    subscribe_link: "/checkout/"
 ---

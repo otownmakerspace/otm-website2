@@ -23,7 +23,9 @@
           {{ end }}
         </ul>
         {{ if .subscribe_link }}
-        <a href="{{ .subscribe_link }}" target="_blank" rel="nofollow noopener"
+          {{ $isExternal := or (hasPrefix .subscribe_link "http://") (hasPrefix .subscribe_link "https://") }}
+          {{ $href := cond $isExternal .subscribe_link (relLangURL .subscribe_link) }}
+        <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="nofollow noopener"{{ end }}
            class="bg-accent hover:bg-accent-2 mt-8 block rounded-[10px] px-4 py-3 text-center font-medium text-white duration-300">
           {{ .button_txt | default "Subscribe" }}
         </a>
