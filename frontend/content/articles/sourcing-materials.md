@@ -5,6 +5,7 @@ author: "O'Town Makerspace"
 description: "Not sure where to get materials for your next project? Here's a practical roundup of sources for wood, metal, textiles, electronics, and more."
 reading_time: 4
 tags: ["Guide", "Materials", "Beginner"]
+draft: true
 ---
 
 Starting a new project at the makerspace is exciting, but knowing where to get your raw materials can be a hurdle — especially for new makers. Whether you're crafting with wood, metal, textiles, electronics, or using CNC tools, a range of affordable and accessible sources can get you started. Here's a roundup of key material sources to spark your next project:

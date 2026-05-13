@@ -4,6 +4,7 @@ date: 2026-02-01
 author: "Admin Team"
 category: "Announcements"
 tags: ["Annual Report", "2025", "Impact"]
+draft: true
 ---
 
 We are excited to share our 2025 Annual Report, highlighting the incredible impact our volunteers have made throughout the year.

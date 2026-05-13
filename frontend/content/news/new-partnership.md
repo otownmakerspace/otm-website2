@@ -4,6 +4,7 @@ date: 2026-01-25
 author: "Director"
 category: "Announcements"
 tags: ["Partnership", "Growth"]
+draft: true
 ---
 
 We are thrilled to announce our new partnership with [Partner Organization Name], which will expand our reach and impact in the community.

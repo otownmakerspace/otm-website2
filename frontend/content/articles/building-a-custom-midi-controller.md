@@ -5,6 +5,7 @@ author: "Iustinian Olaru"
 description: "A step-by-step walkthrough of designing and building a fully custom MIDI controller using the makerspace's tools — from PCB design to the finished enclosure."
 reading_time: 8
 tags: ["Electronics", "Tutorial", "Member Project"]
+draft: true
 ---
 
 It started the way most projects at the makerspace do — with a half-baked idea and a cup of coffee. I wanted a MIDI controller tailored to my live performance setup: something compact, with exactly the knobs and buttons I need, and nothing I don't.
