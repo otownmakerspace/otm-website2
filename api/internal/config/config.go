@@ -74,7 +74,7 @@ type BrandConf struct {
 	Name            string // Full display name, e.g. "O'Town Makerspace". Used in body copy and the footer.
 	WordmarkLeading string // Dark/primary part of the text wordmark, e.g. "O'TOWN".
 	WordmarkAccent  string // Accent-coloured part of the text wordmark, e.g. "MAKERSPACE".
-	LogoURL         string // Absolute URL to a horizontal wordmark image (PNG or SVG). Empty = text wordmark only.
+	LogoURL         string // Absolute URL to a horizontal wordmark image (PNG or SVG). Empty triggers per-deployment derivation in Load() from MarketingBaseURL → PublicURL → makerspace.olaru.dk, so staging emails reference staging assets automatically.
 }
 
 // CaptchaConf holds the HMAC key used by the Altcha proof-of-work CAPTCHA on
@@ -103,7 +103,10 @@ var defaults = Config{
 		Name:            "O'Town Makerspace",
 		WordmarkLeading: "O'TOWN",
 		WordmarkAccent:  "MAKERSPACE",
-		LogoURL:         "https://makerspace.olaru.dk/images/branding/logos/wordmark-horizontal.svg",
+		// LogoURL is intentionally left empty here. Load() derives it from
+		// MarketingBaseURL (or PublicURL) after all overrides so each
+		// deployment serves its own host's copy of the wordmark instead of
+		// every environment pointing at production.
 	},
 }
 
@@ -158,6 +161,22 @@ func Load() Config {
 
 	if c.Backend.CookiePrivateKey == "" {
 		log.Fatal("config: COOKIE_STORE_KEY must be set via environment variable, secret file, or config")
+	}
+
+	// Derive LogoURL from the deployment's own marketing host so staging
+	// emails reference staging assets, not production. Explicit BRAND_LOGO_URL
+	// (env / secret / toml) still wins because it sets c.Brand.LogoURL above.
+	// If neither MarketingBaseURL nor PublicURL is configured (bare local
+	// dev / tests), LogoURL stays empty and the email layout's text-wordmark
+	// branch renders instead — no hardcoded production string in the binary.
+	if c.Brand.LogoURL == "" {
+		base := c.Backend.MarketingBaseURL
+		if base == "" {
+			base = c.Backend.PublicURL
+		}
+		if base != "" {
+			c.Brand.LogoURL = strings.TrimRight(base, "/") + "/images/branding/logos/wordmark-horizontal.svg"
+		}
 	}
 	return c
 }
