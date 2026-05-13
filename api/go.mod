@@ -4,6 +4,7 @@ go 1.24.6
 
 require (
 	github.com/BurntSushi/toml v1.5.0
+	github.com/altcha-org/altcha-lib-go v1.0.0
 	github.com/gorilla/sessions v1.4.0
 	github.com/stripe/stripe-go/v82 v82.5.0
 	github.com/tursodatabase/go-libsql v0.0.0-20250912065916-9dd20bb43d31

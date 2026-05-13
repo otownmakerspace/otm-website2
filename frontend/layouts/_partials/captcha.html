@@ -1,0 +1,21 @@
+{{/*
+  Anti-abuse layer for forms. Drop this partial inside any <form> that POSTs
+  to an endpoint protected by api/internal/captcha.
+
+  Two pieces:
+
+    1. Honeypot input — off-screen, aria-hidden, tabindex=-1, autocomplete=off.
+       Real users never see it; naive bots auto-fill it. The backend silently
+       fake-succeeds when this is filled.
+
+    2. <altcha-widget> — proof-of-work CAPTCHA that solves a small puzzle in
+       the user's browser and submits a hidden "altcha" form field. Auto-
+       starts on form interaction; HMAC-verified server-side.
+
+  The Altcha JS module is loaded once per page via the partial captcha-script.
+*/}}
+<div aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;overflow:hidden">
+  <label for="cf-website">Website (leave empty)</label>
+  <input id="cf-website" type="text" name="website" tabindex="-1" autocomplete="off">
+</div>
+<altcha-widget challengeurl="/captcha/challenge" auto="onload" hidefooter></altcha-widget>

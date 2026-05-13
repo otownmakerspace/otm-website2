@@ -17,6 +17,7 @@ import (
 	stripesession "github.com/stripe/stripe-go/v82/checkout/session"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/iustin94/makerspace/api/internal/captcha"
 	"github.com/iustin94/makerspace/api/internal/config"
 	dbpkg "github.com/iustin94/makerspace/api/internal/db"
 	"github.com/iustin94/makerspace/api/internal/email"
@@ -32,18 +33,20 @@ type Service struct {
 	DB       *sql.DB
 	Sessions *session.Store
 	Mailer   *email.Mailer
+	Captcha  *captcha.Service
 	HugoHead template.HTML // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
 }
 
 // NewService returns a Service. All dependencies must be non-nil. HugoHead is
 // resolved from the static-files directory and may be empty if the static
 // site isn't bundled — the dashboard template falls back to a minimal head.
-func NewService(cfg config.Config, db *sql.DB, sessions *session.Store, mailer *email.Mailer) *Service {
+func NewService(cfg config.Config, db *sql.DB, sessions *session.Store, mailer *email.Mailer, captchaSvc *captcha.Service) *Service {
 	return &Service{
 		Cfg:      cfg,
 		DB:       db,
 		Sessions: sessions,
 		Mailer:   mailer,
+		Captcha:  captchaSvc,
 		HugoHead: loadHugoHead(cfg.Backend.StaticDir),
 	}
 }
@@ -57,6 +60,20 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 		sess, _ := s.Sessions.Get(r)
 		lang := i18n.FromRequest(r)
 		log.Print("checkout: incoming")
+
+		// Anti-abuse: honeypot first (cheapest), then Altcha proof-of-work.
+		// Honeypot triggers a silent fake-success so bots don't learn what
+		// tripped them; Altcha failure surfaces a real reason to the user.
+		if captcha.HoneypotTriggered(r) {
+			log.Print("checkout: honeypot triggered, silent drop")
+			http.Redirect(w, r, i18n.Path(lang, "/checkout/success"), http.StatusSeeOther)
+			return
+		}
+		if err := s.Captcha.Verify(r); err != nil {
+			log.Printf("checkout: captcha verify: %v", err)
+			http.Redirect(w, r, i18n.Path(lang, "/checkout/?reason=captcha_failed"), http.StatusSeeOther)
+			return
+		}
 
 		if auth, ok := sess.Values["authenticated"].(bool); !ok || !auth {
 			log.Print("checkout: new member signup")

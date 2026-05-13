@@ -506,3 +506,6 @@ other = "Privacy Policy"
 
 [member_checkout_reason_accept_required]
 other = "Please confirm you've read all required documents before continuing."
+
+[member_checkout_reason_captcha_failed]
+other = "The anti-bot check didn't complete. Please refresh the page and try again."

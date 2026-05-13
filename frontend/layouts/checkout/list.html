@@ -67,6 +67,8 @@
         </label>
       </fieldset>
 
+      {{ partial "captcha.html" . }}
+
       <button type="submit"
               class="bg-accent hover:bg-accent-2 w-full rounded-[10px] px-4 py-2 font-medium text-white transition-colors">
         {{ i18n "member_continue_to_payment" }}
@@ -76,6 +78,7 @@
 </section>
 
 <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+{{ partial "captcha-script.html" . }}
 <script>
   (function () {
     var reasons = {
@@ -84,7 +87,8 @@
       failed_session: {{ i18n "member_checkout_reason_failed_session" }},
       failed_crypt: {{ i18n "member_checkout_reason_failed_crypt" }},
       invalid_price: {{ i18n "member_checkout_reason_invalid_price" }},
-      accept_required: {{ i18n "member_checkout_reason_accept_required" }}
+      accept_required: {{ i18n "member_checkout_reason_accept_required" }},
+      captcha_failed: {{ i18n "member_checkout_reason_captcha_failed" }}
     };
     var params = new URLSearchParams(window.location.search);
     var reason = params.get('reason');

@@ -12,6 +12,8 @@
         <input id="email" type="email" name="email" required autocomplete="email"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
       </div>
+      {{ partial "captcha.html" . }}
+
       <button type="submit"
               class="bg-accent hover:bg-accent-2 w-full rounded-[10px] px-4 py-2 font-medium text-white transition-colors">
         {{ i18n "member_send_reset_link" }}
@@ -22,4 +24,5 @@
     </form>
   </div>
 </section>
+{{ partial "captcha-script.html" . }}
 {{ end }}

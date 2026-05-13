@@ -506,3 +506,6 @@ other = "Privatlivspolitikken"
 
 [member_checkout_reason_accept_required]
 other = "Bekræft venligst at du har læst alle påkrævede dokumenter for at fortsætte."
+
+[member_checkout_reason_captcha_failed]
+other = "Anti-bot-tjekket blev ikke fuldført. Genindlæs siden og prøv igen."

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	stdhttp "net/http"
 
+	"github.com/iustin94/makerspace/api/internal/captcha"
 	"github.com/iustin94/makerspace/api/internal/email"
 	"github.com/iustin94/makerspace/api/internal/session"
 	"github.com/iustin94/makerspace/api/internal/stripe"
@@ -33,6 +34,7 @@ func Mux(
 	sessions *session.Store,
 	mailer *email.Mailer,
 	svc *stripe.Service,
+	captchaSvc *captcha.Service,
 ) *stdhttp.ServeMux {
 	mux := stdhttp.NewServeMux()
 
@@ -62,6 +64,10 @@ func Mux(
 	// dashboard. We accept it on any host so configuration mistakes don't
 	// drop events silently.
 	mux.HandleFunc("/webhook", svc.HandleWebhook)
+
+	// Altcha captcha challenge endpoint. Any-host so the same Hugo form can
+	// fetch it whether served from members or apex. No auth, no side effects.
+	mux.HandleFunc("GET /captcha/challenge", captchaSvc.ServeChallenge())
 
 	// ───────────────────────── members runtime (host-prefixed) ──────────────
 	// Dashboard — backend-rendered page with auth-aware chrome.
@@ -105,7 +111,7 @@ func Mux(
 	mux.Handle(onMembers("GET /login/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.Handle(onMembers("GET /da/login/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.HandleFunc(onMembers("POST /login/"), sessions.Login(db))
-	mux.HandleFunc(onMembers("POST /request-reset"), session.RequestReset(db, mailer, publicURL))
+	mux.HandleFunc(onMembers("POST /request-reset"), session.RequestReset(db, mailer, publicURL, captchaSvc))
 	mux.HandleFunc(onMembers("POST /reset-password/"), session.ResetPassword(db))
 	mux.HandleFunc(onMembers("POST /reset-password"), session.ResetPassword(db))
 

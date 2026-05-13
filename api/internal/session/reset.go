@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/iustin94/makerspace/api/internal/captcha"
 	"github.com/iustin94/makerspace/api/internal/email"
 	"github.com/iustin94/makerspace/api/internal/i18n"
 	"github.com/iustin94/makerspace/api/internal/user"
@@ -46,10 +47,25 @@ func hashToken(token string) string {
 // only apply to the redirects shown in the user's browser, not the link
 // embedded in the email (which the user clicks from their inbox and may have
 // opened in a different language session).
-func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string) http.HandlerFunc {
+func RequestReset(database *sql.DB, mailer ResetMailer, publicURL string, captchaSvc *captcha.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("password reset requested")
 		lang := i18n.FromRequest(r)
+
+		// Anti-abuse: honeypot first (cheapest), then Altcha. Both bot paths
+		// land on /reset-sent — the same destination as legitimate requests
+		// and as the anti-enumeration path below. Bots learn nothing.
+		if captcha.HoneypotTriggered(r) {
+			log.Print("reset: honeypot triggered, silent drop")
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
+			return
+		}
+		if err := captchaSvc.Verify(r); err != nil {
+			log.Printf("reset: captcha verify: %v", err)
+			http.Redirect(w, r, i18n.Path(lang, "/reset-sent"), http.StatusSeeOther)
+			return
+		}
+
 		emailAddr := r.FormValue("email")
 		if emailAddr == "" {
 			log.Print("reset: empty email")

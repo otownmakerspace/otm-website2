@@ -15,6 +15,7 @@ type Config struct {
 	Stripe  StripeConf
 	Email   EmailConf
 	Brand   BrandConf
+	Captcha CaptchaConf
 }
 
 type BackendConf struct {
@@ -74,6 +75,13 @@ type BrandConf struct {
 	WordmarkLeading string // Dark/primary part of the text wordmark, e.g. "O'TOWN".
 	WordmarkAccent  string // Accent-coloured part of the text wordmark, e.g. "MAKERSPACE".
 	LogoURL         string // Absolute URL to a horizontal wordmark image (PNG or SVG). Empty = text wordmark only.
+}
+
+// CaptchaConf holds the HMAC key used by the Altcha proof-of-work CAPTCHA on
+// the signup + password-reset forms. Empty key disables verification — only
+// safe in local dev / tests.
+type CaptchaConf struct {
+	HMACKey string // random 32+ byte secret, set per environment
 }
 
 // Defaults applied when no config file is present and no env override is set.
@@ -141,6 +149,8 @@ func Load() Config {
 	envOverride(&c.Brand.WordmarkLeading, "BRAND_WORDMARK_LEADING")
 	envOverride(&c.Brand.WordmarkAccent, "BRAND_WORDMARK_ACCENT")
 	envOverride(&c.Brand.LogoURL, "BRAND_LOGO_URL")
+
+	secretOverride(&c.Captcha.HMACKey, "ALTCHA_HMAC_KEY", "altcha_hmac_key")
 
 	// SITE_RELEASE presence (any value) marks production. Absence = test.
 	_, isRelease := os.LookupEnv("SITE_RELEASE")

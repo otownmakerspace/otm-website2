@@ -100,3 +100,4 @@ jobs:
           stripe_webhook_secret: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           cookie_store_key: ${{ secrets.COOKIE_STORE_KEY }}
           email_password: ${{ secrets.EMAIL_PASSWORD }}
+          altcha_hmac_key: ${{ secrets.ALTCHA_HMAC_KEY }}

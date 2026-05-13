@@ -17,6 +17,7 @@ import (
 
 	stripepkg "github.com/stripe/stripe-go/v82"
 
+	"github.com/iustin94/makerspace/api/internal/captcha"
 	"github.com/iustin94/makerspace/api/internal/config"
 	"github.com/iustin94/makerspace/api/internal/db"
 	"github.com/iustin94/makerspace/api/internal/email"
@@ -48,9 +49,13 @@ func main() {
 
 	sessions := session.NewStore([]byte(cfg.Backend.CookiePrivateKey), cfg.Backend.SessionCookieName, cfg.Backend.MarketingBaseURL)
 	mailer := email.NewMailer(cfg.Email, cfg.Brand)
-	svc := stripe.NewService(cfg, database, sessions, mailer)
+	captchaSvc := captcha.NewService(cfg.Captcha.HMACKey)
+	if !captchaSvc.Enabled() {
+		log.Print("captcha: DISABLED (ALTCHA_HMAC_KEY not set) — protected forms accept any submission")
+	}
+	svc := stripe.NewService(cfg, database, sessions, mailer, captchaSvc)
 
-	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, cfg.Backend.MembersHost, database, sessions, mailer, svc)
+	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, cfg.Backend.MembersHost, database, sessions, mailer, svc, captchaSvc)
 
 	addr := cfg.Backend.HostAddr()
 	log.Printf("listening on %s (public URL: %s, members host: %s)", addr, cfg.Backend.PublicURL, cfg.Backend.MembersHost)
