@@ -1,6 +1,11 @@
 {{/*
   Loads the Altcha web-component module. Include this once per page that
-  uses the captcha partial. Pinned to a major version via jsdelivr; the
-  module is ~10KB and ships with no telemetry.
+  uses the captcha partial.
+
+  The JS module is vendored at frontend/static/js/vendor/altcha.min.js
+  (resolved to /js/vendor/altcha.min.js by Hugo). Vendoring removes the
+  runtime dependency on a third-party CDN — important for supply-chain
+  integrity and offline development. Update the file in place and commit
+  the new bytes when bumping the library version.
 */}}
-<script src="https://cdn.jsdelivr.net/npm/altcha@1/dist/altcha.min.js" type="module" async defer></script>
+<script src="{{ "/js/vendor/altcha.min.js" | relURL }}" type="module" async defer></script>
