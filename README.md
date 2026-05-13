@@ -112,7 +112,7 @@ in the GitHub UI.
 | `BRAND_WORDMARK_ACCENT`   | `MAKERSPACE`             | `MAKERSPACE`           | Orange-coloured second part of the wordmark. Optional — defaults to `MAKERSPACE`. |
 | `BRAND_LOGO_URL`          | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | Absolute URL to a horizontal wordmark image rendered at the top of every email (PNG or SVG). The site's marketing host serves this from `frontend/static/images/branding/logos/`. Empty disables the image — clients fall back to the text wordmark above. Optional — defaults to the production URL. |
 
-### Secrets — 11 per environment
+### Secrets — 12 per environment
 
 `Settings → Environments → <env> → Add secret`. Write-only, masked in logs.
 
@@ -129,6 +129,7 @@ in the GitHub UI.
 | `STRIPE_WEBHOOK_SECRET`             | Stripe Dashboard → Developers → Webhooks → your endpoint → Signing secret (`whsec_…`).                              | **Per-endpoint** — each environment needs its own registered webhook. |
 | `COOKIE_STORE_KEY`                  | Generate fresh: `openssl rand -hex 32`.                                                                              | Use a *different* value in each environment. |
 | `EMAIL_PASSWORD`                    | SMTP password from your transactional-mail provider (Zoho).                                                         | One mailbox can serve both envs; consider separate accounts to scope blast radius. |
+| `ALTCHA_HMAC_KEY`                   | Generate fresh: `openssl rand -hex 32`.                                                                              | HMAC key for the Altcha proof-of-work captcha on the signup + reset forms. **Different value per environment**; rotate to invalidate outstanding challenges. Leaving it empty disables captcha verification — the backend logs `captcha: DISABLED` at startup and accepts any submission. |
 
 ### Reverse-proxy workflow (manual)
 

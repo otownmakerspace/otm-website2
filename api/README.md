@@ -52,6 +52,7 @@ Resolved at startup with this priority (highest wins):
 | Webhook secret | `STRIPE_WEBHOOK_SECRET` | `stripe_webhook_secret` | per Stripe webhook endpoint |
 | Stripe price ID | `STRIPE_PRICE_ID` | — | `price_xxx`. Test/live IDs differ. |
 | SMTP password | `EMAIL_PASSWORD` | `email_password` | for `User`/Host/Port from TOML |
+| Captcha HMAC key | `ALTCHA_HMAC_KEY` | `altcha_hmac_key` | random ≥32 byte secret. Empty disables Altcha verification (and logs `captcha: DISABLED` at startup). Per-environment value. |
 | Production flag | `SITE_RELEASE` | — | presence (any value) ⇒ release; absence ⇒ test, runs `db.SeedTest` |
 
 ## Local dev
