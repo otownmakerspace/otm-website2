@@ -1,5 +1,8 @@
 # Staging environment overlay (activated via `hugo --environment staging`).
-# The member portal lives on members.staging.makerspace.olaru.dk, served by
-# the Go backend. The marketing site links to it.
-memberPortalUrl = "https://members.staging.makerspace.olaru.dk/login/"
-memberSignupUrl = "https://members.staging.makerspace.olaru.dk/checkout/"
+# The login and checkout pages exist as Hugo static content under
+# content/login.md and content/checkout/, so the marketing site can link
+# to them as relative paths. The Hugo-rendered forms POST to the Go
+# backend's host-prefixed routes on members.staging.makerspace.olaru.dk
+# (the form action is absolute; the navigation link is not).
+memberPortalUrl = "/login/"
+memberSignupUrl = "/checkout/"

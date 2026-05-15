@@ -8,6 +8,14 @@ inputs:
   ghcr_image_tag:
     description: "The full image name and tag"
     required: true
+  hugo_environment:
+    description: "Hugo config-environment (selects config/<env>/params.toml). Defaults to 'production'."
+    required: false
+    default: "production"
+  hugo_base_url:
+    description: "Hugo --baseURL for absURL/canonicals. Leave empty to use config default."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -23,4 +31,8 @@ runs:
     - name: Build and Push Docker Image
       shell: bash
       run: |
-        docker buildx build --push -t ${{ inputs.ghcr_image_tag }} -f infra/app/Dockerfile .
+        docker buildx build --push \
+          --build-arg HUGO_ENVIRONMENT="${{ inputs.hugo_environment }}" \
+          --build-arg HUGO_BASE_URL="${{ inputs.hugo_base_url }}" \
+          -t ${{ inputs.ghcr_image_tag }} \
+          -f infra/app/Dockerfile .

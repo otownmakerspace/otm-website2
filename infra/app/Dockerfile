@@ -19,6 +19,10 @@ RUN cd api && CGO_ENABLED=1 go build -o /out/server ./cmd/server
 FROM node:22-bookworm AS frontend-builder
 
 ARG HUGO_VERSION=0.151.0
+# Which Hugo config-environment to use (selects config/<env>/params.toml).
+# Override at build time: --build-arg HUGO_ENVIRONMENT=staging
+ARG HUGO_ENVIRONMENT=production
+ARG HUGO_BASE_URL=""
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl \
  && curl -sSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" \
@@ -35,7 +39,8 @@ COPY frontend/ ./
 # Tailwind must run BEFORE Hugo so that static/css/styles.css exists
 # when Hugo copies the static/ tree into the publish directory.
 RUN npx @tailwindcss/cli -i input.css -o static/css/styles.css --minify \
- && hugo --minify
+ && hugo --minify --environment "${HUGO_ENVIRONMENT}" \
+      ${HUGO_BASE_URL:+--baseURL "${HUGO_BASE_URL}"}
 
 
 # =========================================================

@@ -65,6 +65,8 @@ jobs:
         with:
           ghcr_token: ${{ secrets.GHCR_TOKEN }}
           ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
+          hugo_environment: staging
+          hugo_base_url: "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
 
   deploy:
     runs-on: ubuntu-latest
