@@ -1,10 +1,17 @@
 {
   "name": "otm-website",
   "version": "1.0.0",
-  "description": "",
+  "description": "O'Town Makerspace website",
   "main": "index.js",
   "scripts": {
+    "dev": "hugo server --disableFastRender",
+    "build": "hugo && tailwindcss -i input.css -o static/css/styles.css --minify",
+    "build:css": "tailwindcss -i input.css -o static/css/styles.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/cli": "^4.0.0"
+  }
 }

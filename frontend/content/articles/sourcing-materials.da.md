@@ -5,7 +5,7 @@ author: "O'Town Makerspace"
 description: "Ikke sikker på, hvor du kan få materialer til dit næste projekt? Her er en praktisk oversigt over kilder til træ, metal, tekstiler, elektronik og meget mere."
 reading_time: 4
 tags: ["Guide", "Materialer", "Begynder"]
-draft: true
+draft: false
 ---
 
 At starte et nyt projekt i makerspacet er spændende, men at vide, hvor du kan få dine råmaterialer, kan være en udfordring — især for nye makere. Uanset om du arbejder med træ, metal, tekstiler, elektronik eller bruger CNC-værktøj, kan en række overkommelige og tilgængelige kilder få dig i gang. Her er en oversigt over vigtige materialkilder til at inspirere dit næste projekt:

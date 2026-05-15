@@ -19,14 +19,18 @@
     <div class="flex items-center justify-between py-6">
       <a class="flex items-center gap-2" href="{{ .Site.BaseURL }}">
         {{ with .Site.Params.logo }}
-        {{/* Light-mode logo (default) — hidden when <html> has .dark */}}
-        <img src="{{ . | absURL }}" alt="{{ $.Site.Title }}"
-             class="site-logo site-logo--light h-10 w-auto xl:h-12">
+        {{/* Light-mode logo (default) — hidden when <html> has .dark.
+             Inlined as SVG so the lockup's inner <image href> references
+             can resolve (browsers sandbox SVGs loaded via <img>). */}}
+        <span class="site-logo site-logo--light inline-block h-12" role="img" aria-label="{{ $.Site.Title }}">
+          {{ readFile (printf "static/%s" .) | safeHTML }}
+        </span>
         {{ end }}
         {{ with .Site.Params.logoDark }}
         {{/* Dark-mode logo — only shown when <html> has .dark */}}
-        <img src="{{ . | absURL }}" alt="{{ $.Site.Title }}"
-             class="site-logo site-logo--dark h-10 w-auto xl:h-12">
+        <span class="site-logo site-logo--dark inline-block h-12" role="img" aria-label="{{ $.Site.Title }}">
+          {{ readFile (printf "static/%s" .) | safeHTML }}
+        </span>
         {{ end }}
         {{ if and (not .Site.Params.logo) (not .Site.Params.logoDark) }}
         <span class="text-secondary text-xl font-semibold uppercase xl:text-2xl">{{ $.Site.Title }}</span>
