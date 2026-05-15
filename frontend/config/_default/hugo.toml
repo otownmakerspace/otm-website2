@@ -23,8 +23,9 @@ defaultContentLanguage = 'en'
 
 [params]
   siteName = "O'Town Makerspace"
-  logo = "images/branding/logos/wordmark-consolidated.svg"
+  logo = "images/branding/logos/horizontal-lockup-notagline.svg"
   logoDark = "images/branding/logos/wordmark-white-transparent.svg"
+  logoVertical = "images/branding/logos/vertical-lockup.svg"
   location = ["Havnegade 57, 5000 Odense C, Denmark"]
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
@@ -95,7 +96,7 @@ defaultContentLanguage = 'en'
   [params.social]
     facebook = "https://www.facebook.com/theotowngarage"
     instagram = "https://www.instagram.com/theotowngarage/"
-    discord = "https://discord.gg/HDR8jsUp"
+    discord = "https://discord.gg/RHVfMu49CG"
 
 # Enable raw HTML in markdown
 [markup]

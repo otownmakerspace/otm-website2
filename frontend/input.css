@@ -1,0 +1,146 @@
+@import "tailwindcss";
+@config "./tailwind.config.js";
+
+/* Tailwind v4 stripped `.container` down to `width: 100%` (no max-widths).
+   Restore the v3 default responsive caps so existing `container mx-auto px-4`
+   markup keeps its old ceiling-and-centered layout. */
+@utility container {
+  width: 100%;
+  @media (min-width: 640px)  { max-width: 640px;  }
+  @media (min-width: 768px)  { max-width: 768px;  }
+  @media (min-width: 1024px) { max-width: 1024px; }
+  @media (min-width: 1280px) { max-width: 1280px; }
+  @media (min-width: 1536px) { max-width: 1536px; }
+}
+
+/* Import theme styles.
+   NOTE: themes/hugo-up-business-main/assets/css/fonts.css is intentionally
+   NOT imported — it contains Hugo template directives ({{ resources.Get … }})
+   and can only be processed via Hugo's asset pipeline, not the Tailwind CLI.
+   The brand fonts (Roboto, Space Grotesk) are loaded via Google Fonts in
+   layouts/_default/baseof.html, so this import is unnecessary anyway. */
+@import "./themes/hugo-up-business-main/assets/css/shared/_pagination.css";
+@import "./themes/hugo-up-business-main/assets/css/home/_hero.css";
+
+/* Theme customizations */
+@theme {
+  --font-primary: 'Roboto', sans-serif;
+  --font-secondary: 'Space Grotesk', sans-serif;
+  
+  /* Color variables set via JS, but provide defaults */
+  --c-accent: 246 128 72;
+  --c-accent-2: 231 80 8;
+  --c-primary: 237 242 248;
+  --c-primary-2: 225 233 244;
+  --c-secondary: 13 26 99;
+  --c-secondary-2: 26 44 163;
+  --c-gray-light: 238 241 255;
+  --c-gray-dark: 13 26 99;
+  --c-tertiary: 26 44 163;
+  --c-surface: 255 255 255;
+}
+
+/* Base styles */
+@layer base {
+  body {
+    @apply bg-surface text-gray-dark font-primary;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-secondary text-secondary;
+  }
+  
+  a {
+    @apply transition-all duration-300;
+  }
+}
+
+/* Custom content styles for markdown */
+@layer components {
+  .page-content {
+    @apply text-base leading-relaxed text-gray-dark;
+  }
+  
+  .page-content > p:first-child {
+    @apply text-lg italic text-gray-dark/80 mb-10 border-l-4 border-accent pl-5;
+  }
+  
+  .page-content h2 {
+    @apply font-secondary text-2xl font-bold text-secondary mt-12 mb-4 pb-2 border-b border-gray-200 scroll-mt-20;
+  }
+  
+  .page-content h2:first-of-type {
+    @apply mt-6;
+  }
+  
+  .page-content h3 {
+    @apply font-secondary text-xl font-semibold text-secondary mt-8 mb-3 scroll-mt-20;
+  }
+  
+  .page-content p {
+    @apply mb-4;
+  }
+  
+  .page-content ul {
+    @apply mb-6 ml-5 flex flex-col gap-2 list-disc;
+  }
+  
+  .page-content ol {
+    @apply mb-6 ml-5 flex flex-col gap-2 list-decimal;
+  }
+  
+  .page-content li {
+    @apply leading-relaxed;
+  }
+  
+  .page-content a {
+    @apply text-accent hover:text-accent-2 underline underline-offset-2;
+  }
+  
+  .page-content strong {
+    @apply font-semibold text-secondary;
+  }
+  
+  .page-content hr {
+    @apply hidden;
+  }
+  
+  .page-content li ol,
+  .page-content li ul {
+    @apply mt-2 mb-0;
+  }
+  
+  .page-content details {
+    @apply mb-3 rounded-[10px] bg-primary p-0 overflow-hidden;
+  }
+  
+  .page-content details[open] {
+    @apply shadow-sm;
+  }
+  
+  .page-content details summary {
+    @apply cursor-pointer select-none list-none px-5 py-4 font-secondary font-semibold text-secondary transition-colors duration-200 hover:text-accent flex items-center justify-between;
+  }
+  
+  .page-content details summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  .page-content details summary::after {
+    content: '+';
+    @apply text-accent text-xl font-bold shrink-0 ml-4 transition-transform duration-200;
+  }
+  
+  .page-content details[open] summary::after {
+    content: '\2212';
+  }
+  
+  .page-content details[open] summary {
+    @apply border-b border-gray-200 text-accent;
+  }
+  
+  .page-content details > p,
+  .page-content details > div {
+    @apply px-5 py-4 text-gray-dark;
+  }
+}

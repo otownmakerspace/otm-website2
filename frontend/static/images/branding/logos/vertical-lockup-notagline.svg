@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Vertical lockup — NO TAGLINE variant.
+  Same gear + wordmark stacking as vertical-lockup.svg, with the
+  "ODENSE · DENMARK" tagline omitted. Use in compact stacked contexts
+  (sidebar, mobile-menu, narrow profile photos) where the extra type
+  is more crowding than helpful.
+
+  Canvas stays 800 × 1000 (4:5) so this version is a drop-in swap with
+  the parent vertical lockup.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <image href="/images/branding/logos/gear-mark-transparent.svg" x="100" y="40" width="600" height="600"/>
+  <image href="/images/branding/logos/wordmark-consolidated.svg" x="40" y="680" width="720" height="192"/>
+</svg>

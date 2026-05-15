@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Horizontal lockup — WHITE-TRANSPARENT variant.
+  Gear (full colour, no bg) + wordmark white type, no bg. Tagline white.
+  Use over dark photo / navy panel where the host surface provides contrast.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400">
+  <image href="/images/branding/logos/gear-mark-transparent.svg" x="148.29599" y="0" width="400" height="400"/>
+  <image href="/images/branding/logos/wordmark-white-transparent.svg" x="430" y="48" width="1140" height="304"/>
+  <text x="1000" y="370" font-family="Inter, sans-serif" font-weight="500"
+        font-size="20" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">MAKE · TINKER · SHARE  ·  ODENSE</text>
+</svg>

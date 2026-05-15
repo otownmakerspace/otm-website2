@@ -5,7 +5,7 @@ author: "Iustinian Olaru"
 description: "En trin-for-trin gennemgang af design og bygning af en fuldt skræddersyet MIDI-controller ved hjælp af makerspacets værktøj — fra PCB-design til det færdige kabinet."
 reading_time: 8
 tags: ["Elektronik", "Tutorial", "Medlemsprojekt"]
-draft: true
+draft: false
 ---
 
 Det startede, som de fleste projekter i makerspacet gør — med en halvfærdig idé og en kop kaffe. Jeg ville have en MIDI-controller skræddersyet til mit live-performancesetup: noget kompakt, med præcis de knapper og knapper, jeg har brug for, og intet, jeg ikke har.
