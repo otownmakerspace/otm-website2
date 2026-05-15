@@ -430,6 +430,21 @@ other = "Telefon (valgfrit)"
 [member_password_signup_hint]
 other = "8&ndash;31 tegn. Du bruger den til at logge ind senere."
 
+[member_pass_strength_0]
+other = "Meget svag"
+
+[member_pass_strength_1]
+other = "Svag"
+
+[member_pass_strength_2]
+other = "Rimelig"
+
+[member_pass_strength_3]
+other = "Stærk"
+
+[member_pass_strength_4]
+other = "Fremragende"
+
 [member_continue_to_payment]
 other = "Fortsæt til betaling"
 

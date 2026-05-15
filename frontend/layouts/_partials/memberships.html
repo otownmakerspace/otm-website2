@@ -1,38 +1,34 @@
-{{ with .Params.membership_items }}
-<section class="py-16">
-  <div class="container mx-auto px-4">
-    <div class="mx-auto flex max-w-md justify-center">
-      {{ range . }}
-      <div class="flex w-full flex-col rounded-[10px] border border-gray-200 bg-primary p-8 shadow-sm">
-        <h3 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ .title }}</h3>
-        <div class="mb-6">
-          {{ if .currency }}
-            <span class="text-accent font-secondary text-4xl font-bold">{{ .price }}</span>
-            <span class="text-secondary-2 text-lg"> {{ .currency }}</span>
-            <span class="text-secondary-2 text-sm">/ {{ .occurrence }}</span>
-          {{ else }}
-            <span class="text-accent font-secondary text-2xl font-bold">{{ .price }}</span>
-          {{ end }}
-        </div>
-        <ul class="flex flex-col gap-3">
-          {{ range .features }}
-          <li class="flex items-start gap-3">
-            <i class="fa-solid fa-check text-accent mt-1 shrink-0"></i>
-            <span class="text-gray-dark">{{ .txt }}</span>
-          </li>
-          {{ end }}
-        </ul>
-        {{ if .subscribe_link }}
-          {{ $isExternal := or (hasPrefix .subscribe_link "http://") (hasPrefix .subscribe_link "https://") }}
-          {{ $href := cond $isExternal .subscribe_link (relLangURL .subscribe_link) }}
-        <a href="{{ $href }}"{{ if $isExternal }} target="_blank" rel="nofollow noopener"{{ end }}
-           class="bg-accent hover:bg-accent-2 mt-8 block rounded-[10px] px-4 py-3 text-center font-medium text-white duration-300">
-          {{ .button_txt | default "Subscribe" }}
-        </a>
-        {{ end }}
-      </div>
-      {{ end }}
-    </div>
-  </div>
-</section>
+{{/*
+  Self-contained membership card. Provides everything the visible card
+  needs — chrome (border, bg, padding, rounded, shadow), htmx loader,
+  and an optional Subscribe CTA — so callers don't have to re-wrap.
+  Outer page layout (section padding, container, sizing) stays with the
+  caller because it varies per page.
+
+  Data is Stripe-driven via GET /checkout/prices (api/internal/stripe/
+  prices.go + templates/prices.html). To edit copy, change the Product
+  in the Stripe dashboard, not this file.
+
+  Usage:
+    {{ partial "memberships.html" }}                           — card only
+    {{ partial "memberships.html" (dict "subscribeLink" true) }} — card + CTA
+
+  The CTA is on by default for the homepage (where the card is purely
+  informational and needs a way to lead users to /checkout/), off for the
+  checkout page itself (where the signup form is right next to the card).
+*/}}
+{{ $showSubscribe := false }}
+{{ if reflect.IsMap . }}
+  {{ if .subscribeLink }}{{ $showSubscribe = true }}{{ end }}
 {{ end }}
+<div class="flex w-full flex-col rounded-[10px] border border-gray-200 bg-primary p-8 shadow-sm">
+  <div id="checkout-prices" hx-get="/checkout/prices" hx-trigger="load" hx-swap="innerHTML">
+    <p class="text-sm text-gray-dark">{{ i18n "member_loading_prices" | safeHTML }}</p>
+  </div>
+  {{ if $showSubscribe }}
+    <a href="{{ "/checkout/" | relLangURL }}"
+       class="bg-accent hover:bg-accent-2 mt-8 block rounded-[10px] px-4 py-3 text-center font-medium text-white duration-300">
+      {{ i18n "member_subscribe_cta" | default "Subscribe" }}
+    </a>
+  {{ end }}
+</div>

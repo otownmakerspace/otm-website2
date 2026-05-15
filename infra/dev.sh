@@ -152,7 +152,14 @@ case "$cmd" in
     fi
 
     msg "Building Docker image $local_tag"
-    docker build -t "$local_tag" -f "$ROOT_DIR/infra/app/Dockerfile" "$ROOT_DIR" ;;
+    # Forward the Hugo env/baseURL into the Docker build so the
+    # frontend-builder stage's in-container Hugo run matches what we
+    # built on the host above. Without these flags Hugo inside Docker
+    # defaults to production and overwrites the dev-built docs/.
+    docker build \
+      --build-arg HUGO_ENVIRONMENT="$hugo_env" \
+      --build-arg HUGO_BASE_URL="$base_url" \
+      -t "$local_tag" -f "$ROOT_DIR/infra/app/Dockerfile" "$ROOT_DIR" ;;
 
   rebuild)
     "$0" app down || true

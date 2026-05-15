@@ -163,7 +163,13 @@
 </section>
 
 <!-- Memberships -->
-{{ partial "memberships.html" . }}
+<section class="py-16">
+  <div class="container mx-auto px-4">
+    <div class="mx-auto flex max-w-md justify-center">
+      {{ partial "memberships.html" (dict "subscribeLink" true) }}
+    </div>
+  </div>
+</section>
 
 <!-- Call to Action -->
 <section class="py-16 xl:py-24">

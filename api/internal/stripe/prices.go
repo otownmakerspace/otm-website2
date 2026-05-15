@@ -14,11 +14,22 @@ import (
 )
 
 // priceOption is the single membership tier rendered into the signup form.
-// Pre-formatted for the template.
+// Pre-formatted for the template. All fields originate from Stripe so the
+// card is data-driven — to edit the description or the "what's included"
+// list, change the Product in the Stripe dashboard, not this code.
+//
+// Amount, Currency, and Interval are kept as separate fields so the
+// template can give each its own typographic weight (large amount, smaller
+// currency code, smaller "per month") — matching the homepage pricing
+// card design from layouts/_partials/memberships.html.
 type priceOption struct {
-	ID     string // price_xxx — kept for client-side Stripe.js use if needed
-	Name   string // product name (with nickname suffix when distinct)
-	Amount string // pre-formatted "200 DKK / month"
+	ID          string   // price_xxx — kept for client-side Stripe.js use if needed
+	Name        string   // product name (with nickname suffix when distinct)
+	Description string   // product description (Stripe Product.description)
+	Features    []string // marketing features (Stripe Product.marketing_features[].name)
+	Amount      string   // major currency unit, e.g. "200" or "199.50"
+	Currency    string   // uppercase ISO code, e.g. "DKK"
+	Interval    string   // "per month", "per year", etc.
 }
 
 type pricesView struct {
@@ -65,10 +76,33 @@ func (s *Service) ServePrices() http.HandlerFunc {
 				if p.Nickname != "" && p.Nickname != name {
 					name = name + " — " + p.Nickname
 				}
+				features := make([]string, 0, len(p.Product.MarketingFeatures))
+				for _, f := range p.Product.MarketingFeatures {
+					if f != nil && f.Name != "" {
+						features = append(features, f.Name)
+					}
+				}
+				// Split major/minor + currency + interval so the template can
+				// give each part its own typographic weight (matches the
+				// homepage pricing card layout).
+				major := p.UnitAmount / 100
+				minor := p.UnitAmount % 100
+				amount := fmt.Sprintf("%d", major)
+				if minor != 0 {
+					amount = fmt.Sprintf("%d.%02d", major, minor)
+				}
+				ccy := string(p.Currency)
+				if ccy == "" {
+					ccy = "DKK"
+				}
 				view.Option = priceOption{
-					ID:     p.ID,
-					Name:   name,
-					Amount: formatAmount(p.UnitAmount, p.Currency, p.Recurring.Interval),
+					ID:          p.ID,
+					Name:        name,
+					Description: p.Product.Description,
+					Features:    features,
+					Amount:      amount,
+					Currency:    stripeUpper(ccy),
+					Interval:    "per " + string(p.Recurring.Interval),
 				}
 			}
 		}

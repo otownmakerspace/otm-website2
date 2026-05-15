@@ -3,3 +3,9 @@
 # served by the Go backend. The marketing site (this Hugo build) only links to it.
 memberPortalUrl = "/login/"
 memberSignupUrl = "/checkout/"
+
+# Absolute origin of the Go backend (members host). The checkout page's
+# <form action> and htmx hx-get for /checkout/prices target this so the
+# apex-served Hugo page can reach the backend without a navigation
+# bounce. See infra/app/Dockerfile + Mux/withCORS for the CORS scope.
+memberApiBaseUrl = "https://members.development.makerspace.olaru.dk"

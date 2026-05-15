@@ -69,6 +69,12 @@ func Mux(
 	// fetch it whether served from members or apex. No auth, no side effects.
 	mux.HandleFunc("GET /captcha/challenge", captchaSvc.ServeChallenge())
 
+	// Membership-price fragment. Any-host so the apex-rendered /checkout/
+	// page can htmx-load it same-origin (no CORS, no cross-origin cert
+	// prompts in local-dev). Public data — STRIPE_PRICE_ID drives output,
+	// no session required.
+	mux.HandleFunc("GET /checkout/prices", svc.ServePrices())
+
 	// ───────────────────────── members runtime (host-prefixed) ──────────────
 	// Dashboard — backend-rendered page with auth-aware chrome.
 	mux.HandleFunc(onMembers("GET /dashboard"), svc.ServeDashboardPage())
@@ -95,7 +101,8 @@ func Mux(
 	// Checkout — signup form (Hugo page) + form handler. Both on members host.
 	mux.Handle(onMembers("GET /checkout/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.HandleFunc(onMembers("POST /checkout/"), svc.CreateCheckoutSession())
-	mux.HandleFunc(onMembers("GET /checkout/prices"), svc.ServePrices())
+	// /checkout/prices moved to apex (any-host) registration above so the
+	// marketing page's htmx call stays same-origin.
 	mux.HandleFunc(onMembers("/re-checkout"), svc.CreateCheckoutSession())
 	mux.Handle(onMembers("GET /da/checkout/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 

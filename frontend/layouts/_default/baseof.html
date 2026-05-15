@@ -184,6 +184,10 @@
     </style>
     <script defer src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js"></script>
 
+    {{/* htmx — used by the memberships partial (homepage + /checkout/) and
+         any future htmx-driven fragments. Loaded site-wide so the hx-get
+         attribute fires regardless of which page renders the partial. */}}
+    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
 
   </head>
   <body>

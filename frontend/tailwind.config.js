@@ -13,6 +13,13 @@ export default {
     'bg-accent/15',
     'bg-accent/20',
     'bg-secondary/70',
+    // zxcvbn strength-meter colors — used as JS string literals so
+    // Tailwind's content scanner can't see them in markup.
+    'bg-red-500',
+    'bg-orange-500',
+    'bg-yellow-500',
+    'bg-lime-500',
+    'bg-green-500',
   ],
   theme: {
     extend: {

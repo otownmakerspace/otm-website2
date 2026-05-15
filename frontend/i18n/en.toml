@@ -430,6 +430,21 @@ other = "Phone (optional)"
 [member_password_signup_hint]
 other = "8&ndash;31 characters. You'll use this to sign in later."
 
+[member_pass_strength_0]
+other = "Very weak"
+
+[member_pass_strength_1]
+other = "Weak"
+
+[member_pass_strength_2]
+other = "Fair"
+
+[member_pass_strength_3]
+other = "Strong"
+
+[member_pass_strength_4]
+other = "Excellent"
+
 [member_continue_to_payment]
 other = "Continue to payment"
 

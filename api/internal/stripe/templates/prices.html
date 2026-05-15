@@ -1,22 +1,52 @@
 {{/*
-  Renders inside the signup form. The single configured membership tier is
-  displayed read-only; the actual price the user is charged is decided by
-  STRIPE_PRICE_ID server-side, not by anything submitted in this form. The
-  wrapping fieldset carries the publishable key as a data attribute for any
-  client-side Stripe.js use.
+  htmx fragment for GET /checkout/prices. Renders the inside of the
+  membership card — the partial layouts/_partials/memberships.html
+  provides the outer card chrome and swaps this content in on page load.
+
+  Markup mirrors the homepage pricing-card structure exactly (title,
+  3-span price, feature list with FontAwesome check icons) so a single
+  partial drives both the homepage and the signup-page renders. All
+  content is Stripe-driven — to edit copy, change the Product in the
+  Stripe dashboard, not this file:
+
+    .Option.Name        → Stripe Product.name (+ nickname when distinct)
+    .Option.Description → Stripe Product.description (free-text)
+    .Option.Features    → Stripe Product.marketing_features[].name
+                          (edit in Stripe dashboard, max 15 entries)
+    .Option.Amount      → "200" or "199.50" (major + optional minor)
+    .Option.Currency    → "DKK"
+    .Option.Interval    → "per month"
+
+  The wrapping fieldset carries the publishable key as a data attribute
+  for client-side Stripe.js use. The actual price charged is decided by
+  STRIPE_PRICE_ID server-side, not by anything in the rendered HTML.
 */}}
-<fieldset class="space-y-2" data-stripe-pk="{{ .PublishableKey }}">
-  <legend class="text-secondary mb-2 block text-sm font-medium">{{ .S.SelectMembership }}</legend>
+<fieldset data-stripe-pk="{{ .PublishableKey }}">
+  <legend class="sr-only">{{ .S.SelectMembership }}</legend>
+
   {{ if .Empty }}
     <p class="rounded-[8px] bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
       {{ .S.NoPricesAvailable }}
     </p>
   {{ else }}
-    <div class="flex items-start gap-3 rounded-[8px] border border-gray-300 bg-white p-3">
-      <span class="flex-1">
-        <span class="block text-sm font-medium text-secondary">{{ .Option.Name }}</span>
-        <span class="block text-xs text-gray-dark">{{ .Option.Amount }}</span>
-      </span>
+    <h3 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ .Option.Name }}</h3>
+    {{ with .Option.Description }}
+      <p class="text-gray-dark mb-4 text-sm">{{ . }}</p>
+    {{ end }}
+    <div class="mb-6">
+      <span class="text-accent font-secondary text-4xl font-bold">{{ .Option.Amount }}</span>
+      <span class="text-secondary-2 text-lg"> {{ .Option.Currency }}</span>
+      <span class="text-secondary-2 text-sm">/ {{ .Option.Interval }}</span>
     </div>
+    {{ with .Option.Features }}
+      <ul class="flex flex-col gap-3">
+        {{ range . }}
+          <li class="flex items-start gap-3">
+            <i class="fa-solid fa-check text-accent mt-1 shrink-0"></i>
+            <span class="text-gray-dark">{{ . }}</span>
+          </li>
+        {{ end }}
+      </ul>
+    {{ end }}
   {{ end }}
 </fieldset>

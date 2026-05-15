@@ -6,3 +6,10 @@
 # (the form action is absolute; the navigation link is not).
 memberPortalUrl = "/login/"
 memberSignupUrl = "/checkout/"
+
+# Absolute origin of the Go backend (members host). Used by the checkout
+# page's <form action> and htmx hx-get for /checkout/prices so the
+# apex-served Hugo page can still reach the backend. The /checkout/prices
+# endpoint sends a narrow Access-Control-Allow-Origin for this site's
+# apex origin (see Mux/withCORS).
+memberApiBaseUrl = "https://members.staging.makerspace.olaru.dk"

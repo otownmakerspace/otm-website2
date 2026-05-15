@@ -1,6 +1,6 @@
 {{ define "main" }}
 <section class="py-16">
-  <div class="container mx-auto max-w-md px-4">
+  <div class="container mx-auto max-w-5xl px-4">
     <h1 class="text-secondary mb-6 text-center font-secondary text-3xl font-bold">{{ .Title }}</h1>
     {{ with .Content }}
       <div class="text-gray-dark mb-8 text-center">{{ . }}</div>
@@ -8,33 +8,71 @@
 
     <p id="checkout-error" class="text-red-600 mb-4 text-center hidden"></p>
 
-    <form action="/checkout/" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm">
-      {{/* Price selector — htmx-loaded fragment with active Stripe prices. */}}
-      <div id="checkout-prices" hx-get="/checkout/prices" hx-trigger="load" hx-swap="innerHTML">
-        <p class="text-sm text-gray-dark">{{ i18n "member_loading_prices" | safeHTML }}</p>
-      </div>
+    {{/*
+      Two-column layout: membership card on the left, signup form on the right.
+      Stacks to a single column below `lg`. The card is sticky in the desktop
+      layout so the user can always see what they're paying for while filling
+      out the form.
 
+      The htmx call for the price fragment is relative — backend registers
+      GET /checkout/prices on any host so it works same-origin from apex.
+      The form action is absolute to members.X because POST /checkout/ and
+      the rest of the flow (Stripe redirect, /checkout/success) are still
+      host-bound to the members backend.
+    */}}
+    {{ $apiBase := .Site.Params.memberApiBaseUrl }}
+    <div class="grid gap-8 lg:grid-cols-[2fr_3fr]">
+
+      {{/* Left: membership description card. Uses the same self-contained
+           partial as the homepage (subscribeLink omitted — the signup form
+           is right beside the card, so a self-link would be redundant).
+           The <aside> here is positioning only — the partial provides the
+           full card chrome. */}}
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        {{ partial "memberships.html" }}
+      </aside>
+
+      {{/* Right: signup form */}}
+      <form action="{{ $apiBase }}/checkout/" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm" novalidate>
       <div>
         <label for="name" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_full_name" }}</label>
         <input id="name" type="text" name="name" required autocomplete="name"
+               aria-describedby="name-error"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
+        <p id="name-error" class="field-error mt-1 hidden text-xs text-red-600" role="alert"></p>
       </div>
       <div>
         <label for="email" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_email" }}</label>
         <input id="email" type="email" name="email" required autocomplete="email"
+               aria-describedby="email-error"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
+        <p id="email-error" class="field-error mt-1 hidden text-xs text-red-600" role="alert"></p>
       </div>
       <div>
         <label for="phone" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_phone_optional" }}</label>
         <input id="phone" type="tel" name="phone" autocomplete="tel"
+               aria-describedby="phone-error"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
+        <p id="phone-error" class="field-error mt-1 hidden text-xs text-red-600" role="alert"></p>
       </div>
       <div>
         <label for="pass" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_password" }}</label>
         <input id="pass" type="password" name="pass" required minlength="8" maxlength="31"
                autocomplete="new-password"
+               aria-describedby="pass-hint pass-error pass-strength"
                class="w-full rounded-[8px] border border-gray-300 bg-white px-3 py-2 text-secondary focus:border-accent focus:outline-none">
-        <p class="mt-1 text-xs text-gray-dark">{{ i18n "member_password_signup_hint" | safeHTML }}</p>
+        {{/* Strength meter (zxcvbn-driven). Pure UX signal — does not gate
+             submit. Backend still enforces 8–31 character bound only. */}}
+        <div id="pass-strength-bars" class="mt-2 flex gap-1" aria-hidden="true">
+          <div class="h-1 flex-1 rounded bg-gray-200"></div>
+          <div class="h-1 flex-1 rounded bg-gray-200"></div>
+          <div class="h-1 flex-1 rounded bg-gray-200"></div>
+          <div class="h-1 flex-1 rounded bg-gray-200"></div>
+          <div class="h-1 flex-1 rounded bg-gray-200"></div>
+        </div>
+        <p id="pass-strength" class="mt-1 text-xs text-gray-dark" role="status" aria-live="polite"></p>
+        <p id="pass-hint" class="mt-1 text-xs text-gray-dark">{{ i18n "member_password_signup_hint" | safeHTML }}</p>
+        <p id="pass-error" class="field-error mt-1 hidden text-xs text-red-600" role="alert"></p>
       </div>
       {{/*
         Consent checkboxes — required before payment. The labels include
@@ -42,7 +80,7 @@
         their form input). The backend re-validates these are all present
         on POST, so a JS bypass can't skip them.
       */}}
-      <fieldset class="space-y-3 border-t border-gray-200 pt-4">
+      <fieldset class="space-y-3 border-t border-gray-200 pt-4" aria-describedby="accept-error">
         <legend class="text-secondary mb-2 block text-sm font-medium">{{ i18n "member_accept_section" }}</legend>
         <label class="flex items-start gap-2 cursor-pointer">
           <input type="checkbox" name="accept_terms" required class="mt-1 accent-accent">
@@ -65,6 +103,7 @@
             <a href="{{ "/docs/cookies-and-privacy-policy/" | relLangURL }}" target="_blank" rel="noopener" class="text-secondary-2 underline hover:text-accent">{{ i18n "member_privacy_label" }}</a>
           </span>
         </label>
+        <p id="accept-error" class="field-error mt-1 hidden text-xs text-red-600" role="alert"></p>
       </fieldset>
 
       {{ partial "captcha.html" . }}
@@ -73,11 +112,18 @@
               class="bg-accent hover:bg-accent-2 w-full rounded-[10px] px-4 py-2 font-medium text-white transition-colors">
         {{ i18n "member_continue_to_payment" }}
       </button>
-    </form>
+      </form>
+
+    </div>
   </div>
 </section>
 
-<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+{{/* htmx is loaded site-wide in baseof.html — no need to reload it here. */}}
+{{/* zxcvbn drives the password strength meter (UX only — backend still
+     enforces just the 8–31 char bound). Deferred so it doesn't block paint;
+     the meter falls back to no-op until the library is ready. */}}
+<script defer src="https://cdn.jsdelivr.net/npm/zxcvbn@4.4.2/dist/zxcvbn.js"
+        crossorigin="anonymous"></script>
 {{ partial "captcha-script.html" . }}
 <script>
   (function () {
@@ -97,6 +143,149 @@
       el.textContent = reasons[reason];
       el.classList.remove('hidden');
     }
+  })();
+</script>
+<script>
+  /*
+    Inline per-field validation. The form has `novalidate` so the browser
+    doesn't show its transient bubble — we render persistent, themed errors
+    under each invalid input using the browser's localized validationMessage.
+
+    Behavior:
+      - invalid event: show the field's error (preventDefault to suppress bubble).
+      - input/change: clear the field's error.
+      - submit: validate every required input. Block submit, surface every error,
+        focus the first invalid field. Otherwise submit proceeds normally.
+  */
+  (function () {
+    var form = document.querySelector('form');
+    if (!form) return;
+    var inputs = form.querySelectorAll('input[required], input[minlength], input[type="email"]');
+    var consentInputs = form.querySelectorAll('input[type="checkbox"][required]');
+    var acceptError = document.getElementById('accept-error');
+
+    function errorElFor(input) {
+      return document.getElementById(input.id + '-error');
+    }
+    function showError(input) {
+      var err = errorElFor(input);
+      if (err) {
+        err.textContent = input.validationMessage;
+        err.classList.remove('hidden');
+      }
+      input.classList.add('border-red-500');
+      input.setAttribute('aria-invalid', 'true');
+    }
+    function clearError(input) {
+      var err = errorElFor(input);
+      if (err) {
+        err.textContent = '';
+        err.classList.add('hidden');
+      }
+      input.classList.remove('border-red-500');
+      input.removeAttribute('aria-invalid');
+    }
+
+    inputs.forEach(function (input) {
+      input.addEventListener('invalid', function (e) { e.preventDefault(); showError(input); });
+      input.addEventListener('input', function () { clearError(input); });
+      input.addEventListener('blur', function () {
+        if (input.value !== '' && !input.checkValidity()) showError(input);
+      });
+    });
+
+    consentInputs.forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var anyMissing = Array.prototype.some.call(consentInputs, function (c) { return !c.checked; });
+        if (!anyMissing && acceptError) {
+          acceptError.textContent = '';
+          acceptError.classList.add('hidden');
+        }
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      var firstInvalid = null;
+
+      inputs.forEach(function (input) {
+        if (!input.checkValidity()) {
+          showError(input);
+          if (!firstInvalid) firstInvalid = input;
+        }
+      });
+
+      var allConsented = Array.prototype.every.call(consentInputs, function (c) { return c.checked; });
+      if (!allConsented && acceptError) {
+        acceptError.textContent = consentInputs[0] ? consentInputs[0].validationMessage : 'Required';
+        acceptError.classList.remove('hidden');
+        if (!firstInvalid) firstInvalid = consentInputs[0];
+      }
+
+      if (firstInvalid) {
+        e.preventDefault();
+        firstInvalid.focus();
+      }
+    });
+  })();
+</script>
+<script>
+  /*
+    Password-strength meter (zxcvbn). Pure UX signal — does not gate
+    submit, since the backend's only constraint is the 8–31 char bound
+    (api/internal/session/store.go). The meter helps users pick a
+    higher-entropy password without forcing arbitrary complexity rules.
+
+    Behavior:
+      - Loads zxcvbn lazily via <script defer>; until it's ready, the
+        meter stays blank (no-op listener still runs but exits early).
+      - On every input event: re-scores and updates the bar fills + label.
+      - Score 0–4 maps to fill count (1–5 bars) and a single brand color.
+  */
+  (function () {
+    var passInput = document.getElementById('pass');
+    var bars = document.querySelectorAll('#pass-strength-bars > div');
+    var label = document.getElementById('pass-strength');
+    if (!passInput || bars.length !== 5 || !label) return;
+
+    var LABELS = [
+      {{ i18n "member_pass_strength_0" }},
+      {{ i18n "member_pass_strength_1" }},
+      {{ i18n "member_pass_strength_2" }},
+      {{ i18n "member_pass_strength_3" }},
+      {{ i18n "member_pass_strength_4" }}
+    ];
+    var COLORS = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-lime-500', 'bg-green-500'];
+
+    function clearBars() {
+      bars.forEach(function (b) {
+        COLORS.forEach(function (c) { b.classList.remove(c); });
+        b.classList.add('bg-gray-200');
+      });
+    }
+
+    function render(score) {
+      bars.forEach(function (b, i) {
+        COLORS.forEach(function (c) { b.classList.remove(c); });
+        if (i <= score) {
+          b.classList.remove('bg-gray-200');
+          b.classList.add(COLORS[score]);
+        } else {
+          b.classList.add('bg-gray-200');
+        }
+      });
+      label.textContent = LABELS[score];
+    }
+
+    passInput.addEventListener('input', function () {
+      var pw = passInput.value;
+      if (!pw) {
+        clearBars();
+        label.textContent = '';
+        return;
+      }
+      if (typeof zxcvbn !== 'function') return;
+      render(zxcvbn(pw).score);
+    });
   })();
 </script>
 {{ end }}
