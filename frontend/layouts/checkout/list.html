@@ -14,13 +14,12 @@
       layout so the user can always see what they're paying for while filling
       out the form.
 
-      The htmx call for the price fragment is relative — backend registers
-      GET /checkout/prices on any host so it works same-origin from apex.
-      The form action is absolute to members.X because POST /checkout/ and
-      the rest of the flow (Stripe redirect, /checkout/success) are still
-      host-bound to the members backend.
+      Form action and htmx URL are both relative. The Go backend registers
+      GET /checkout/, POST /checkout/, and GET /checkout/prices on any host
+      (router.go), so the apex-served Hugo page submits same-origin and any
+      failure redirects stay on the user's current host (no apex→members
+      hop that would wipe the form data).
     */}}
-    {{ $apiBase := .Site.Params.memberApiBaseUrl }}
     <div class="grid gap-8 lg:grid-cols-[2fr_3fr]">
 
       {{/* Left: membership description card. Uses the same self-contained
@@ -33,7 +32,7 @@
       </aside>
 
       {{/* Right: signup form */}}
-      <form action="{{ $apiBase }}/checkout/" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm" novalidate>
+      <form action="/checkout/" method="POST" class="space-y-4 rounded-[10px] bg-surface p-8 shadow-sm" novalidate>
       <div>
         <label for="name" class="text-secondary mb-1 block text-sm font-medium">{{ i18n "member_full_name" }}</label>
         <input id="name" type="text" name="name" required autocomplete="name"

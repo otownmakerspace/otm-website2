@@ -1,0 +1,19 @@
+{{ define "main" }}
+{{/*
+  Hugo auto-emits this template to docs/404.html on every build.
+  Served by the Go backend's static fallback whenever a request maps to no
+  file — see api/internal/http/router.go (staticFallback wrapper writes
+  HTTP 404 before this body).
+*/}}
+<section class="flex min-h-[60vh] items-center justify-center py-16 xl:py-24">
+  <div class="container mx-auto max-w-2xl px-4 text-center">
+    <p class="text-accent font-secondary text-8xl font-bold leading-none xl:text-9xl">404</p>
+    <h1 class="text-secondary mt-6 font-secondary text-3xl font-bold xl:text-5xl">{{ i18n "error_404_title" }}</h1>
+    <p class="text-gray-dark mx-auto mt-4 max-w-md text-base xl:text-lg">{{ i18n "error_404_message" }}</p>
+    <a href="{{ "/" | relLangURL }}"
+       class="bg-accent hover:bg-accent-2 mt-10 inline-block rounded-[10px] px-6 py-3 font-medium text-white transition-colors">
+      {{ i18n "error_back_home" }}
+    </a>
+  </div>
+</section>
+{{ end }}

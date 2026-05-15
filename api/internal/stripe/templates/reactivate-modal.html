@@ -1,0 +1,53 @@
+{{/*
+  Reactivation confirmation modal. Mounted into #modal-mount on the dashboard.
+  Mirrors the cancel-modal pattern for friction symmetry — reactivating is not
+  destructive, but we still want the user to make a deliberate two-step choice.
+
+  Closing options:
+    - "Not yet" → swaps innerHTML of #modal-mount with empty string via the
+      shared /cancel-modal/dismiss endpoint (returns empty body).
+    - Confirm button → POST /reactivate-subscription, server responds with
+      empty body + HX-Trigger:membership-changed. The membership card reloads.
+*/}}
+<div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+  {{/* Backdrop. Clicking it dismisses the modal (same effect as the
+       "Not yet" button) so accidental outside-clicks don't trigger
+       reactivation. */}}
+  <div class="absolute inset-0 bg-black/50"
+       hx-get="/cancel-modal/dismiss"
+       hx-target="#modal-mount"
+       hx-swap="innerHTML"
+       aria-hidden="true"></div>
+
+  {{/* Dialog */}}
+  <div class="relative w-full max-w-md rounded-[10px] bg-surface p-6 shadow-xl">
+    <h2 class="text-secondary mb-3 font-secondary text-xl font-bold">
+      {{ .S.ReactivateModalTitle }}
+    </h2>
+
+    <div class="space-y-3 text-sm text-gray-dark">
+      <p>{{ printf .S.ReactivateModalBody .EndsOn }}</p>
+    </div>
+
+    <div class="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <button
+        type="button"
+        hx-get="/cancel-modal/dismiss"
+        hx-target="#modal-mount"
+        hx-swap="innerHTML"
+        class="rounded-[10px] border border-gray-300 px-4 py-2 text-sm font-medium text-secondary transition-colors hover:border-accent hover:text-accent"
+      >
+        {{ .S.ReactivateModalKeep }}
+      </button>
+      <button
+        type="button"
+        hx-post="/reactivate-subscription?sub_id={{ .SubID }}"
+        hx-target="#modal-mount"
+        hx-swap="innerHTML"
+        class="rounded-[10px] bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-2"
+      >
+        {{ .S.ReactivateModalConfirm }}
+      </button>
+    </div>
+  </div>
+</div>

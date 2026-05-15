@@ -32,6 +32,8 @@ type Strings struct {
 	OpenHouseHintTpl    string // printf template "See you at the next Open House — %s, 17:00."
 	CancelMembership    string
 	CancelEndsOn        string // "Your membership is set to end on {date}. You'll keep access until then."
+	Reactivate          string // "Reactivate membership" — undo a pending cancel-at-period-end
+	ReactivateHint      string // brief explainer shown next to the reactivate button
 	NoActiveMembership  string
 	NoActiveBody        string
 	BecomeMemberAgain   string
@@ -44,6 +46,13 @@ type Strings struct {
 	CancelModalKeep        string // "Keep membership"
 	CancelModalConfirm     string // "End membership"
 	CancelModalConfirmDated string // printf "End on %s"
+
+	// ── Reactivate modal (reactivate-modal.html) ──
+	ReactivateModalTitle   string // "Continue your membership?"
+	ReactivateModalBody    string // printf "We'll keep billing you on %s like normal."
+	ReactivateModalKeep    string // "Not yet" — dismiss button
+	ReactivateModalConfirm string // "Continue membership" — confirm button
+	ReactivateLimitReached string // printf — shown when in-period reactivation cap is hit; %s = next renewal date
 
 	// ── Settings group label (dashboard layout) ──
 	SettingsSection string
@@ -116,6 +125,8 @@ var en = Strings{
 	OpenHouseHintTpl:    "See you at the next Open House — %s, 17:00",
 	CancelMembership:    "Cancel membership",
 	CancelEndsOn:        "Your membership is set to end on %s. You'll keep access until then.",
+	Reactivate:          "Reactivate membership",
+	ReactivateHint:      "Changed your mind? You can keep your membership active.",
 	NoActiveMembership:  "No active membership",
 	NoActiveBody:        "You don't have an active membership right now.",
 	BecomeMemberAgain:   "Become a member again",
@@ -127,6 +138,12 @@ var en = Strings{
 	CancelModalKeep:         "Keep membership",
 	CancelModalConfirm:      "End membership",
 	CancelModalConfirmDated: "End on %s",
+
+	ReactivateModalTitle:   "Continue your membership?",
+	ReactivateModalBody:    "You won't be cancelled at the end of the period. We'll keep billing you on %s like normal.",
+	ReactivateModalKeep:    "Not yet",
+	ReactivateModalConfirm: "Continue membership",
+	ReactivateLimitReached: "You've already reactivated once this billing period. You can change your mind again from your next renewal on %s.",
 
 	SettingsSection: "Account settings",
 
@@ -194,6 +211,8 @@ var da = Strings{
 	OpenHouseHintTpl:    "Vi ses til næste Open House — %s kl. 17:00",
 	CancelMembership:    "Opsig medlemskab",
 	CancelEndsOn:        "Dit medlemskab udløber %s. Du beholder adgang indtil da.",
+	Reactivate:          "Genaktivér medlemskab",
+	ReactivateHint:      "Skiftet mening? Du kan beholde dit medlemskab aktivt.",
 	NoActiveMembership:  "Intet aktivt medlemskab",
 	NoActiveBody:        "Du har ikke et aktivt medlemskab lige nu.",
 	BecomeMemberAgain:   "Bliv medlem igen",
@@ -205,6 +224,12 @@ var da = Strings{
 	CancelModalKeep:         "Behold medlemskab",
 	CancelModalConfirm:      "Opsig medlemskab",
 	CancelModalConfirmDated: "Opsig pr. %s",
+
+	ReactivateModalTitle:   "Fortsæt dit medlemskab?",
+	ReactivateModalBody:    "Du bliver ikke opsagt ved periodens udløb. Vi fortsætter med at fakturere dig den %s som normalt.",
+	ReactivateModalKeep:    "Ikke endnu",
+	ReactivateModalConfirm: "Fortsæt medlemskab",
+	ReactivateLimitReached: "Du har allerede genaktiveret én gang i denne faktureringsperiode. Du kan ændre mening igen fra din næste fornyelse den %s.",
 
 	SettingsSection: "Kontoindstillinger",
 

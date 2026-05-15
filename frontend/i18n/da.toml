@@ -524,3 +524,24 @@ other = "Bekræft venligst at du har læst alle påkrævede dokumenter for at fo
 
 [member_checkout_reason_captcha_failed]
 other = "Anti-bot-tjekket blev ikke fuldført. Genindlæs siden og prøv igen."
+
+[error_back_home]
+other = "Tilbage til forsiden"
+
+[error_404_title]
+other = "Siden blev ikke fundet"
+
+[error_404_message]
+other = "Den side du leder efter findes ikke eller er flyttet. Prøv et af menupunkterne ovenfor, eller gå tilbage til forsiden."
+
+[error_500_title]
+other = "Noget gik galt"
+
+[error_500_message]
+other = "Vi løb ind i en uventet fejl hos os. Det er ikke din skyld. Prøv igen om et øjeblik — hvis det fortsætter, så skriv til os."
+
+[error_403_title]
+other = "Adgang nægtet"
+
+[error_403_message]
+other = "Du har ikke tilladelse til at se denne side. Hvis du tror det er en fejl, så log ind eller kontakt os."

@@ -23,6 +23,12 @@ ARG HUGO_VERSION=0.151.0
 # Override at build time: --build-arg HUGO_ENVIRONMENT=staging
 ARG HUGO_ENVIRONMENT=production
 ARG HUGO_BASE_URL=""
+# SUBDOMAIN/TOPDOMAIN flow through to the Hugo subprocess so templates
+# can construct https://members.${SUBDOMAIN}.${TOPDOMAIN}/login/ etc.
+# via os.Getenv. The marketing site links member-related URLs directly
+# at the members backend host.
+ARG SUBDOMAIN=""
+ARG TOPDOMAIN=""
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl \
  && curl -sSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" \
@@ -36,10 +42,24 @@ RUN npm install
 
 COPY frontend/ ./
 
+# Expose the Go-rendered template trees to Tailwind's content scanner.
+# tailwind.config.js has `'../api/internal/**/*.html'` in its content array;
+# without these COPYs the path resolves to a nonexistent dir inside the
+# container and modal-only classes (bg-black/50, bg-red-600, etc.) silently
+# get dropped from the compiled CSS bundle. Targeted COPYs keep the layer
+# cache scoped to template changes, not Go code.
+COPY api/internal/stripe/templates /app/api/internal/stripe/templates
+COPY api/internal/email/templates /app/api/internal/email/templates
+
 # Tailwind must run BEFORE Hugo so that static/css/styles.css exists
 # when Hugo copies the static/ tree into the publish directory.
+# SUBDOMAIN/TOPDOMAIN are exposed to Hugo via the HUGO_PARAMS_* convention:
+# env vars prefixed with HUGO_PARAMS_ are auto-merged into .Site.Params
+# (lowercased), so templates read them as .Site.Params.subdomain /
+# .Site.Params.topdomain — no security.funcs.getenv whitelist needed.
 RUN npx @tailwindcss/cli -i input.css -o static/css/styles.css --minify \
- && hugo --minify --environment "${HUGO_ENVIRONMENT}" \
+ && HUGO_PARAMS_SUBDOMAIN="${SUBDOMAIN}" HUGO_PARAMS_TOPDOMAIN="${TOPDOMAIN}" \
+      hugo --minify --environment "${HUGO_ENVIRONMENT}" \
       ${HUGO_BASE_URL:+--baseURL "${HUGO_BASE_URL}"}
 
 

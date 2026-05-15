@@ -524,3 +524,24 @@ other = "Please confirm you've read all required documents before continuing."
 
 [member_checkout_reason_captcha_failed]
 other = "The anti-bot check didn't complete. Please refresh the page and try again."
+
+[error_back_home]
+other = "Back to home"
+
+[error_404_title]
+other = "Page not found"
+
+[error_404_message]
+other = "The page you're looking for doesn't exist or has moved. Try one of the navigation links above, or head back home."
+
+[error_500_title]
+other = "Something went wrong"
+
+[error_500_message]
+other = "We hit an unexpected error on our end. It's not your fault. Please try again in a moment — if it keeps happening, drop us a line."
+
+[error_403_title]
+other = "Access denied"
+
+[error_403_message]
+other = "You don't have permission to view this page. If you think this is a mistake, please sign in or contact us."

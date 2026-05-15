@@ -145,7 +145,13 @@ case "$cmd" in
     hugo_env="${HUGO_ENV:-development}"
     msg "Building Hugo static site (env: $hugo_env, baseURL: $base_url)..."
     if command -v hugo >/dev/null 2>&1; then
-      (cd "$ROOT_DIR/frontend" && hugo build --minify --cleanDestinationDir --environment "$hugo_env" -b "$base_url")
+      # HUGO_PARAMS_SUBDOMAIN / HUGO_PARAMS_TOPDOMAIN feed
+      # .Site.Params.subdomain and .topdomain at build time so the
+      # marketing site can compose absolute members.<sub>.<top> URLs.
+      (cd "$ROOT_DIR/frontend" && \
+        HUGO_PARAMS_SUBDOMAIN="${SUBDOMAIN:-development}" \
+        HUGO_PARAMS_TOPDOMAIN="${TOPDOMAIN:-makerspace.olaru.dk}" \
+        hugo build --minify --cleanDestinationDir --environment "$hugo_env" -b "$base_url")
     else
       err "Hugo not found. Install Hugo first: https://gohugo.io/installation/"
       exit 1
@@ -156,9 +162,13 @@ case "$cmd" in
     # frontend-builder stage's in-container Hugo run matches what we
     # built on the host above. Without these flags Hugo inside Docker
     # defaults to production and overwrites the dev-built docs/.
+    # SUBDOMAIN/TOPDOMAIN go through too so the Hugo build can compose
+    # https://members.<SUBDOMAIN>.<TOPDOMAIN>/... links via os.Getenv.
     docker build \
       --build-arg HUGO_ENVIRONMENT="$hugo_env" \
       --build-arg HUGO_BASE_URL="$base_url" \
+      --build-arg SUBDOMAIN="${SUBDOMAIN:-development}" \
+      --build-arg TOPDOMAIN="${TOPDOMAIN:-makerspace.olaru.dk}" \
       -t "$local_tag" -f "$ROOT_DIR/infra/app/Dockerfile" "$ROOT_DIR" ;;
 
   rebuild)

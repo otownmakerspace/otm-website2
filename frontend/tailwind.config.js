@@ -5,6 +5,7 @@ export default {
     './content/**/*.{html,md}',
     './themes/hugo-up-business-main/layouts/**/*.html',
     './themes/hugo-up-business-main/assets/js/**/*.js',
+    '../api/internal/**/*.html',
   ],
   safelist: [
     'bg-primary-2/50',

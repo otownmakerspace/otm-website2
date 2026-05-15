@@ -11,18 +11,21 @@ import (
 	"strings"
 
 	dbpkg "github.com/iustin94/makerspace/api/internal/db"
+	"github.com/iustin94/makerspace/api/internal/errpage"
 	"github.com/iustin94/makerspace/api/internal/i18n"
 )
 
 // dashboardPageView feeds templates/dashboard-page.html — a complete HTML
 // document with its own auth-aware chrome.
 type dashboardPageView struct {
-	Lang        i18n.Lang
-	Head        template.HTML // extracted from docs/index.html — Tailwind, fonts, theme tokens
-	UserEmail   string
-	HomeURL     string // /  or  /da/
-	LogoutURL   string // /logout
-	S           i18n.Strings
+	Lang      i18n.Lang
+	Head      template.HTML // extracted from docs/index.html — Tailwind, fonts, theme tokens
+	LogoLight template.HTML // inline SVG of the marketing-site light-mode logo
+	LogoDark  template.HTML // inline SVG of the marketing-site dark-mode logo
+	UserEmail string
+	HomeURL   string // /  or  /da/
+	LogoutURL string // /logout
+	S         i18n.Strings
 }
 
 // loadHugoHead reads <head>...</head> out of docs/index.html so the dashboard
@@ -50,6 +53,24 @@ func loadHugoHead(staticDir string) template.HTML {
 	// we can prepend a per-page <title> before this content.
 	inner := s[start+len("<head>") : end]
 	return template.HTML(inner)
+}
+
+// loadInlineSVG reads an SVG file from the static dir so it can be emitted
+// inline in the rendered HTML. Inlining is required for the horizontal-lockup
+// because it references gear + wordmark SVGs via <image href="...">; browsers
+// sandbox SVGs loaded through <img> and refuse to fetch those inner resources
+// (Opaque Response Blocking). Inline SVG bypasses the sandbox.
+//
+// Returns empty HTML if the file is missing — callers should render gracefully
+// without a logo rather than 500'ing the dashboard.
+func loadInlineSVG(staticDir, relPath string) template.HTML {
+	path := filepath.Join(staticDir, relPath)
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Printf("dashboard: couldn't read %s for inline SVG: %v", path, err)
+		return ""
+	}
+	return template.HTML(data)
 }
 
 // ServeDashboardPage returns the GET /dashboard handler. Auth-gated. Renders a
@@ -90,6 +111,8 @@ func (s *Service) ServeDashboardPage() http.HandlerFunc {
 		view := dashboardPageView{
 			Lang:      lang,
 			Head:      s.HugoHead,
+			LogoLight: s.LogoLight,
+			LogoDark:  s.LogoDark,
 			UserEmail: displayName,
 			HomeURL:   homeURL,
 			LogoutURL: "/logout",
@@ -99,13 +122,13 @@ func (s *Service) ServeDashboardPage() http.HandlerFunc {
 		tmpl, err := template.ParseFS(templatesFS, "templates/dashboard-page.html")
 		if err != nil {
 			log.Print("dashboard: parse template: ", err)
-			http.Error(w, "Internal error", http.StatusInternalServerError)
+			errpage.Render(w, r, s.Cfg.Backend.StaticDir, "500", http.StatusInternalServerError)
 			return
 		}
 		var out bytes.Buffer
 		if err := tmpl.Execute(&out, view); err != nil {
 			log.Print("dashboard: render: ", err)
-			http.Error(w, "Internal error", http.StatusInternalServerError)
+			errpage.Render(w, r, s.Cfg.Backend.StaticDir, "500", http.StatusInternalServerError)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

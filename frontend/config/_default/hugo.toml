@@ -7,7 +7,7 @@ defaultContentLanguage = 'en'
 [languages]
   [languages.en]
     languageCode = 'en-us'
-    languageName = 'English'
+    label = 'English'
     weight = 1
     [languages.en.params]
       description = "A community-driven makerspace in Odense with 24/7 access to 3D printers, laser cutters, CNC machines, electronics, and woodworking tools."
@@ -15,7 +15,7 @@ defaultContentLanguage = 'en'
 
   [languages.da]
     languageCode = 'da'
-    languageName = 'Dansk'
+    label = 'Dansk'
     weight = 2
     [languages.da.params]
       description = "Et fællesskabsdrevet værksted i Odense med 24/7 adgang til 3D-printere, laserskærere, CNC-maskiner, elektronik og træværksted."
@@ -30,12 +30,11 @@ defaultContentLanguage = 'en'
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
   ogImage = "images/og-default.jpg"
-  # Where existing members sign in. Override per-environment.
-  memberPortalUrl = "https://members.theotowngarage.com"
-  # Where new members begin signup. In production both URLs point at the
-  # external members site (which serves both flows); in dev/staging they
-  # diverge into /login/ and /checkout/.
-  memberSignupUrl = "https://members.theotowngarage.com"
+  # Member-portal links: relative paths only. Hugo never bakes absolute
+  # URLs — cross-host routing (apex → members backend) is handled at
+  # runtime by the Go server via BACKEND_PUBLIC_URL env var.
+  memberPortalUrl = "/login/"
+  memberSignupUrl = "/checkout/"
 
   [[params.sponsor_items]]
     name = "Coalescent Mobile Robotics"

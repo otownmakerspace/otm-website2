@@ -8,6 +8,7 @@ import (
 
 	stripepkg "github.com/stripe/stripe-go/v82"
 	stripesession "github.com/stripe/stripe-go/v82/checkout/session"
+	"github.com/stripe/stripe-go/v82/subscription"
 	"github.com/stripe/stripe-go/v82/webhook"
 
 	dbpkg "github.com/iustin94/makerspace/api/internal/db"
@@ -67,6 +68,31 @@ func (s *Service) HandleWebhook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		return
+
+	case stripepkg.EventTypeCustomerSubscriptionUpdated:
+		var sub stripepkg.Subscription
+		if err := json.Unmarshal(event.Data.Raw, &sub); err != nil {
+			log.Printf("webhook: parse JSON: %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		// On a cycle advance, reset the reactivation counter. Stripe puts the
+		// old value of any changed field in previous_attributes; we only care
+		// that current_period_end was among the changed keys.
+		//
+		// Best-effort: a failed metadata write shouldn't bubble up as an error
+		// to Stripe (that would trigger webhook retries for a cosmetic reset).
+		if _, ok := event.Data.PreviousAttributes["current_period_end"]; ok {
+			if _, err := subscription.Update(sub.ID, &stripepkg.SubscriptionParams{
+				Params: stripepkg.Params{
+					Metadata: map[string]string{
+						reactivationsMetadataKey: "0",
+					},
+				},
+			}); err != nil {
+				log.Printf("webhook: failed to reset reactivations counter on sub %s: %v", sub.ID, err)
+			}
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)

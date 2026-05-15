@@ -12,8 +12,13 @@
   click Keep or Confirm. Acceptable for a destructive action.
 */}}
 <div class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-  {{/* Backdrop */}}
-  <div class="absolute inset-0 bg-black/50"></div>
+  {{/* Backdrop. Clicking it dismisses the modal (same effect as the Keep
+       button) — accidental click-outside MUST NOT trigger cancellation. */}}
+  <div class="absolute inset-0 bg-black/50"
+       hx-get="/cancel-modal/dismiss"
+       hx-target="#modal-mount"
+       hx-swap="innerHTML"
+       aria-hidden="true"></div>
 
   {{/* Dialog */}}
   <div class="relative w-full max-w-md rounded-[10px] bg-surface p-6 shadow-xl">

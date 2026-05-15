@@ -8,6 +8,7 @@ import (
 
 	"github.com/iustin94/makerspace/api/internal/captcha"
 	"github.com/iustin94/makerspace/api/internal/email"
+	"github.com/iustin94/makerspace/api/internal/errpage"
 	"github.com/iustin94/makerspace/api/internal/session"
 	"github.com/iustin94/makerspace/api/internal/stripe"
 )
@@ -57,7 +58,7 @@ func Mux(
 		return membersHost + pattern
 	}
 
-	staticFallback := stdhttp.FileServer(stdhttp.Dir(staticDir))
+	staticFallback := staticFallbackWith404(staticDir)
 
 	// ───────────────────────── apex (any host with no more-specific match) ──
 	// Stripe webhook — Stripe POSTs to whatever URL is configured in the
@@ -84,7 +85,9 @@ func Mux(
 	mux.HandleFunc(onMembers("GET /dashboard/hero"), svc.ServeHero())
 	mux.HandleFunc(onMembers("/subscriptions"), svc.ServeSubscriptions())
 	mux.HandleFunc(onMembers("/cancel-subscription"), svc.CancelSubscription())
+	mux.HandleFunc(onMembers("POST /reactivate-subscription"), svc.ReactivateSubscription())
 	mux.HandleFunc(onMembers("GET /cancel-modal"), svc.ServeCancelModal())
+	mux.HandleFunc(onMembers("GET /reactivate-modal"), svc.ServeReactivateModal())
 	mux.HandleFunc(onMembers("GET /cancel-modal/dismiss"), svc.DismissModal())
 
 	// Profile + password
@@ -98,23 +101,32 @@ func Mux(
 	mux.HandleFunc(onMembers("GET /invoices"), svc.ServeInvoices())
 	mux.HandleFunc(onMembers("GET /billing-portal"), svc.BillingPortal())
 
-	// Checkout — signup form (Hugo page) + form handler. Both on members host.
-	mux.Handle(onMembers("GET /checkout/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
-	mux.HandleFunc(onMembers("POST /checkout/"), svc.CreateCheckoutSession())
-	// /checkout/prices moved to apex (any-host) registration above so the
-	// marketing page's htmx call stays same-origin.
-	mux.HandleFunc(onMembers("/re-checkout"), svc.CreateCheckoutSession())
-	mux.Handle(onMembers("GET /da/checkout/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
+	// Checkout — signup form (Hugo page) + form handler. Any-host so the
+	// apex-rendered /checkout/ page can submit same-origin; failure redirects
+	// (relative URLs) stay on whichever host the user is actually on, no host
+	// hop on validation errors. /checkout/prices is already any-host above.
+	mux.Handle("GET /checkout/", sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
+	mux.HandleFunc("POST /checkout/", svc.CreateCheckoutSession())
+	mux.HandleFunc("/re-checkout", svc.CreateCheckoutSession())
+	mux.Handle("GET /da/checkout/", sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 
 	// Stripe redirect target after successful payment. Handler verifies the
 	// session_id, runs fulfillment idempotently (covers the redirect-beats-
 	// webhook race), then 303-redirects to the login page so the user signs
-	// in with the credentials they just set on the signup form.
-	mux.HandleFunc(onMembers("GET /checkout/success"), svc.ServeCheckoutSuccess())
-	mux.HandleFunc(onMembers("GET /da/checkout/success"), svc.ServeCheckoutSuccess())
+	// in with the credentials they just set on the signup form. Any-host so
+	// Stripe can be configured to return to whichever origin the user came
+	// from (the SuccessURL is built server-side from BACKEND_PUBLIC_URL).
+	mux.HandleFunc("GET /checkout/success", svc.ServeCheckoutSuccess())
+	mux.HandleFunc("GET /da/checkout/success", svc.ServeCheckoutSuccess())
 
-	// Auth flows (login, logout, password reset)
-	mux.HandleFunc(onMembers("/logout"), sessions.Logout)
+	// Auth flows. Login routes are members-only: the marketing site bakes
+	// absolute https://members.X/login/ links at Hugo build time (from the
+	// SUBDOMAIN/TOPDOMAIN env vars forwarded into the Hugo build), so
+	// users never hit apex/login/ in normal navigation. Restricting these
+	// to the members host means the cookie lands on the right origin and
+	// the post-login /dashboard redirect resolves correctly without any
+	// backend redirect indirection.
+	mux.HandleFunc("/logout", sessions.Logout)
 	mux.Handle(onMembers("GET /login/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.Handle(onMembers("GET /da/login/"), sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.HandleFunc(onMembers("POST /login/"), sessions.Login(db))
@@ -128,4 +140,23 @@ func Mux(
 	// every request falls here.
 	mux.Handle("/", staticFallback)
 	return mux
+}
+
+// staticFallbackWith404 wraps http.FileServer so that requests to a path
+// that doesn't exist on disk get the Hugo-built docs/404.html body with
+// proper HTTP 404 status — instead of the default plain-text
+// "404 page not found\n" that FileServer emits. Localization (Danish
+// /da/* paths) is handled inside errpage.Render.
+func staticFallbackWith404(staticDir string) stdhttp.Handler {
+	dir := stdhttp.Dir(staticDir)
+	fs := stdhttp.FileServer(dir)
+	return stdhttp.HandlerFunc(func(w stdhttp.ResponseWriter, r *stdhttp.Request) {
+		f, err := dir.Open(r.URL.Path)
+		if err != nil {
+			errpage.Render(w, r, staticDir, "404", stdhttp.StatusNotFound)
+			return
+		}
+		f.Close()
+		fs.ServeHTTP(w, r)
+	})
 }

@@ -29,25 +29,31 @@ import (
 // Service holds the dependencies the Stripe handlers need. Constructed once
 // in main() and used to register routes.
 type Service struct {
-	Cfg      config.Config
-	DB       *sql.DB
-	Sessions *session.Store
-	Mailer   *email.Mailer
-	Captcha  *captcha.Service
-	HugoHead template.HTML // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
+	Cfg       config.Config
+	DB        *sql.DB
+	Sessions  *session.Store
+	Mailer    *email.Mailer
+	Captcha   *captcha.Service
+	HugoHead  template.HTML // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
+	LogoLight template.HTML // inline SVG of the light-mode horizontal lockup, mirrors marketing-site usage
+	LogoDark  template.HTML // inline SVG of the dark-mode wordmark, mirrors marketing-site usage
 }
 
 // NewService returns a Service. All dependencies must be non-nil. HugoHead is
 // resolved from the static-files directory and may be empty if the static
 // site isn't bundled — the dashboard template falls back to a minimal head.
+// LogoLight/LogoDark are read from the same static dir; if missing they stay
+// empty and the header simply renders without a logo (no crash).
 func NewService(cfg config.Config, db *sql.DB, sessions *session.Store, mailer *email.Mailer, captchaSvc *captcha.Service) *Service {
 	return &Service{
-		Cfg:      cfg,
-		DB:       db,
-		Sessions: sessions,
-		Mailer:   mailer,
-		Captcha:  captchaSvc,
-		HugoHead: loadHugoHead(cfg.Backend.StaticDir),
+		Cfg:       cfg,
+		DB:        db,
+		Sessions:  sessions,
+		Mailer:    mailer,
+		Captcha:   captchaSvc,
+		HugoHead:  loadHugoHead(cfg.Backend.StaticDir),
+		LogoLight: loadInlineSVG(cfg.Backend.StaticDir, "images/branding/logos/horizontal-lockup-notagline.svg"),
+		LogoDark:  loadInlineSVG(cfg.Backend.StaticDir, "images/branding/logos/wordmark-white-transparent.svg"),
 	}
 }
 

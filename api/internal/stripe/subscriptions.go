@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	stripepkg "github.com/stripe/stripe-go/v82"
@@ -17,6 +18,16 @@ import (
 	"github.com/iustin94/makerspace/api/internal/i18n"
 	"github.com/iustin94/makerspace/api/internal/user"
 )
+
+// maxReactivationsPerPeriod caps in-period cancel/reactivate ping-pong.
+// One reactivation per billing cycle lets a user undo an accidental cancel
+// but not loop through the flow repeatedly to test or game the system.
+const maxReactivationsPerPeriod = 1
+
+// reactivationsMetadataKey is the Stripe subscription metadata field that
+// tracks how many times the current period has been reactivated. Reset to "0"
+// by the customer.subscription.updated webhook on cycle advance.
+const reactivationsMetadataKey = "reactivations_this_period"
 
 //go:embed templates/*.html
 var templatesFS embed.FS
@@ -38,7 +49,25 @@ type subscriptionView struct {
 	CancelEndsMsg    string // localized "Your membership ends on X..." with NextRenewal substituted
 	OpenHouseDate    string // pre-formatted next Thursday for the localized hint
 	OpenHouseLinkURL string // /events/ or /da/events/
+	CanReactivate    bool   // false when reactivations_this_period >= cap; hides the reactivate button
 	S                i18n.Strings
+}
+
+// reactivationsCount reads the per-period reactivation counter from a
+// subscription's metadata. Missing or unparseable values are treated as 0.
+func reactivationsCount(sub *stripepkg.Subscription) int {
+	if sub == nil || sub.Metadata == nil {
+		return 0
+	}
+	raw, ok := sub.Metadata[reactivationsMetadataKey]
+	if !ok {
+		return 0
+	}
+	n, err := strconv.Atoi(raw)
+	if err != nil || n < 0 {
+		return 0
+	}
+	return n
 }
 
 // listSubscriptions returns the iterator of active subs for a customer (max 1).
@@ -121,6 +150,9 @@ func renderSubscriptions(u user.User, lang i18n.Lang) (bytes.Buffer, error) {
 		if view.CancelAtEnd {
 			view.CancelEndsMsg = fmt.Sprintf(view.S.CancelEndsOn, view.NextRenewal)
 		}
+		// Only meaningful when CancelAtEnd is true (the only state that shows
+		// the reactivate button), but harmless to set unconditionally.
+		view.CanReactivate = reactivationsCount(s) < maxReactivationsPerPeriod
 		log.Printf("subs: id=%s status=%s", s.ID, s.Status)
 	}
 
@@ -230,6 +262,62 @@ func (s *Service) ServeCancelModal() http.HandlerFunc {
 	}
 }
 
+// ServeReactivateModal returns the GET /reactivate-modal handler — htmx
+// fragment with the reactivation confirmation modal. Mirrors ServeCancelModal
+// for friction symmetry; we want reactivating to be a deliberate two-step
+// choice just like cancelling, even though it's non-destructive.
+//
+// Reuses cancelModalView since the shape (SubID, EndsOn, S) is identical.
+func (s *Service) ServeReactivateModal() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sess, _ := s.Sessions.Get(r)
+		if auth, ok := sess.Values["authenticated"].(bool); !ok || !auth {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+		subID := r.URL.Query().Get("sub_id")
+		if subID == "" {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		// Verify ownership and read current period end so the modal can show
+		// the concrete "we'll keep billing you on X" date.
+		customerID, _ := sess.Values["customer_id"].(string)
+		sub, err := subscription.Get(subID, nil)
+		if err != nil || sub.Customer.ID != customerID {
+			log.Printf("reactivate-modal: ownership check failed for sub %s by customer %s", subID, customerID)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		view := cancelModalView{
+			SubID: subID,
+			S:     i18n.For(i18n.FromRequest(r)),
+		}
+		if sub.Items != nil && len(sub.Items.Data) > 0 {
+			if end := sub.Items.Data[0].CurrentPeriodEnd; end != 0 {
+				view.EndsOn = time.Unix(end, 0).Format("2 January 2006")
+			}
+		}
+
+		tmpl, err := template.ParseFS(templatesFS, "templates/reactivate-modal.html")
+		if err != nil {
+			log.Print("reactivate-modal: parse template: ", err)
+			http.Error(w, "Internal error", http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		var out bytes.Buffer
+		if err := tmpl.Execute(&out, view); err != nil {
+			log.Print("reactivate-modal: render: ", err)
+			http.Error(w, "Internal error", http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprint(w, out.String())
+	}
+}
+
 // CancelSubscription returns the POST /cancel-subscription handler. Verifies
 // the subscription belongs to the logged-in user before cancelling immediately.
 //
@@ -271,5 +359,63 @@ func (s *Service) CancelSubscription() http.HandlerFunc {
 
 		// Empty body clears #modal-mount; HX-Trigger reloads the membership card.
 		w.Header().Set("HX-Trigger", "membership-changed")
+	}
+}
+
+// ReactivateSubscription returns the POST /reactivate-subscription handler.
+// Undoes a pending cancel-at-period-end by flipping the Stripe flag back to
+// false. Non-destructive — no modal needed.
+//
+// On success, emits an HX-Trigger for 'membership-changed' so the membership
+// card reloads itself and 204 No Content (the button's hx-target already
+// triggers a refetch via the event, but the 204 keeps the immediate swap
+// neutral).
+func (s *Service) ReactivateSubscription() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sess, _ := s.Sessions.Get(r)
+		if auth, ok := sess.Values["authenticated"].(bool); !ok || !auth {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+		subID := r.URL.Query().Get("sub_id")
+		if subID == "" {
+			log.Print("reactivate: missing sub_id query: ", r.URL.Query())
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		customerID, _ := sess.Values["customer_id"].(string)
+		sub, err := subscription.Get(subID, nil)
+		if err != nil || sub.Customer.ID != customerID {
+			log.Printf("reactivate: ownership check failed for sub %s by customer %s", subID, customerID)
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		// Anti-gaming guard: cap reactivations per billing period. The counter
+		// is reset by the customer.subscription.updated webhook when the cycle
+		// rolls over (current_period_end advances).
+		count := reactivationsCount(sub)
+		if count >= maxReactivationsPerPeriod {
+			log.Printf("reactivate: limit reached for sub %s (count=%d, cap=%d)", subID, count, maxReactivationsPerPeriod)
+			http.Error(w, "Reactivation limit reached for this billing period", http.StatusConflict)
+			return
+		}
+
+		if _, err := subscription.Update(subID, &stripepkg.SubscriptionParams{
+			CancelAtPeriodEnd: stripepkg.Bool(false),
+			Params: stripepkg.Params{
+				Metadata: map[string]string{
+					reactivationsMetadataKey: strconv.Itoa(count + 1),
+				},
+			},
+		}); err != nil {
+			log.Printf("reactivate: stripe error: %v", err)
+			http.Error(w, "Failed to reactivate subscription", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("HX-Trigger", "membership-changed")
+		w.WriteHeader(http.StatusNoContent)
 	}
 }

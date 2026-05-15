@@ -1,18 +1,34 @@
 {{/*
   Member-portal URLs.
-  - memberPortalUrl is for existing members signing in.
-  - memberSignupUrl is for new members starting checkout.
-  Production points both at the same external URL; dev/staging diverge into
-  /login/ and /checkout/.
 
-  Relative paths (e.g. /login/) are language-prefixed via relLangURL so DA
-  pages link to /da/login/. Absolute URLs (https://...) are passed through
-  unchanged.
+  The marketing site is static-only. Anything member-related (login,
+  checkout, password reset, dashboard, profile) lives on the members
+  backend at https://members.${SUBDOMAIN}.${TOPDOMAIN}. The deployment
+  exports those env vars; the Dockerfile re-exports them as the Hugo
+  HUGO_PARAMS_* convention (HUGO_PARAMS_SUBDOMAIN / HUGO_PARAMS_TOPDOMAIN),
+  which Hugo auto-merges into .Site.Params at build time — no
+  security.funcs.getenv whitelist needed.
+
+  Fallback: if the params aren't set (e.g. running `hugo server` locally
+  without docker), the link stays as a relative path. The marketing site
+  still renders; the cross-host flow just doesn't apply in that
+  local-only context.
+
+  relLangURL is applied first so the Danish version produces /da/login/
+  before the absolute prefix is added → https://members.X/da/login/.
 */}}
+{{ $sub := .Site.Params.subdomain }}
+{{ $top := .Site.Params.topdomain }}
+{{ $membersBase := "" }}
+{{ if and $sub $top }}{{ $membersBase = printf "https://members.%s.%s" $sub $top }}{{ end }}
+
 {{ $signinHref := .Site.Params.memberPortalUrl }}
 {{ if hasPrefix $signinHref "/" }}{{ $signinHref = $signinHref | relLangURL }}{{ end }}
+{{ if and $membersBase (hasPrefix $signinHref "/") }}{{ $signinHref = printf "%s%s" $membersBase $signinHref }}{{ end }}
+
 {{ $signupHref := .Site.Params.memberSignupUrl }}
 {{ if hasPrefix $signupHref "/" }}{{ $signupHref = $signupHref | relLangURL }}{{ end }}
+{{ if and $membersBase (hasPrefix $signupHref "/") }}{{ $signupHref = printf "%s%s" $membersBase $signupHref }}{{ end }}
 <nav class="sticky top-0 z-[9999] bg-surface/95 backdrop-blur-sm shadow-sm">
   <div class="container mx-auto px-4">
     {{/* ── Top bar: logo + desktop nav + burger ── */}}

@@ -38,6 +38,21 @@
       <p class="rounded-[8px] bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
         {{ .CancelEndsMsg }}
       </p>
+      {{ if .CanReactivate }}
+        <button
+          class="mt-3 inline-flex items-center gap-2 rounded-[10px] bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-2"
+          hx-get="/reactivate-modal?sub_id={{ .SubID }}"
+          hx-target="#modal-mount"
+          hx-swap="innerHTML"
+        >
+          <i class="fa-solid fa-rotate-left"></i>
+          {{ .S.Reactivate }}
+        </button>
+      {{ else }}
+        <p class="mt-3 text-sm text-gray-dark">
+          {{ printf .S.ReactivateLimitReached .NextRenewal }}
+        </p>
+      {{ end }}
     {{ else }}
       {{/* Open House hint: next Thursday, linked to events. Dynamic + actionable. */}}
       <p class="text-sm text-gray-dark">
