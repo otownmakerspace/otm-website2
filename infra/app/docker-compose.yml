@@ -9,12 +9,18 @@ services:
     container_name: otm-app
     labels:
       - "traefik.enable=true"
-      # Apex (marketing site, Hugo static): development.makerspace.olaru.dk
-      - "traefik.http.routers.otm-app.rule=Host(`${SUBDOMAIN}.${TOPDOMAIN}`)"
+      # Marketing site (Hugo static). With SUBDOMAIN set the host is
+      # <sub>.<top> (e.g. development.makerspace.olaru.dk); with SUBDOMAIN
+      # empty it collapses to the apex (e.g. otownmakerspace.dk). The
+      # ${SUBDOMAIN:+${SUBDOMAIN}.} form drops the slug *and* its dot when
+      # SUBDOMAIN is empty, so there is no stray leading ".".
+      - "traefik.http.routers.otm-app.rule=Host(`${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}`)"
       - "traefik.http.routers.otm-app.entrypoints=websecure"
       - "traefik.http.routers.otm-app.tls.certresolver=myresolver"
-      # Members (dashboard, auth flows, all dynamic): members.development.makerspace.olaru.dk
-      - "traefik.http.routers.otm-members.rule=Host(`members.${SUBDOMAIN}.${TOPDOMAIN}`)"
+      # Members (dashboard, auth flows, all dynamic): members.<host>
+      # (members.development.makerspace.olaru.dk, or members.otownmakerspace.dk
+      # when SUBDOMAIN is empty).
+      - "traefik.http.routers.otm-members.rule=Host(`members.${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}`)"
       - "traefik.http.routers.otm-members.entrypoints=websecure"
       - "traefik.http.routers.otm-members.tls.certresolver=myresolver"
       # Both routers send to the same backend service (single Go binary).
@@ -25,10 +31,10 @@ services:
       BACKEND_PORT: "4242"
       # Backend is reachable to users at the members subdomain. Stripe redirects,
       # password-reset email links, and Customer Portal returns all use this.
-      BACKEND_PUBLIC_URL: "https://members.${SUBDOMAIN}.${TOPDOMAIN}"
+      BACKEND_PUBLIC_URL: "https://members.${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}"
       # Apex / marketing host. Used for logout "back to site" redirects.
-      MARKETING_BASE_URL: "https://${SUBDOMAIN}.${TOPDOMAIN}"
-      MEMBERS_HOST: "members.${SUBDOMAIN}.${TOPDOMAIN}"
+      MARKETING_BASE_URL: "https://${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}"
+      MEMBERS_HOST: "members.${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}"
       STRIPE_PRICE_ID: "${STRIPE_PRICE_ID:-}"
       SITE_RELEASE: "${SITE_RELEASE:-}"
       SESSION_COOKIE_NAME: "${SESSION_COOKIE_NAME:-otm-session}"

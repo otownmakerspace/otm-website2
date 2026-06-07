@@ -40,9 +40,12 @@ jobs:
           ghcr_token: ${{ secrets.GHCR_TOKEN }}
           ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
           hugo_environment: staging
-          hugo_base_url: "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
-          subdomain: ${{ vars.SUBDOMAIN }}
-          topdomain: ${{ vars.TOPDOMAIN }}
+          # Staging is served at the apex otownmakerspace.dk — no subdomain
+          # slug. An empty subdomain collapses the host to the apex in both
+          # the Hugo build and Traefik routing (see docker-compose.yml).
+          hugo_base_url: "https://otownmakerspace.dk/"
+          subdomain: ""
+          topdomain: otownmakerspace.dk
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,8 +64,9 @@ jobs:
           ghcr_token: ${{ secrets.GHCR_TOKEN }}
           ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
           image: ${{ vars.IMAGE }}
-          subdomain: ${{ vars.SUBDOMAIN }}
-          topdomain: ${{ vars.TOPDOMAIN }}
+          # Apex deploy — empty subdomain, otownmakerspace.dk top domain.
+          subdomain: ""
+          topdomain: otownmakerspace.dk
           stripe_price_id: ${{ vars.STRIPE_PRICE_ID }}
           session_cookie_name: ${{ vars.SESSION_COOKIE_NAME }}
           email_address: ${{ secrets.EMAIL_ADDRESS }}
