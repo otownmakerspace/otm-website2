@@ -28,6 +28,20 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Compile Tailwind first so static/css/styles.css exists before Hugo
+      # publishes the static/ tree — matches infra/app/Dockerfile and the
+      # test action. Without it this check passes on a styleless build.
+      - name: Build CSS with Tailwind
+        working-directory: frontend
+        run: |
+          npm install
+          npx @tailwindcss/cli -i input.css -o static/css/styles.css --minify
+
       - name: Build with Hugo
         working-directory: frontend
         env:

@@ -2,6 +2,7 @@
   "name": "otm-website",
   "version": "1.0.0",
   "description": "O'Town Makerspace website",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "hugo server --disableFastRender",

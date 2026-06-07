@@ -34,7 +34,20 @@ runs:
           "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
         sudo dpkg -i "${{ runner.temp }}/hugo.deb"
 
-    - name: Hugo build (validation)
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+
+    # Mirror the Dockerfile's frontend-builder: Tailwind must run before Hugo so
+    # static/css/styles.css exists when Hugo copies static/ into the publish dir.
+    # Running it here means a broken CSS build fails CI instead of shipping a
+    # styleless site.
+    - name: Build CSS + Hugo (validation)
       shell: bash
       working-directory: frontend
-      run: hugo --minify
+      run: |
+        set -euo pipefail
+        npm install
+        npx @tailwindcss/cli -i input.css -o static/css/styles.css --minify
+        hugo --minify

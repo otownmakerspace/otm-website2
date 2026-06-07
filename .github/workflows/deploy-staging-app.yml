@@ -21,44 +21,18 @@ jobs:
       - name: Run tests
         uses: ./.github/actions/test
 
-  build-hugo:
+  # The Docker image build (infra/app/Dockerfile, frontend-builder stage) runs
+  # npm install -> Tailwind -> Hugo internally, so it is the single source of
+  # truth for the compiled static site. No separate Hugo/artifact step is needed
+  # here; a prior build-hugo job only produced a CSS-less docs/ that the Docker
+  # build overwrote anyway.
+  publish:
     runs-on: ubuntu-latest
     environment: Staging
     needs: test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Build Hugo static site
-        env:
-          HUGO_VERSION: "0.161.1"
-        working-directory: frontend
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-          hugo --minify --environment staging --baseURL "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
-
-      - name: Upload frontend/docs/ artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugo-public
-          path: frontend/docs/
-
-  publish:
-    runs-on: ubuntu-latest
-    environment: Staging
-    needs: build-hugo
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download Hugo output
-        uses: actions/download-artifact@v4
-        with:
-          name: hugo-public
-          path: frontend/docs/
 
       - name: Build and Publish Docker Image
         uses: ./.github/actions/publish
