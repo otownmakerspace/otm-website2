@@ -63,10 +63,18 @@ window.klaroConfig = {
                     title: 'Analytics',
                     description: 'Help us understand how visitors use our site so we can make it better for the community.',
                 },
+                marketing: {
+                    title: 'Marketing',
+                    description: "Lets us measure our ads so we can reach more makers without wasting the community's money.",
+                },
             },
             googleAnalytics: {
                 title: 'Google Analytics',
                 description: 'Helps us see which pages and content resonate with our community so we can focus on what matters most.',
+            },
+            googleAds: {
+                title: 'Google Ads',
+                description: 'Measures which ads bring new members in, so we can spend our small ad budget wisely.',
             },
         },
     },
@@ -80,6 +88,19 @@ window.klaroConfig = {
             cookies: [
                 /^_ga/,
                 /^_gid/,
+            ],
+            required: false,
+            optOut: false,
+            default: true,
+            onlyOnce: false,
+        },
+        {
+            name: 'googleAds',
+            title: 'Google Ads',
+            purposes: ['marketing'],
+            cookies: [
+                /^_gcl/,
+                /^_gac_/,
             ],
             required: false,
             optOut: false,

@@ -30,6 +30,10 @@ defaultContentLanguage = 'en'
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
   ogImage = "images/og-default.jpg"
+  # Google Ads tag (gtag.js). Consent-gated via the Klaro "googleAnalytics"
+  # service in baseof.html. Moved here from the retired otg-website
+  # (theotowngarage.com) when its traffic was redirected to otm.
+  googleAdsID = "AW-17544583777"
   # Member-portal links: relative paths only. Hugo never bakes absolute
   # URLs — cross-host routing (apex → members backend) is handled at
   # runtime by the Go server via BACKEND_PUBLIC_URL env var.

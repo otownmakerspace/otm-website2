@@ -1,0 +1,9 @@
+eyebrow: 24/7 community workshop
+# Split on ", " into the two stacked headline lines (each gets a period).
+tagline: make anything, build everything
+headline:
+  emphasis: Makerspace
+  suffix: in Odense
+# Short CTA for compact banner formats.
+cta: Join now
+paragraph: Round-the-clock access to 3D printers, laser cutters, CNC machines, electronics, and a full woodshop — in one community workshop in the heart of Odense.

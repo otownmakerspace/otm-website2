@@ -184,6 +184,22 @@
     </style>
     <script defer src="https://cdn.kiprotect.com/klaro/v0.7/klaro.js"></script>
 
+    {{/* Google Ads tag (gtag.js). Consent-gated: these scripts stay inert
+         (type="text/plain") until the visitor accepts the Klaro "googleAds"
+         marketing service, at which point Klaro rewrites them to the real
+         type and activates them. ID lives in [params].googleAdsID
+         (moved from the retired otg-website). */}}
+    {{ with .Site.Params.googleAdsID }}
+    <script type="text/plain" data-type="application/javascript" data-name="googleAds"
+            data-src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+    <script type="text/plain" data-type="application/javascript" data-name="googleAds">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ . }}');
+    </script>
+    {{ end }}
+
     {{/* htmx — used by the memberships partial (homepage + /checkout/) and
          any future htmx-driven fragments. Loaded site-wide so the hx-get
          attribute fires regardless of which page renders the partial. */}}

@@ -1,0 +1,23 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# O'Town Makerspace — marketing renderer configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# Settings for the ad/social templates compiled by marketing-materials/
+# render.sh (Typst → SVG). Brand colors are pinned via the palette below so
+# published ads stay stable regardless of any site-side tweaks.
+#
+# Loaded by tokens.typ via toml("/marketing-materials/marketing.toml").
+
+# Brand palette: a folder under marketing-materials/palette/<name>/ holding
+# light.json + dark.json. otm ships one brand, so there is a single "brand"
+# palette (esio used M3 palette folders here; otm has fixed brand colors).
+palette = "brand"
+
+[fonts]
+  # Display / headings — matches the site's Space Grotesk (font-secondary).
+  # Static TTFs live in marketing-materials/fonts/ (SpaceGrotesk-500/700).
+  display         = "Space Grotesk"
+  display_weights = "500;700"
+
+  # Body / UI text — matches the site's Roboto.
+  primary         = "Roboto"
+  primary_weights = "400;500;700;900"
