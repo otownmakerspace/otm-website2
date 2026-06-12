@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Helper script to manage local stacks for the otm-website (makerspace.olaru.dk).
+# Helper script to manage local stacks for the otm-website (otownmakerspace.dk).
 # Location: infra/dev.sh
 # Usage examples:
 #   ./infra/dev.sh app up             # start app + reverse-proxy
@@ -91,13 +91,16 @@ compose_app() {
   local env_args=()
   if [[ -f "$APP_ENV" ]]; then
     env_args+=("--env-file" "$APP_ENV")
+    set -a; . "$APP_ENV"; set +a
   else
     warn "Env file not found at $APP_ENV (copy infra/app/.env.example to infra/app/.env)"
   fi
 
+  : "${TOPDOMAIN:?TOPDOMAIN must be set in infra/app/.env}"
+  : "${SUBDOMAIN?SUBDOMAIN must be set in infra/app/.env (leave empty for an apex deploy)}"
+
   SECRETS_FOLDER="$abs_secrets_dir" \
   NETWORK_NAME="${NETWORK_NAME:-app_network}" \
-  TOPDOMAIN="${TOPDOMAIN:-makerspace.olaru.dk}" \
   docker compose -f "$APP_COMPOSE" "${env_args[@]}" "$@"
 }
 
@@ -141,7 +144,10 @@ case "$cmd" in
       if [[ -n "${IMAGE:-}" ]]; then local_tag="$IMAGE"; fi
     fi
 
-    base_url="https://${SUBDOMAIN:-development}.${TOPDOMAIN:-makerspace.olaru.dk}"
+    : "${TOPDOMAIN:?TOPDOMAIN must be set in infra/app/.env}"
+    : "${SUBDOMAIN?SUBDOMAIN must be set in infra/app/.env (leave empty for an apex deploy)}"
+
+    base_url="https://${SUBDOMAIN:+${SUBDOMAIN}.}${TOPDOMAIN}"
     hugo_env="${HUGO_ENV:-development}"
     msg "Building Hugo static site (env: $hugo_env, baseURL: $base_url)..."
     if command -v hugo >/dev/null 2>&1; then
@@ -149,8 +155,8 @@ case "$cmd" in
       # .Site.Params.subdomain and .topdomain at build time so the
       # marketing site can compose absolute members.<sub>.<top> URLs.
       (cd "$ROOT_DIR/frontend" && \
-        HUGO_PARAMS_SUBDOMAIN="${SUBDOMAIN:-development}" \
-        HUGO_PARAMS_TOPDOMAIN="${TOPDOMAIN:-makerspace.olaru.dk}" \
+        HUGO_PARAMS_SUBDOMAIN="${SUBDOMAIN}" \
+        HUGO_PARAMS_TOPDOMAIN="${TOPDOMAIN}" \
         hugo build --minify --cleanDestinationDir --environment "$hugo_env" -b "$base_url")
     else
       err "Hugo not found. Install Hugo first: https://gohugo.io/installation/"
@@ -167,8 +173,8 @@ case "$cmd" in
     docker build \
       --build-arg HUGO_ENVIRONMENT="$hugo_env" \
       --build-arg HUGO_BASE_URL="$base_url" \
-      --build-arg SUBDOMAIN="${SUBDOMAIN:-development}" \
-      --build-arg TOPDOMAIN="${TOPDOMAIN:-makerspace.olaru.dk}" \
+      --build-arg SUBDOMAIN="${SUBDOMAIN}" \
+      --build-arg TOPDOMAIN="${TOPDOMAIN}" \
       -t "$local_tag" -f "$ROOT_DIR/infra/app/Dockerfile" "$ROOT_DIR" ;;
 
   rebuild)

@@ -38,13 +38,28 @@ var (
 
 // Mailer wraps SMTP credentials and brand identity so handlers can call
 // Send without reaching for package globals.
+//
+// marketingURL (apex site) and portalURL (member backend) are passed in by
+// the caller from config so templates never hardcode a deployment's host —
+// staging mail links to staging, production to production. The contact
+// address rendered in mail is simply cfg.User (the SMTP From mailbox).
 type Mailer struct {
-	cfg   config.EmailConf
-	brand config.BrandConf
+	cfg          config.EmailConf
+	brand        config.BrandConf
+	marketingURL string
+	portalURL    string
 }
 
-func NewMailer(cfg config.EmailConf, brand config.BrandConf) *Mailer {
-	return &Mailer{cfg: cfg, brand: brand}
+func NewMailer(cfg config.EmailConf, brand config.BrandConf, marketingURL, portalURL string) *Mailer {
+	return &Mailer{cfg: cfg, brand: brand, marketingURL: marketingURL, portalURL: portalURL}
+}
+
+// host strips the scheme and any trailing slash from a URL so templates can
+// show "otownmakerspace.dk" as link text while linking to the full URL.
+func host(rawURL string) string {
+	s := strings.TrimPrefix(rawURL, "https://")
+	s = strings.TrimPrefix(s, "http://")
+	return strings.TrimRight(s, "/")
 }
 
 // Send renders the template with the supplied data fields and dispatches via SMTP.
@@ -54,7 +69,8 @@ func NewMailer(cfg config.EmailConf, brand config.BrandConf) *Mailer {
 // then references the shared chrome via {{template "_layout.html" .}}. We parse the
 // layout alongside the content template so block overrides resolve correctly.
 func (m *Mailer) Send(to string, u user.User, t Template, link string, data any) error {
-	tmpl, err := template.ParseFS(templatesFS, "templates/_layout.html", "templates/"+t.File)
+	tmpl, err := template.New(t.File).Funcs(template.FuncMap{"host": host}).
+		ParseFS(templatesFS, "templates/_layout.html", "templates/"+t.File)
 	if err != nil {
 		log.Print("email: parse template:", err)
 		return err
@@ -64,13 +80,19 @@ func (m *Mailer) Send(to string, u user.User, t Template, link string, data any)
 
 	var body bytes.Buffer
 	err = tmpl.ExecuteTemplate(&body, t.File, struct {
-		Name    string
-		Link    string
-		Email   string
-		Subject string
-		Brand   config.BrandConf
-		Data    any
-	}{Name: u.Name, Link: link, Email: u.Email, Subject: subject, Brand: m.brand, Data: data})
+		Name         string
+		Link         string
+		Email        string
+		Subject      string
+		Brand        config.BrandConf
+		MarketingURL string
+		PortalURL    string
+		ContactEmail string
+		Data         any
+	}{
+		Name: u.Name, Link: link, Email: u.Email, Subject: subject, Brand: m.brand,
+		MarketingURL: m.marketingURL, PortalURL: m.portalURL, ContactEmail: m.cfg.User, Data: data,
+	})
 	if err != nil {
 		log.Print("email: execute template:", err)
 		return err

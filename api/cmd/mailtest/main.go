@@ -47,7 +47,7 @@ func main() {
 	host := flag.String("host", "", "SMTP host (overrides env / dotenv)")
 	port := flag.Int("port", 0, "SMTP port (overrides env / dotenv)")
 	name := flag.String("name", "Test User", "name to render into the template")
-	baseURL := flag.String("base-url", "https://makerspace.olaru.dk", "public base URL for the deployed environment under test — drives both the link rendered in the template and the LogoURL fetched by the email client. Point at https://staging.makerspace.olaru.dk to test against staging.")
+	baseURL := flag.String("base-url", "https://otownmakerspace.dk", "public base URL for the deployed environment under test — drives both the link rendered in the template and the LogoURL fetched by the email client. Point at a staging host to test against staging.")
 	link := flag.String("link", "", "fully-qualified link to render into the template (overrides -base-url-derived default)")
 	flag.Parse()
 
@@ -80,7 +80,8 @@ func main() {
 		LogoURL:         pickString(os.Getenv("BRAND_LOGO_URL"), base+"/images/branding/logos/wordmark-horizontal.svg"),
 	}
 	resolvedLink := pickString(*link, base+"/example/token-12345")
-	m := email.NewMailer(cfg, brand)
+	portalURL := "https://members." + strings.TrimPrefix(strings.TrimPrefix(base, "https://"), "http://")
+	m := email.NewMailer(cfg, brand, base, portalURL)
 	u := user.User{Name: *name, Email: *to}
 
 	for _, key := range templates {

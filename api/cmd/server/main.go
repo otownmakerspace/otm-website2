@@ -48,7 +48,19 @@ func main() {
 	}
 
 	sessions := session.NewStore([]byte(cfg.Backend.CookiePrivateKey), cfg.Backend.SessionCookieName, cfg.Backend.MarketingBaseURL)
-	mailer := email.NewMailer(cfg.Email, cfg.Brand)
+
+	// Email links derive from config, never hardcoded hosts. Marketing falls
+	// back to the public URL; the member portal is the members host (apex's
+	// public URL when host-based routing is off, e.g. local dev).
+	marketingURL := cfg.Backend.MarketingBaseURL
+	if marketingURL == "" {
+		marketingURL = cfg.Backend.PublicURL
+	}
+	portalURL := cfg.Backend.PublicURL
+	if cfg.Backend.MembersHost != "" {
+		portalURL = "https://" + cfg.Backend.MembersHost
+	}
+	mailer := email.NewMailer(cfg.Email, cfg.Brand, marketingURL, portalURL)
 	captchaSvc := captcha.NewService(cfg.Captcha.HMACKey)
 	if !captchaSvc.Enabled() {
 		log.Print("captcha: DISABLED (ALTCHA_HMAC_KEY not set) — protected forms accept any submission")

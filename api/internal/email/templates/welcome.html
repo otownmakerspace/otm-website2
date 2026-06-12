@@ -27,14 +27,14 @@
   <ol class="body-text" style="margin: 0; padding-left: 22px; font-size: 16px; line-height: 24px; color: #1A2CA3;">
     <li style="margin-bottom: 10px;">
       Say hello in <em>#general</em> and ask for a tour. Prefer email?
-      <a href="mailto:info@theotowngarage.com" style="color: #F68048; text-decoration: underline;">Drop us a line.</a>
+      <a href="mailto:{{.ContactEmail}}" style="color: #F68048; text-decoration: underline;">Drop us a line.</a>
     </li>
     <li style="margin-bottom: 10px;">
       We'll show you around, walk through the house rules, and unlock 24/7 access.
     </li>
     <li>
       Manage your subscription anytime at
-      <a href="https://members.theotowngarage.com" style="color: #F68048; text-decoration: underline;">members.theotowngarage.com</a>.
+      <a href="{{.PortalURL}}" style="color: #F68048; text-decoration: underline;">{{host .PortalURL}}</a>.
     </li>
   </ol>
 

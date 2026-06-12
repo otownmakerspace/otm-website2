@@ -1,4 +1,4 @@
-baseURL = 'https://makerspace.olaru.dk/'
+baseURL = 'https://otownmakerspace.dk/'
 publishDir = 'docs'
 title = "O'Town Makerspace — Community Workshop in Odense"
 theme = 'hugo-up-business-main'
