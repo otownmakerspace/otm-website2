@@ -3,6 +3,9 @@ networks:
     external: true
     name: ${NETWORK_NAME}
 
+volumes:
+  otm_db:
+
 services:
   app:
     image: ${IMAGE}
@@ -80,6 +83,27 @@ services:
         target: /run/secrets/altcha_hmac_key
         read_only: true
       - ../../db:/app/db
+
+  db:
+    image: postgres:15-alpine
+    container_name: otm-db
+    restart: unless-stopped
+    environment:
+      # Basic shared credentials — security comes from network isolation, not
+      # secrecy (the DB is only on app_network + a loopback-only host port).
+      POSTGRES_DB: otm
+      POSTGRES_USER: otm
+      POSTGRES_PASSWORD: otm
+    volumes:
+      - otm_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U otm -d otm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks: [ app_network ]
 
   stripe-cli:
     image: stripe/stripe-cli
