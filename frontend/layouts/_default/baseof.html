@@ -200,6 +200,21 @@
     </script>
     {{ end }}
 
+    {{/* Google Analytics 4 tag (gtag.js). Consent-gated: inert until the
+         visitor accepts the Klaro "googleAnalytics" service. ID lives in
+         [params].googleAnalyticsID. Loads its own gtag.js so analytics works
+         even when the googleAds service is declined. */}}
+    {{ with .Site.Params.googleAnalyticsID }}
+    <script type="text/plain" data-type="application/javascript" data-name="googleAnalytics"
+            data-src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+    <script type="text/plain" data-type="application/javascript" data-name="googleAnalytics">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ . }}');
+    </script>
+    {{ end }}
+
     {{/* htmx — used by the memberships partial (homepage + /checkout/) and
          any future htmx-driven fragments. Loaded site-wide so the hx-get
          attribute fires regardless of which page renders the partial. */}}

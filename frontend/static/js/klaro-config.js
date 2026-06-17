@@ -91,7 +91,7 @@ window.klaroConfig = {
             ],
             required: false,
             optOut: false,
-            default: true,
+            default: false,
             onlyOnce: false,
         },
         {
@@ -104,7 +104,7 @@ window.klaroConfig = {
             ],
             required: false,
             optOut: false,
-            default: true,
+            default: false,
             onlyOnce: false,
         },
     ],
