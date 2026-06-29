@@ -100,8 +100,8 @@ defaultContentLanguage = 'en'
     # tertiary = "#1A2CA3"
 
   [params.social]
-    facebook = "https://www.facebook.com/theotowngarage"
-    instagram = "https://www.instagram.com/theotowngarage/"
+    facebook = "https://www.facebook.com/profile.php?id=61590717692379&sk=mentions"
+    instagram = "https://www.instagram.com/otownmakerspace/"
     discord = "https://discord.gg/RHVfMu49CG"
 
 # Enable raw HTML in markdown

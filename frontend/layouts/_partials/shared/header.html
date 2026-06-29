@@ -21,23 +21,13 @@
 
   relLangURL is applied first so the Danish version produces /da/login/
   before the absolute prefix is added → https://members.X/da/login/.
+
+  The host-building + relLangURL + prefixing logic lives in the shared
+  func/members-href partial so content shortcodes (members-url) and this
+  header stay in sync.
 */}}
-{{ $sub := .Site.Params.subdomain }}
-{{ $top := .Site.Params.topdomain }}
-{{ $membersBase := "" }}
-{{ if $top }}
-  {{ $host := $top }}
-  {{ if $sub }}{{ $host = printf "%s.%s" $sub $top }}{{ end }}
-  {{ $membersBase = printf "https://members.%s" $host }}
-{{ end }}
-
-{{ $signinHref := .Site.Params.memberPortalUrl }}
-{{ if hasPrefix $signinHref "/" }}{{ $signinHref = $signinHref | relLangURL }}{{ end }}
-{{ if and $membersBase (hasPrefix $signinHref "/") }}{{ $signinHref = printf "%s%s" $membersBase $signinHref }}{{ end }}
-
-{{ $signupHref := .Site.Params.memberSignupUrl }}
-{{ if hasPrefix $signupHref "/" }}{{ $signupHref = $signupHref | relLangURL }}{{ end }}
-{{ if and $membersBase (hasPrefix $signupHref "/") }}{{ $signupHref = printf "%s%s" $membersBase $signupHref }}{{ end }}
+{{ $signinHref := partial "func/members-href.html" (dict "path" .Site.Params.memberPortalUrl "localize" true) }}
+{{ $signupHref := partial "func/members-href.html" (dict "path" .Site.Params.memberSignupUrl "localize" true) }}
 <nav class="sticky top-0 z-[9999] bg-surface/95 backdrop-blur-sm shadow-sm">
   <div class="container mx-auto px-4">
     {{/* ── Top bar: logo + desktop nav + burger ── */}}
@@ -70,32 +60,40 @@
               <a class="text-secondary hover:text-accent font-bold" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
             </li>
           {{ end }}
-          {{/* "More" dropdown — Desktop */}}
-          <li class="relative group/more">
-            <span class="text-secondary hover:text-accent font-bold cursor-pointer">{{ i18n "more" }}</span>
-            <div class="invisible opacity-0 group-hover/more:visible group-hover/more:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+          {{/* "More" dropdown — Desktop (click to open; see dropdown controller below) */}}
+          <li class="relative" data-dd>
+            <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="text-secondary hover:text-accent font-bold cursor-pointer inline-flex items-center gap-1">
+              {{ i18n "more" }}
+              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
               <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
                 {{/* Info with flyout */}}
-                <div class="relative group/info">
-                  <button class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
+                <div class="relative" data-dd>
+                  <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
                     <span class="inline-flex items-center gap-2"><i class="fa-solid fa-circle-info w-4 text-center"></i> Info</span>
                     <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                     </svg>
                   </button>
-                  <div class="invisible opacity-0 group-hover/info:visible group-hover/info:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                  <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
                     <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
                       {{/* Getting Started */}}
-                      <div class="relative group/gs2">
-                        <a href="{{ "/getting-started/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      <div class="relative" data-dd>
+                        {{ $gsPage := site.GetPage "/getting-started" }}
+                        <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
                           <span class="inline-flex items-center gap-2"><i class="fa-solid fa-rocket w-4 text-center"></i> {{ i18n "getting_started" }}</span>
                           <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                           </svg>
-                        </a>
-                        <div class="invisible opacity-0 group-hover/gs2:visible group-hover/gs2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                        </button>
+                        <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
                           <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
-                            {{ $gsPage := site.GetPage "/getting-started" }}
+                            {{/* Overview link — kept reachable now that the row toggles instead of navigating */}}
+                            <a href="{{ $gsPage.RelPermalink }}" class="block px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">{{ $gsPage.Title }}</a>
+                            <div class="my-1 border-t border-gray-200"></div>
                             {{ range $gsPage.Pages.ByWeight }}
                             <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
                               {{ .Title }}
@@ -105,15 +103,20 @@
                         </div>
                       </div>
                       {{/* Work Areas */}}
-                      <div class="relative group/wa2">
-                        <a href="{{ "/work-areas/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      <div class="relative" data-dd>
+                        {{ $waPage := site.GetPage "/work-areas" }}
+                        <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
                           <span class="inline-flex items-center gap-2"><i class="fa-solid fa-screwdriver-wrench w-4 text-center"></i> {{ i18n "work_areas" }}</span>
                           <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                           </svg>
-                        </a>
-                        <div class="invisible opacity-0 group-hover/wa2:visible group-hover/wa2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                        </button>
+                        <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
                           <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                            {{ if $waPage }}
+                            <a href="{{ $waPage.RelPermalink }}" class="block px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">{{ $waPage.Title }}</a>
+                            <div class="my-1 border-t border-gray-200"></div>
+                            {{ end }}
                             {{ $workAreas := sort (where site.RegularPages "Params.section" "Work Areas") "Weight" }}
                             {{ range $workAreas }}
                             <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
@@ -124,15 +127,20 @@
                         </div>
                       </div>
                       {{/* Legal Documents */}}
-                      <div class="relative group/ld2">
-                        <a href="{{ "/docs/" | relLangURL }}" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">
+                      <div class="relative" data-dd>
+                        {{ $docsPage := site.GetPage "/docs" }}
+                        <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200 cursor-pointer">
                           <span class="inline-flex items-center gap-2"><i class="fa-solid fa-file-lines w-4 text-center"></i> {{ i18n "legal_documents" }}</span>
                           <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                           </svg>
-                        </a>
-                        <div class="invisible opacity-0 group-hover/ld2:visible group-hover/ld2:opacity-100 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
+                        </button>
+                        <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-full top-0 pr-1 z-50">
                           <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-52">
+                            {{ if $docsPage }}
+                            <a href="{{ $docsPage.RelPermalink }}" class="block px-4 py-2 text-sm font-semibold text-secondary hover:bg-primary hover:text-accent duration-200">{{ $docsPage.Title }}</a>
+                            <div class="my-1 border-t border-gray-200"></div>
+                            {{ end }}
                             {{ $allDocs := sort (where site.RegularPages "Section" "docs") "Weight" }}
                             {{ range $allDocs }}
                             <a href="{{ .RelPermalink }}" class="block px-4 py-2 text-sm text-gray-dark hover:bg-primary hover:text-accent duration-200">
@@ -192,15 +200,15 @@
           </div>
           {{/* Settings */}}
           {{ partial "shared/settings" . }}
-          {{/* Join Us dropdown */}}
-          <div class="relative group/account">
-            <button class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200">
+          {{/* Join Us dropdown (click to open; see dropdown controller below) */}}
+          <div class="relative" data-dd>
+            <button type="button" data-dd-toggle aria-haspopup="true" aria-expanded="false" class="bg-secondary hover:bg-secondary-2 rounded-[10px] px-4 py-2 text-white text-sm font-medium inline-flex items-center gap-2 cursor-pointer transition-colors duration-200">
               {{ i18n "join_us" }}
               <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </button>
-            <div class="invisible opacity-0 group-hover/account:visible group-hover/account:opacity-100 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
+            <div data-dd-panel class="invisible opacity-0 transition-all duration-200 absolute right-0 top-full pt-2 z-50">
               <div class="bg-surface rounded-[10px] border border-gray-200 shadow-lg py-2 w-48">
                 <a href="{{ $signinHref }}" class="flex items-center gap-2 px-4 py-2 text-sm text-secondary hover:bg-primary hover:text-accent duration-200">
                   <i class="fa-solid fa-right-to-bracket w-4 text-center"></i> {{ i18n "sign_in" }}
@@ -378,4 +386,67 @@
       </div>
     </div>
   </div>
+
+  {{/*
+    Click-to-open dropdown controller.
+
+    Each dropdown is a [data-dd] root holding a direct-child [data-dd-toggle]
+    trigger and a direct-child [data-dd-panel]. Panels are hidden by default
+    via `invisible opacity-0`; opening simply removes those two classes (so no
+    extra "shown" utilities need to survive Tailwind's purge), and the existing
+    `transition-all` handles the fade. Nesting works because each level is its
+    own root: opening a child keeps its ancestors open, while clicking outside
+    or pressing Escape closes everything.
+  */}}
+  <script>
+    (function () {
+      function panelOf(root) { return root.querySelector(':scope > [data-dd-panel]'); }
+      function triggerOf(root) { return root.querySelector(':scope > [data-dd-toggle]'); }
+
+      function setOpen(root, open) {
+        var panel = panelOf(root);
+        if (!panel) return;
+        var trigger = triggerOf(root);
+        if (open) {
+          root.setAttribute('data-open', '');
+          panel.classList.remove('invisible', 'opacity-0');
+          if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        } else {
+          root.removeAttribute('data-open');
+          panel.classList.add('invisible', 'opacity-0');
+          if (trigger) trigger.setAttribute('aria-expanded', 'false');
+          // Reset any nested dropdowns so they don't reappear stale next time.
+          root.querySelectorAll('[data-dd][data-open]').forEach(function (child) { setOpen(child, false); });
+        }
+      }
+
+      function closeAll() {
+        document.querySelectorAll('[data-dd][data-open]').forEach(function (root) { setOpen(root, false); });
+      }
+
+      document.addEventListener('click', function (e) {
+        var toggle = e.target.closest('[data-dd-toggle]');
+        if (toggle) {
+          var root = toggle.closest('[data-dd]');
+          // Only act when the click is on THIS root's own trigger (not a nested one).
+          if (root && triggerOf(root) === toggle) {
+            e.preventDefault();
+            var willOpen = !root.hasAttribute('data-open');
+            // Close any open dropdown that isn't an ancestor of the one we're opening.
+            document.querySelectorAll('[data-dd][data-open]').forEach(function (other) {
+              if (other !== root && !other.contains(root)) setOpen(other, false);
+            });
+            setOpen(root, willOpen);
+            return;
+          }
+        }
+        // A click anywhere outside a dropdown closes them all.
+        if (!e.target.closest('[data-dd]')) closeAll();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll();
+      });
+    })();
+  </script>
 </nav>

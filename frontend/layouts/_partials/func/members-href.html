@@ -1,0 +1,40 @@
+{{- /*
+  Returns an absolute member-portal URL for the given relative path.
+
+  Single source of truth for cross-host member links. The members host is
+  built from the SUBDOMAIN/TOPDOMAIN params (exported via env as
+  HUGO_PARAMS_*). With a top domain set we get e.g.
+  https://members.otownmakerspace.dk<path>; without one (local `hugo server`)
+  the path stays relative so the marketing site still renders.
+
+  Argument: either a path string, or a dict {path, localize}.
+    - path:     the relative member-portal path, e.g. "/subscribe/200".
+    - localize: when true, relLangURL prefixes the current language
+                (/da/...). Only enable this for backend routes that are
+                actually path-localized (login/checkout). The subscribe
+                route is NOT localized, so leaving it off keeps /subscribe/200
+                rather than the 404-ing /da/subscribe/200. Defaults to false.
+
+  Usage (template): partial "func/members-href.html" (dict "path" "/login/" "localize" true)
+  Usage (markdown): the members-url shortcode with the same path argument.
+*/ -}}
+{{- $path := "" -}}
+{{- $localize := false -}}
+{{- if reflect.IsMap . -}}
+  {{- $path = .path -}}
+  {{- if isset . "localize" -}}{{- $localize = .localize -}}{{- end -}}
+{{- else -}}
+  {{- $path = . -}}
+{{- end -}}
+{{- $sub := site.Params.subdomain -}}
+{{- $top := site.Params.topdomain -}}
+{{- $base := "" -}}
+{{- if $top -}}
+  {{- $host := $top -}}
+  {{- if $sub -}}{{- $host = printf "%s.%s" $sub $top -}}{{- end -}}
+  {{- $base = printf "https://members.%s" $host -}}
+{{- end -}}
+{{- $href := $path -}}
+{{- if and $localize (hasPrefix $href "/") -}}{{- $href = $href | relLangURL -}}{{- end -}}
+{{- if and $base (hasPrefix $href "/") -}}{{- $href = printf "%s%s" $base $href -}}{{- end -}}
+{{- return $href -}}

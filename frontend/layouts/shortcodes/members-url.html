@@ -1,0 +1,25 @@
+{{- /*
+  Emits the dynamic member-portal URL for a known destination, resolving the
+  path from config so content never hardcodes backend routes.
+
+  Arg 0:
+    "signup" -> site.Params.memberSignupUrl  (the /checkout/ flow), localized
+    "login"  -> site.Params.memberPortalUrl  (the /login/ flow),    localized
+    "/path"  -> used verbatim (no language prefix)
+
+  Host + language logic lives in the func/members-href partial.
+
+  Usage in markdown: the members-url shortcode with arg "signup", "login",
+  or a literal "/path".
+*/ -}}
+{{- $arg := .Get 0 -}}
+{{- $path := $arg -}}
+{{- $localize := false -}}
+{{- if eq $arg "signup" -}}
+  {{- $path = site.Params.memberSignupUrl -}}
+  {{- $localize = true -}}
+{{- else if eq $arg "login" -}}
+  {{- $path = site.Params.memberPortalUrl -}}
+  {{- $localize = true -}}
+{{- end -}}
+{{- partial "func/members-href.html" (dict "path" $path "localize" $localize) -}}

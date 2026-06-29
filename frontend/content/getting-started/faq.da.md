@@ -34,7 +34,7 @@ weight: 60
 
 <details>
 <summary>Hvordan bliver jeg medlem?</summary>
-<p>Start med at besøge os under Åbent Hus (hver torsdag, 18:00–20:00). Få en introduktion fra et bestyrelsesmedlem, gennemgå <a href="/da/docs/articles-of-association/">vedtægterne</a> og <a href="/da/docs/terms-of-membership/">medlemsvilkårene</a>, og tilmeld dig derefter via vores <a href="https://members.theotowngarage.com/subscribe/200">medlemsportal</a>.</p>
+<p>Start med at besøge os under Åbent Hus (hver torsdag, 18:00–20:00). Få en introduktion fra et bestyrelsesmedlem, gennemgå <a href="/da/docs/articles-of-association/">vedtægterne</a> og <a href="/da/docs/terms-of-membership/">medlemsvilkårene</a>, og tilmeld dig derefter via vores <a href="{{< members-url "signup" >}}">medlemsportal</a>.</p>
 </details>
 
 <details>

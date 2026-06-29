@@ -34,7 +34,7 @@ weight: 60
 
 <details>
 <summary>How do I become a member?</summary>
-<p>Start by visiting us during an Open House (every Thursday, 18:00–20:00). Get an introduction from a board member, review the <a href="/docs/articles-of-association/">Articles of Association</a> and <a href="/docs/terms-of-membership/">Terms of Membership</a>, then sign up through our <a href="https://members.theotowngarage.com/subscribe/200">membership portal</a>.</p>
+<p>Start by visiting us during an Open House (every Thursday, 18:00–20:00). Get an introduction from a board member, review the <a href="/docs/articles-of-association/">Articles of Association</a> and <a href="/docs/terms-of-membership/">Terms of Membership</a>, then sign up through our <a href="{{< members-url "signup" >}}">membership portal</a>.</p>
 </details>
 
 <details>

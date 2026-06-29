@@ -17,7 +17,7 @@
    viewBox="0 0 1600 400"
    version="1.1"
    id="svg2"
-   sodipodi:docname="02-horizontal-lockup.svg"
+   sodipodi:docname="horizontal-lockup.svg"
    inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -34,18 +34,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.87833555"
-     inkscape:cx="863.56518"
-     inkscape:cy="235.10377"
+     inkscape:zoom="0.43916778"
+     inkscape:cx="681.97171"
+     inkscape:cy="357.49435"
      inkscape:window-width="2560"
-     inkscape:window-height="1374"
-     inkscape:window-x="2560"
-     inkscape:window-y="29"
+     inkscape:window-height="1403"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <!-- Gear mark, left -->
   <image
-     href="/images/branding/logos/gear-mark-transparent.svg"
+     href="gear-mark-transparent.svg"
      x="148.29599"
      y="-3.1974423e-14"
      width="400"
@@ -56,12 +56,13 @@
     Sized 1140 × 304 to keep that ratio.
   -->
   <image
-     href="/images/branding/logos/wordmark-consolidated.svg"
+     href="wordmark-consolidated.svg"
      x="430"
      y="48"
      width="1140"
      height="304"
-     id="image2" />
+     id="image2"
+     inkscape:label="image2" />
   <!-- Tagline, centred under the wordmark -->
   <text
      x="1000"

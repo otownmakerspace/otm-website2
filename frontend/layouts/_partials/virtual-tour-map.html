@@ -91,7 +91,7 @@ var roomImages = {
     main:    { color: '#0D1A63', weight: 2, fillColor: '#0D1A63', fillOpacity: 0.08 },
     area:    { color: '#F68048', weight: 2, fillColor: '#F68048', fillOpacity: 0.15 },
     utility: { color: '#22c55e', weight: 2, fillColor: '#22c55e', fillOpacity: 0.12 },
-    hover:   { fillOpacity: 0.35, weight: 3 }
+    active:  { fillOpacity: 0.35, weight: 3 }
   };
 
   // --- Floor background ---
@@ -260,10 +260,11 @@ var roomImages = {
     });
     L.marker(center, { icon: icon, interactive: false }).addTo(map);
 
-    rect.on('mouseover', function () {
-      rect.setStyle({ fillOpacity: COL.hover.fillOpacity, weight: COL.hover.weight });
+    // Highlight on tap/click (popup open) rather than hover — works on touch.
+    rect.on('popupopen', function () {
+      rect.setStyle({ fillOpacity: COL.active.fillOpacity, weight: COL.active.weight });
     });
-    rect.on('mouseout', function () {
+    rect.on('popupclose', function () {
       rect.setStyle({ fillOpacity: baseStyle.fillOpacity, weight: baseStyle.weight });
     });
 
