@@ -18,14 +18,40 @@ import (
 // dashboardPageView feeds templates/dashboard-page.html — a complete HTML
 // document with its own auth-aware chrome.
 type dashboardPageView struct {
-	Lang      i18n.Lang
-	Head      template.HTML // extracted from docs/index.html — Tailwind, fonts, theme tokens
-	LogoLight template.HTML // inline SVG of the marketing-site light-mode logo
-	LogoDark  template.HTML // inline SVG of the marketing-site dark-mode logo
-	UserEmail string
-	HomeURL   string // /  or  /da/
-	LogoutURL string // /logout
-	S         i18n.Strings
+	Lang        i18n.Lang
+	Head        template.HTML // extracted from docs/index.html — Tailwind, fonts, theme tokens
+	LogoLight   template.HTML // inline SVG of the marketing-site light-mode logo
+	LogoDark    template.HTML // inline SVG of the marketing-site dark-mode logo
+	UserEmail   string
+	HomeURL     string // /  or  /da/
+	LogoutURL   string // /logout
+	ErrorBanner string // localized message for a ?error= code; empty renders no banner
+	S           i18n.Strings
+}
+
+// dashboardErrorMessage maps a ?error= code to a localized banner message.
+// A non-empty but unrecognized code falls through to the generic message so an
+// error redirect can never land silently — the whole point is that no failure
+// reaches the user as a blank dashboard.
+func dashboardErrorMessage(s i18n.Strings, code string) string {
+	switch code {
+	case "":
+		return ""
+	case "already_active":
+		return s.DashErrAlreadyActive
+	case "checkout_failed":
+		return s.DashErrCheckoutFailed
+	case "invalid_price":
+		return s.DashErrInvalidPrice
+	case "verify_failed":
+		return s.DashErrVerifyFailed
+	case "no_customer":
+		return s.DashErrNoCustomer
+	case "portal_failed":
+		return s.DashErrPortalFailed
+	default:
+		return s.DashErrGeneric
+	}
 }
 
 // loadHugoHead reads <head>...</head> out of docs/index.html so the dashboard
@@ -87,13 +113,25 @@ func (s *Service) ServeDashboardPage() http.HandlerFunc {
 		}
 		emailAddr, _ := sess.Values["email"].(string)
 
-		// Lookup the user for first-name display in the menu.
+		// Lookup the user for first-name display — and to refresh the session's
+		// cached customer_id. That cache is stamped at login and goes stale when
+		// re-subscribe self-heal rebinds the member to a new Stripe customer,
+		// which makes session-sourced reads (cancel/reactivate ownership checks)
+		// diverge from the DB. Refreshing it here means the cookie set on this
+		// page load carries the current id into the htmx fragment + action
+		// requests that follow.
 		var displayName string
 		if emailAddr != "" {
 			if u, err := dbpkg.GetByEmail(s.DB, emailAddr); err == nil {
 				displayName = u.Name
 				if displayName == "" {
 					displayName = u.Email
+				}
+				if cur, _ := sess.Values["customer_id"].(string); cur != u.CustomerID {
+					sess.Values["customer_id"] = u.CustomerID
+					if err := sess.Save(r, w); err != nil {
+						log.Print("dashboard: refresh session customer_id: ", err)
+					}
 				}
 			}
 		}
@@ -109,14 +147,15 @@ func (s *Service) ServeDashboardPage() http.HandlerFunc {
 			homeURL = s.Cfg.Backend.MarketingBaseURL + homeURL
 		}
 		view := dashboardPageView{
-			Lang:      lang,
-			Head:      s.HugoHead,
-			LogoLight: s.LogoLight,
-			LogoDark:  s.LogoDark,
-			UserEmail: displayName,
-			HomeURL:   homeURL,
-			LogoutURL: "/logout",
-			S:         i18n.For(lang),
+			Lang:        lang,
+			Head:        s.HugoHead,
+			LogoLight:   s.LogoLight,
+			LogoDark:    s.LogoDark,
+			UserEmail:   displayName,
+			HomeURL:     homeURL,
+			LogoutURL:   "/logout",
+			ErrorBanner: dashboardErrorMessage(i18n.For(lang), r.URL.Query().Get("error")),
+			S:           i18n.For(lang),
 		}
 
 		tmpl, err := template.ParseFS(templatesFS, "templates/dashboard-page.html")

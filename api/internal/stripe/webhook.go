@@ -131,7 +131,20 @@ func (s *Service) fulfillCheckout(checkoutSessionID string) error {
 		return err
 	}
 	if exists {
-		log.Printf("webhook: user %s already fulfilled; skipping", u.Email)
+		// Returning member, not a fresh signup. This covers a lapsed member
+		// re-subscribing — including the self-heal case where their old customer
+		// was gone and checkout minted a NEW one, so the stored customer_id is now
+		// stale. Rebind the (possibly new) customer and mark active so the
+		// dashboard, which looks up subscriptions by customer_id, finds the sub.
+		// Idempotent: safe for the redirect/webhook race and repeated events, and
+		// a no-op when nothing changed. We deliberately don't touch name/phone/
+		// password (metadata carries none for a re-subscribe) or resend the
+		// welcome email.
+		if err := dbpkg.ReactivateReturning(s.DB, u.Email, u.CustomerID); err != nil {
+			log.Print("webhook: ReactivateReturning: ", err)
+			return err
+		}
+		log.Printf("webhook: rebound customer %s to returning member %s", u.CustomerID, u.Email)
 		return nil
 	}
 	if err := dbpkg.AddUser(s.DB, u); err != nil {

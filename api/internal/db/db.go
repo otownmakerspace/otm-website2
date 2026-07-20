@@ -195,3 +195,17 @@ func SetActive(db *sql.DB, customerID string, active bool) error {
 	}
 	return nil
 }
+
+// ReactivateReturning rebinds a returning member (identified by email) to a
+// Stripe customer ID and marks them active. Used by checkout fulfillment when a
+// lapsed member re-subscribes — including the self-heal case where their stored
+// customer was gone and checkout minted a fresh one, so customer_id changes.
+// Keyed by email (not customer_id) precisely because the customer_id may be the
+// thing that's changing. Idempotent: re-running with the same values is a no-op.
+func ReactivateReturning(db *sql.DB, email, customerID string) error {
+	_, err := db.Exec("UPDATE user SET customer_id = ?, active = 1 WHERE email = ?", customerID, email)
+	if err != nil {
+		return fmt.Errorf("db: ReactivateReturning: %w", err)
+	}
+	return nil
+}

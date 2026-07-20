@@ -85,6 +85,16 @@
 <main class="py-10 lg:py-16">
   <div class="container mx-auto max-w-5xl px-4">
 
+    {{/* Notice banner — rendered from the ?error= query param so redirect
+         failures (checkout, billing portal, re-subscribe) never land silently.
+         dashboardErrorMessage() maps every code, with a generic fallback. */}}
+    {{ if .ErrorBanner }}
+      <div role="alert"
+           class="mb-8 rounded-[10px] border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+        {{ .ErrorBanner }}
+      </div>
+    {{ end }}
+
     {{/* Hero — greeting + headline membership status */}}
     <div id="dashboard-hero"
          hx-get="/dashboard/hero"

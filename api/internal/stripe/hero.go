@@ -16,12 +16,12 @@ import (
 // heroView feeds templates/hero.html — the personalized greeting at the top of
 // the dashboard. All fields are pre-formatted strings.
 type heroView struct {
-	FirstName       string
-	StatusHeadline  string // "Membership renews 9 June 2026" / "No active membership"
-	StatusDetail    string // optional secondary line, e.g. "Cancel scheduled for X"
-	Active          bool
-	CancelAtEnd     bool
-	S               i18n.Strings
+	FirstName      string
+	StatusHeadline string // "Membership renews 9 June 2026" / "No active membership"
+	StatusDetail   string // optional secondary line, e.g. "Cancel scheduled for X"
+	Active         bool
+	CancelAtEnd    bool
+	S              i18n.Strings
 }
 
 // firstNameOf returns the first whitespace-separated token from full.
@@ -91,6 +91,7 @@ func (s *Service) ServeHero() http.HandlerFunc {
 
 		// Headline status comes from the active subscription (if any).
 		// Reusing listSubscriptions keeps Stripe-API plumbing in one place.
+		statusUnknown := false
 		if u.CustomerID != "" {
 			subs := listSubscriptions(u.CustomerID)
 			if subs.Next() {
@@ -109,9 +110,21 @@ func (s *Service) ServeHero() http.HandlerFunc {
 					}
 				}
 			}
+			// See renderSubscriptions: an errored list is not an empty one, and a
+			// missing customer is not a transient failure. Only the latter should
+			// read as "status unknown"; a gone customer just means "not currently a
+			// member", which HeroInactive already covers.
+			if err := subs.Err(); err != nil && !isMissingResource(err) {
+				log.Print("hero: could not determine membership status: ", err)
+				statusUnknown = true
+			}
 		}
 		if view.StatusHeadline == "" {
-			view.StatusHeadline = strs.HeroInactive
+			if statusUnknown {
+				view.StatusHeadline = strs.StatusUnavailable
+			} else {
+				view.StatusHeadline = strs.HeroInactive
+			}
 		}
 
 		// Mention next Open House when the user is active and not winding down,

@@ -107,7 +107,10 @@ func Mux(
 	// hop on validation errors. /checkout/prices is already any-host above.
 	mux.Handle("GET /checkout/", sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 	mux.HandleFunc("POST /checkout/", svc.CreateCheckoutSession())
-	mux.HandleFunc("/re-checkout", svc.CreateCheckoutSession())
+	// Re-subscribe from the dashboard. POST-only and a dedicated handler: it's a
+	// state-initiating action for an authenticated member, kept apart from the
+	// anonymous-signup POST above (no form, no captcha, dashboard-bound errors).
+	mux.HandleFunc("POST /re-checkout", svc.ReCheckout())
 	mux.Handle("GET /da/checkout/", sessions.RedirectIfLoggedIn("/dashboard", staticFallback))
 
 	// Stripe redirect target after successful payment. Handler verifies the

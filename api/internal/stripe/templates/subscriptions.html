@@ -76,13 +76,34 @@
       {{ end }}
     </div>
   </div>
+{{ else if .StatusUnknown }}
+  {{/* Billing lookup errored — NOT the same as "no membership". Show an honest
+       unavailable state instead of a re-subscribe CTA that would just fail, and
+       offer a retry that re-fetches this fragment. */}}
+  <div class="space-y-4 text-center">
+    <h2 class="text-secondary font-secondary text-xl font-bold">{{ .S.StatusUnavailable }}</h2>
+    <p class="rounded-[8px] bg-yellow-50 px-4 py-3 text-sm text-yellow-800">{{ .S.StatusUnavailableBody }}</p>
+    <button
+      class="inline-flex items-center gap-2 rounded-[10px] border border-gray-300 px-4 py-2 text-sm font-medium text-secondary transition-colors hover:border-accent hover:text-accent"
+      hx-get="/subscriptions"
+      hx-target="#subscriptions"
+      hx-swap="innerHTML"
+    >
+      <i class="fa-solid fa-rotate-right"></i>
+      {{ .S.Retry }}
+    </button>
+  </div>
 {{ else }}
   <div class="space-y-4 text-center">
     <h2 class="text-secondary font-secondary text-xl font-bold">{{ .S.NoActiveMembership }}</h2>
     <p class="text-gray-dark">{{ .S.NoActiveBody }}</p>
-    <a href="/re-checkout"
-       class="inline-block rounded-[10px] bg-accent px-5 py-2 font-medium text-white transition-colors hover:bg-accent-2">
-      {{ .S.BecomeMemberAgain }}
-    </a>
+    {{/* POST, not a link: re-subscribe initiates a Stripe checkout session, so
+         it must not be triggerable by a prefetch, link-scanner, or bookmark. */}}
+    <form method="post" action="/re-checkout" class="inline-block">
+      <button type="submit"
+              class="inline-block rounded-[10px] bg-accent px-5 py-2 font-medium text-white transition-colors hover:bg-accent-2">
+        {{ .S.BecomeMemberAgain }}
+      </button>
+    </form>
   </div>
 {{ end }}

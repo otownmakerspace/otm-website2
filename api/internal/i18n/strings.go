@@ -5,9 +5,9 @@ package i18n
 //
 // Keep keys grouped by surface (membership, profile, password, billing) so
 // translators can see context. Adding a new field requires:
-//   1. Add the field to this struct.
-//   2. Add the value to both en and da below.
-//   3. Reference it in the relevant template as {{ .S.<Field> }}.
+//  1. Add the field to this struct.
+//  2. Add the value to both en and da below.
+//  3. Reference it in the relevant template as {{ .S.<Field> }}.
 type Strings struct {
 	// ── Hero (hero.html) ──
 	HeroGreetingNamed     string // "Hi %s" — printf-style with first name
@@ -38,13 +38,30 @@ type Strings struct {
 	NoActiveBody        string
 	BecomeMemberAgain   string
 	MembershipCancelled string
+	// Shown when we couldn't determine membership status (e.g. the billing
+	// provider errored). Distinct from "no active membership" so we don't
+	// mislead the user into a re-subscribe that would just fail.
+	StatusUnavailable     string
+	StatusUnavailableBody string
+	Retry                 string
+
+	// ── Dashboard notices (?error= banners on /dashboard) ──
+	// Rendered by ServeDashboardPage from the ?error= query param. DashErrGeneric
+	// is the catch-all so an unmapped code is still shown, never swallowed.
+	DashErrAlreadyActive  string
+	DashErrCheckoutFailed string
+	DashErrInvalidPrice   string
+	DashErrVerifyFailed   string
+	DashErrNoCustomer     string
+	DashErrPortalFailed   string
+	DashErrGeneric        string
 
 	// ── Cancel modal (cancel-modal.html) ──
-	CancelModalTitle       string
-	CancelModalKeepAccess  string // printf "You'll keep access until %s."
-	CancelModalBelongings  string
-	CancelModalKeep        string // "Keep membership"
-	CancelModalConfirm     string // "End membership"
+	CancelModalTitle        string
+	CancelModalKeepAccess   string // printf "You'll keep access until %s."
+	CancelModalBelongings   string
+	CancelModalKeep         string // "Keep membership"
+	CancelModalConfirm      string // "End membership"
 	CancelModalConfirmDated string // printf "End on %s"
 
 	// ── Reactivate modal (reactivate-modal.html) ──
@@ -58,18 +75,18 @@ type Strings struct {
 	SettingsSection string
 
 	// ── Profile card (profile.html) ──
-	Profile          string
-	Saved            string
-	FullName         string
-	Email            string
-	EmailReadOnly    string
-	Phone            string
-	Save             string
-	Cancel           string
-	EditProfile      string
-	ErrNameEmpty     string
-	ErrTooLong       string
-	ErrSaveFailed    string
+	Profile       string
+	Saved         string
+	FullName      string
+	Email         string
+	EmailReadOnly string
+	Phone         string
+	Save          string
+	Cancel        string
+	EditProfile   string
+	ErrNameEmpty  string
+	ErrTooLong    string
+	ErrSaveFailed string
 
 	// ── Password card (password.html) ──
 	ChangePassword     string
@@ -116,21 +133,32 @@ var en = Strings{
 	BackToSite:  "Back to site",
 	SignOut:     "Sign out",
 
-	Membership:          "Membership",
-	StatusActive:        "Active",
-	Plan:                "Plan",
-	NextRenewal:         "Next renewal",
-	MemberSince:         "Member since",
-	StartedOn:           "Member since",
-	OpenHouseHintTpl:    "See you at the next Open House — %s, 17:00",
-	CancelMembership:    "Cancel membership",
-	CancelEndsOn:        "Your membership is set to end on %s. You'll keep access until then.",
-	Reactivate:          "Reactivate membership",
-	ReactivateHint:      "Changed your mind? You can keep your membership active.",
-	NoActiveMembership:  "No active membership",
-	NoActiveBody:        "You don't have an active membership right now.",
-	BecomeMemberAgain:   "Become a member again",
-	MembershipCancelled: "Membership cancelled.",
+	Membership:            "Membership",
+	StatusActive:          "Active",
+	Plan:                  "Plan",
+	NextRenewal:           "Next renewal",
+	MemberSince:           "Member since",
+	StartedOn:             "Member since",
+	OpenHouseHintTpl:      "See you at the next Open House — %s, 17:00",
+	CancelMembership:      "Cancel membership",
+	CancelEndsOn:          "Your membership is set to end on %s. You'll keep access until then.",
+	Reactivate:            "Reactivate membership",
+	ReactivateHint:        "Changed your mind? You can keep your membership active.",
+	NoActiveMembership:    "No active membership",
+	NoActiveBody:          "You don't have an active membership right now.",
+	BecomeMemberAgain:     "Become a member again",
+	MembershipCancelled:   "Membership cancelled.",
+	StatusUnavailable:     "Membership status unavailable",
+	StatusUnavailableBody: "We couldn't load your membership details right now. Please try again in a moment — if it keeps happening, contact us and we'll sort it out.",
+	Retry:                 "Try again",
+
+	DashErrAlreadyActive:  "You already have an active membership.",
+	DashErrCheckoutFailed: "We couldn't start checkout. Please try again — if it keeps happening, contact us.",
+	DashErrInvalidPrice:   "Membership pricing isn't available right now. Please contact us and we'll sort it out.",
+	DashErrVerifyFailed:   "We couldn't verify your membership status just now, so we didn't start a new checkout. Please try again in a moment.",
+	DashErrNoCustomer:     "We couldn't find your billing account. Please contact us.",
+	DashErrPortalFailed:   "We couldn't open the billing portal. Please try again in a moment.",
+	DashErrGeneric:        "Something went wrong. Please try again — if it keeps happening, contact us.",
 
 	CancelModalTitle:        "Cancel your membership?",
 	CancelModalKeepAccess:   "You'll keep access to the makerspace until %s — the end of the period you've already paid for.",
@@ -147,18 +175,18 @@ var en = Strings{
 
 	SettingsSection: "Account settings",
 
-	Profile:        "Profile",
-	Saved:          "Saved",
-	FullName:       "Full name",
-	Email:          "Email",
-	EmailReadOnly:  "Contact us if you need to change your email.",
-	Phone:          "Phone",
-	Save:           "Save",
-	Cancel:         "Cancel",
-	EditProfile:    "Edit profile",
-	ErrNameEmpty:   "Name can't be empty.",
-	ErrTooLong:     "Name or phone is too long.",
-	ErrSaveFailed:  "Couldn't save. Try again.",
+	Profile:       "Profile",
+	Saved:         "Saved",
+	FullName:      "Full name",
+	Email:         "Email",
+	EmailReadOnly: "Contact us if you need to change your email.",
+	Phone:         "Phone",
+	Save:          "Save",
+	Cancel:        "Cancel",
+	EditProfile:   "Edit profile",
+	ErrNameEmpty:  "Name can't be empty.",
+	ErrTooLong:    "Name or phone is too long.",
+	ErrSaveFailed: "Couldn't save. Try again.",
 
 	ChangePassword:     "Change password",
 	Updated:            "Updated",
@@ -202,21 +230,32 @@ var da = Strings{
 	BackToSite:  "Tilbage til hjemmesiden",
 	SignOut:     "Log ud",
 
-	Membership:          "Medlemskab",
-	StatusActive:        "Aktivt",
-	Plan:                "Abonnement",
-	NextRenewal:         "Næste fornyelse",
-	MemberSince:         "Medlem siden",
-	StartedOn:           "Medlem siden",
-	OpenHouseHintTpl:    "Vi ses til næste Open House — %s kl. 17:00",
-	CancelMembership:    "Opsig medlemskab",
-	CancelEndsOn:        "Dit medlemskab udløber %s. Du beholder adgang indtil da.",
-	Reactivate:          "Genaktivér medlemskab",
-	ReactivateHint:      "Skiftet mening? Du kan beholde dit medlemskab aktivt.",
-	NoActiveMembership:  "Intet aktivt medlemskab",
-	NoActiveBody:        "Du har ikke et aktivt medlemskab lige nu.",
-	BecomeMemberAgain:   "Bliv medlem igen",
-	MembershipCancelled: "Medlemskab opsagt.",
+	Membership:            "Medlemskab",
+	StatusActive:          "Aktivt",
+	Plan:                  "Abonnement",
+	NextRenewal:           "Næste fornyelse",
+	MemberSince:           "Medlem siden",
+	StartedOn:             "Medlem siden",
+	OpenHouseHintTpl:      "Vi ses til næste Open House — %s kl. 17:00",
+	CancelMembership:      "Opsig medlemskab",
+	CancelEndsOn:          "Dit medlemskab udløber %s. Du beholder adgang indtil da.",
+	Reactivate:            "Genaktivér medlemskab",
+	ReactivateHint:        "Skiftet mening? Du kan beholde dit medlemskab aktivt.",
+	NoActiveMembership:    "Intet aktivt medlemskab",
+	NoActiveBody:          "Du har ikke et aktivt medlemskab lige nu.",
+	BecomeMemberAgain:     "Bliv medlem igen",
+	MembershipCancelled:   "Medlemskab opsagt.",
+	StatusUnavailable:     "Medlemskabsstatus utilgængelig",
+	StatusUnavailableBody: "Vi kunne ikke hente dine medlemskabsoplysninger lige nu. Prøv igen om et øjeblik — hvis det bliver ved, så kontakt os, og vi løser det.",
+	Retry:                 "Prøv igen",
+
+	DashErrAlreadyActive:  "Du har allerede et aktivt medlemskab.",
+	DashErrCheckoutFailed: "Vi kunne ikke starte betalingen. Prøv igen — hvis det bliver ved, så kontakt os.",
+	DashErrInvalidPrice:   "Medlemskabspriser er ikke tilgængelige lige nu. Kontakt os, så løser vi det.",
+	DashErrVerifyFailed:   "Vi kunne ikke bekræfte din medlemskabsstatus lige nu, så vi startede ikke en ny betaling. Prøv igen om et øjeblik.",
+	DashErrNoCustomer:     "Vi kunne ikke finde din betalingskonto. Kontakt os venligst.",
+	DashErrPortalFailed:   "Vi kunne ikke åbne betalingsportalen. Prøv igen om et øjeblik.",
+	DashErrGeneric:        "Noget gik galt. Prøv igen — hvis det bliver ved, så kontakt os.",
 
 	CancelModalTitle:        "Opsig dit medlemskab?",
 	CancelModalKeepAccess:   "Du beholder adgang til værkstedet indtil %s — slutningen af den periode du allerede har betalt for.",
@@ -233,18 +272,18 @@ var da = Strings{
 
 	SettingsSection: "Kontoindstillinger",
 
-	Profile:        "Profil",
-	Saved:          "Gemt",
-	FullName:       "Fulde navn",
-	Email:          "Email",
-	EmailReadOnly:  "Kontakt os hvis du skal ændre din email.",
-	Phone:          "Telefon",
-	Save:           "Gem",
-	Cancel:         "Annuller",
-	EditProfile:    "Rediger profil",
-	ErrNameEmpty:   "Navn må ikke være tomt.",
-	ErrTooLong:     "Navn eller telefon er for lange.",
-	ErrSaveFailed:  "Kunne ikke gemme. Prøv igen.",
+	Profile:       "Profil",
+	Saved:         "Gemt",
+	FullName:      "Fulde navn",
+	Email:         "Email",
+	EmailReadOnly: "Kontakt os hvis du skal ændre din email.",
+	Phone:         "Telefon",
+	Save:          "Gem",
+	Cancel:        "Annuller",
+	EditProfile:   "Rediger profil",
+	ErrNameEmpty:  "Navn må ikke være tomt.",
+	ErrTooLong:    "Navn eller telefon er for lange.",
+	ErrSaveFailed: "Kunne ikke gemme. Prøv igen.",
 
 	ChangePassword:     "Skift adgangskode",
 	Updated:            "Opdateret",

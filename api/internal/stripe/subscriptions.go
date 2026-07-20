@@ -15,6 +15,7 @@ import (
 	"github.com/stripe/stripe-go/v82/customer"
 	"github.com/stripe/stripe-go/v82/subscription"
 
+	dbpkg "github.com/iustin94/makerspace/api/internal/db"
 	"github.com/iustin94/makerspace/api/internal/i18n"
 	"github.com/iustin94/makerspace/api/internal/user"
 )
@@ -39,6 +40,7 @@ var ErrNoSubs = errors.New("no subscriptions available")
 // All fields are pre-formatted strings so the template stays logic-light.
 type subscriptionView struct {
 	Active           bool
+	StatusUnknown    bool // billing lookup errored — status could not be determined (≠ "no membership")
 	SubID            string
 	Status           string
 	PlanLabel        string // e.g. "200 DKK / month"
@@ -77,6 +79,56 @@ func listSubscriptions(customerID string) *subscription.Iter {
 	params.Status = stripepkg.String("active")
 	params.Limit = stripepkg.Int64(1)
 	return subscription.List(params)
+}
+
+// subStatus is the definitive outcome of a single membership lookup.
+type subStatus int
+
+const (
+	subActive        subStatus = iota // customer has an active subscription
+	subNone                           // no active subscription (customer exists, or none stored)
+	subCustomerGone                   // Stripe reports the stored customer no longer exists
+	subIndeterminate                  // a transient/unknown error — status could NOT be determined
+)
+
+// subscriptionStatus resolves a customer's membership state in a SINGLE Stripe
+// call. Listing subscriptions for the customer answers everything at once: an
+// active sub (subActive), a clean empty result (subNone), a resource_missing
+// error (subCustomerGone), or any other error (subIndeterminate).
+//
+// Callers that mutate billing (re-subscribe) MUST treat subIndeterminate as a
+// hard stop. Proceeding on an unknown status is exactly how you double-charge
+// someone who already has a subscription — so this type makes "we don't know"
+// a distinct, un-ignorable outcome rather than collapsing it into "no sub".
+func subscriptionStatus(customerID string) subStatus {
+	if customerID == "" {
+		return subNone
+	}
+	it := listSubscriptions(customerID)
+	if it.Next() {
+		return subActive
+	}
+	if err := it.Err(); err != nil {
+		if isMissingResource(err) {
+			return subCustomerGone
+		}
+		return subIndeterminate
+	}
+	return subNone
+}
+
+// isMissingResource reports whether err is a Stripe "resource_missing" error —
+// e.g. the stored customer no longer exists in this Stripe account (an account
+// reset, or stale seed data pointing at a customer from a different account).
+// This is deliberately distinct from transient/connectivity failures: a missing
+// customer means "there's nothing to bill, let them subscribe afresh", whereas
+// a transient error means "we genuinely don't know — don't guess".
+func isMissingResource(err error) bool {
+	var se *stripepkg.Error
+	if errors.As(err, &se) {
+		return se.Code == stripepkg.ErrorCodeResourceMissing
+	}
+	return false
 }
 
 // formatAmount renders a Stripe minor-unit price as "<amount> <CCY> / <interval>".
@@ -127,33 +179,52 @@ func renderSubscriptions(u user.User, lang i18n.Lang) (bytes.Buffer, error) {
 	}
 
 	// Subscription (active, max 1). The current API exposes period boundaries
-	// on the SubscriptionItem, not the Subscription itself.
-	subs := listSubscriptions(u.CustomerID)
-	if subs.Next() {
-		s := subs.Subscription()
-		view.Active = true
-		view.SubID = s.ID
-		view.Status = string(s.Status)
-		view.CancelAtEnd = s.CancelAtPeriodEnd
-		if s.StartDate != 0 {
-			view.StartedOn = time.Unix(s.StartDate, 0).Format("January 2006")
-		}
-		if s.Items != nil && len(s.Items.Data) > 0 {
-			item := s.Items.Data[0]
-			if item.CurrentPeriodEnd != 0 {
-				view.NextRenewal = time.Unix(item.CurrentPeriodEnd, 0).Format("2 January 2006")
+	// on the SubscriptionItem, not the Subscription itself. Skip the lookup for
+	// a user with no Stripe customer: there's nothing to query, and it's a plain
+	// "no membership" (offer re-subscribe), not an error to surface.
+	if u.CustomerID != "" {
+		subs := listSubscriptions(u.CustomerID)
+		hasSub := subs.Next()
+		// An errored list is not an empty one. But not every error means the same
+		// thing: a *missing customer* (ghost/stale ID) means "no subscription to
+		// show — offer a fresh one", so we leave Active/StatusUnknown false and the
+		// template renders the re-subscribe CTA (serveReCheckout mints a new
+		// customer on click). A *transient* error means "we genuinely can't tell",
+		// so we show the explicit unavailable state instead of guessing.
+		if err := subs.Err(); err != nil {
+			if isMissingResource(err) {
+				log.Print("subs: stored customer is gone; offering re-subscribe: ", err)
+			} else {
+				log.Print("subs: could not determine membership status: ", err)
+				view.StatusUnknown = true
 			}
-			if item.Price != nil && item.Price.Recurring != nil {
-				view.PlanLabel = formatAmount(item.Price.UnitAmount, item.Price.Currency, item.Price.Recurring.Interval)
+		}
+		if hasSub {
+			s := subs.Subscription()
+			view.Active = true
+			view.SubID = s.ID
+			view.Status = string(s.Status)
+			view.CancelAtEnd = s.CancelAtPeriodEnd
+			if s.StartDate != 0 {
+				view.StartedOn = time.Unix(s.StartDate, 0).Format("January 2006")
 			}
+			if s.Items != nil && len(s.Items.Data) > 0 {
+				item := s.Items.Data[0]
+				if item.CurrentPeriodEnd != 0 {
+					view.NextRenewal = time.Unix(item.CurrentPeriodEnd, 0).Format("2 January 2006")
+				}
+				if item.Price != nil && item.Price.Recurring != nil {
+					view.PlanLabel = formatAmount(item.Price.UnitAmount, item.Price.Currency, item.Price.Recurring.Interval)
+				}
+			}
+			if view.CancelAtEnd {
+				view.CancelEndsMsg = fmt.Sprintf(view.S.CancelEndsOn, view.NextRenewal)
+			}
+			// Only meaningful when CancelAtEnd is true (the only state that shows
+			// the reactivate button), but harmless to set unconditionally.
+			view.CanReactivate = reactivationsCount(s) < maxReactivationsPerPeriod
+			log.Printf("subs: id=%s status=%s", s.ID, s.Status)
 		}
-		if view.CancelAtEnd {
-			view.CancelEndsMsg = fmt.Sprintf(view.S.CancelEndsOn, view.NextRenewal)
-		}
-		// Only meaningful when CancelAtEnd is true (the only state that shows
-		// the reactivate button), but harmless to set unconditionally.
-		view.CanReactivate = reactivationsCount(s) < maxReactivationsPerPeriod
-		log.Printf("subs: id=%s status=%s", s.ID, s.Status)
 	}
 
 	tmpl, err := template.ParseFS(templatesFS, "templates/subscriptions.html")
@@ -181,7 +252,18 @@ func (s *Service) ServeSubscriptions() http.HandlerFunc {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
-		out, err := renderSubscriptions(user.FromSession(*sess), i18n.FromRequest(r))
+		// Read identity from the DB, not the session cookie. The cookie's
+		// customer_id is set at login and can go stale (re-subscribe self-heal
+		// rebinds the member to a new Stripe customer) — and the hero card already
+		// sources customer_id from the DB, so trusting the cookie here is exactly
+		// what makes the two cards disagree. GetByEmail keeps them in lockstep.
+		emailAddr, _ := sess.Values["email"].(string)
+		u, dberr := dbpkg.GetByEmail(s.DB, emailAddr)
+		if dberr != nil {
+			log.Print("subs: GetByEmail failed, falling back to session identity: ", dberr)
+			u = user.FromSession(*sess)
+		}
+		out, err := renderSubscriptions(u, i18n.FromRequest(r))
 		if err != nil && err != ErrNoSubs {
 			log.Print("subs: ", err)
 			fmt.Fprintln(w, "<p>Internal server error -", err, "</p>")
@@ -192,9 +274,9 @@ func (s *Service) ServeSubscriptions() http.HandlerFunc {
 
 // cancelModalView feeds templates/cancel-modal.html.
 type cancelModalView struct {
-	SubID       string
-	EndsOn      string // "9 June 2026" — the user's current period end
-	S           i18n.Strings
+	SubID  string
+	EndsOn string // "9 June 2026" — the user's current period end
+	S      i18n.Strings
 }
 
 // DismissModal returns an empty body — used by Keep-membership to clear

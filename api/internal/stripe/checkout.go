@@ -67,9 +67,21 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 		lang := i18n.FromRequest(r)
 		log.Print("checkout: incoming")
 
-		// Anti-abuse: honeypot first (cheapest), then Altcha proof-of-work.
-		// Honeypot triggers a silent fake-success so bots don't learn what
-		// tripped them; Altcha failure surfaces a real reason to the user.
+		// Authenticated users don't belong on the anonymous-signup path: they
+		// carry no signup form and can't solve the Altcha challenge enforced
+		// below. They normally can't even reach here (the signup page is
+		// login-gated), but a stale form or crafted POST could — hand them to the
+		// dedicated re-subscribe flow, which owns its own dashboard-bound error
+		// routing instead of the /checkout/ redirects the signup path uses.
+		if auth, ok := sess.Values["authenticated"].(bool); ok && auth {
+			s.serveReCheckout(w, r)
+			return
+		}
+
+		// New (anonymous) signup from the public /checkout/ form. Anti-abuse:
+		// honeypot first (cheapest), then Altcha proof-of-work. Honeypot triggers
+		// a silent fake-success so bots don't learn what tripped them; Altcha
+		// failure surfaces a real reason to the user.
 		if captcha.HoneypotTriggered(r) {
 			log.Print("checkout: honeypot triggered, silent drop")
 			http.Redirect(w, r, i18n.Path(lang, "/checkout/success"), http.StatusSeeOther)
@@ -80,22 +92,7 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 			http.Redirect(w, r, i18n.Path(lang, "/checkout/?reason=captcha_failed"), http.StatusSeeOther)
 			return
 		}
-
-		if auth, ok := sess.Values["authenticated"].(bool); !ok || !auth {
-			log.Print("checkout: new member signup")
-		} else if active, _ := sess.Values["active"].(bool); active {
-			emailAddr, _ := sess.Values["email"].(string)
-			log.Printf("checkout: %s already has active membership", emailAddr)
-			http.Redirect(w, r, i18n.Path(lang, "/dashboard?error=already_active"), http.StatusSeeOther)
-			return
-		} else {
-			// Re-checkout: existing customer with a lapsed subscription. No form,
-			// so we fall back to the configured default price (Cfg.Stripe.PriceID).
-			emailAddr, _ := sess.Values["email"].(string)
-			log.Printf("checkout: %s is re-subscribing", emailAddr)
-			s.serveCheckout(w, r, user.FromSession(*sess), s.Cfg.Stripe.PriceID)
-			return
-		}
+		log.Print("checkout: new member signup")
 
 		if err := r.ParseForm(); err != nil || !validateCheckoutInput(r.Form) {
 			log.Print("checkout: malformed request")
@@ -148,21 +145,94 @@ func (s *Service) CreateCheckoutSession() http.HandlerFunc {
 		}
 		u := user.FromForm(r)
 		u.Password = hashed
-		s.serveCheckout(w, r, u, priceID)
+		s.serveCheckout(w, r, u, priceID, i18n.Path(lang, "/checkout/?reason=failed_session"))
 	}
+}
+
+// ReCheckout is the POST /re-checkout handler behind the dashboard's "Become
+// Member Again" button. It is a distinct entry point from the anonymous signup
+// (POST /checkout/): no signup form, no captcha — the user already
+// authenticated at login. Unauthenticated hits (expired session, stray
+// bookmark) fall through to the public signup form; authenticated hits run the
+// re-subscribe flow.
+func (s *Service) ReCheckout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sess, _ := s.Sessions.Get(r)
+		if auth, ok := sess.Values["authenticated"].(bool); !ok || !auth {
+			lang := i18n.FromRequest(r)
+			http.Redirect(w, r, i18n.Path(lang, "/checkout/"), http.StatusSeeOther)
+			return
+		}
+		s.serveReCheckout(w, r)
+	}
+}
+
+// serveReCheckout runs the authenticated re-subscribe flow. Callers must have
+// already confirmed the session is authenticated.
+//
+// Every exit lands on /dashboard, never /checkout/ — that separation is the
+// whole point of this being its own path. The signup URL is login-gated
+// (RedirectIfLoggedIn), so routing a logged-in user's error through it would
+// silently bounce them to the dashboard with the real cause erased. Here the
+// dashboard is the deliberate destination and each redirect names its reason.
+func (s *Service) serveReCheckout(w http.ResponseWriter, r *http.Request) {
+	sess, _ := s.Sessions.Get(r)
+	lang := i18n.FromRequest(r)
+	u := user.FromSession(*sess)
+
+	// No form, so fall back to the configured default price. An empty price is a
+	// deployment misconfiguration — surface it rather than handing Stripe an
+	// empty price and failing downstream. (Checked before the Stripe lookup: no
+	// point querying if we can't check out anyway.)
+	if s.Cfg.Stripe.PriceID == "" {
+		log.Print("re-checkout: STRIPE_PRICE_ID is not configured")
+		http.Redirect(w, r, i18n.Path(lang, "/dashboard?error=invalid_price"), http.StatusSeeOther)
+		return
+	}
+
+	// A single lookup drives the whole decision. We start a checkout ONLY from a
+	// confirmed no-subscription state — subActive blocks (no double-subscribe),
+	// subIndeterminate refuses (we couldn't confirm there's no existing sub, so
+	// creating one could double-charge; by design we never guess), subCustomerGone
+	// mints a fresh customer, subNone re-subscribes under the existing one.
+	switch subscriptionStatus(u.CustomerID) {
+	case subActive:
+		log.Printf("re-checkout: %s already has active membership", u.Email)
+		http.Redirect(w, r, i18n.Path(lang, "/dashboard?error=already_active"), http.StatusSeeOther)
+		return
+	case subIndeterminate:
+		log.Printf("re-checkout: could not verify subscription status for %s; refusing to avoid a double-subscribe", u.Email)
+		http.Redirect(w, r, i18n.Path(lang, "/dashboard?error=verify_failed"), http.StatusSeeOther)
+		return
+	case subCustomerGone:
+		// Stored customer no longer exists — drop it so checkout mints a fresh
+		// one; the completed-checkout webhook rebinds the new ID to this user by
+		// email (fulfillCheckout -> ReactivateReturning).
+		log.Printf("re-checkout: stored customer %s is gone; minting a fresh one for %s", u.CustomerID, u.Email)
+		u.CustomerID = ""
+	case subNone:
+		// Existing customer (or none stored) with no active sub — normal path.
+	}
+
+	log.Printf("re-checkout: %s is re-subscribing", u.Email)
+	s.serveCheckout(w, r, u, s.Cfg.Stripe.PriceID, i18n.Path(lang, "/dashboard?error=checkout_failed"))
 }
 
 // serveCheckout creates a Stripe checkout session and redirects the user to it.
 // Metadata round-trips through Stripe so the post-payment webhook can recreate
 // the user row.
 //
-// priceID must already be validated by the caller (validatePriceID) so we can
-// trust it as a single tier line item.
+// priceID must be non-empty — both callers guard `s.Cfg.Stripe.PriceID == ""`
+// before calling — so we can trust it as a single tier line item. failURL is
+// where the caller wants the
+// user sent if Stripe rejects the session — signup keeps them on /checkout/,
+// re-subscribe sends them to /dashboard — so a failure never lands a user on a
+// URL that bounces for their auth state.
 //
 // The user's consent timestamps (terms / waiver / privacy) are stamped into
 // the checkout session's metadata so they end up on the resulting Stripe
 // customer + subscription — auditable from the Stripe Dashboard later.
-func (s *Service) serveCheckout(w http.ResponseWriter, r *http.Request, u user.User, priceID string) {
+func (s *Service) serveCheckout(w http.ResponseWriter, r *http.Request, u user.User, priceID, failURL string) {
 	lang := i18n.FromRequest(r)
 	params := &stripepkg.CheckoutSessionParams{
 		SuccessURL: stripepkg.String(s.Cfg.Backend.PublicURL + i18n.Path(lang, "/checkout/success") + "?session_id={CHECKOUT_SESSION_ID}"),
@@ -198,7 +268,7 @@ func (s *Service) serveCheckout(w http.ResponseWriter, r *http.Request, u user.U
 	checkoutSess, err := stripesession.New(params)
 	if err != nil {
 		log.Printf("checkout: stripesession.New: %v", err)
-		http.Redirect(w, r, i18n.Path(lang, "/checkout/?reason=failed_session"), http.StatusSeeOther)
+		http.Redirect(w, r, failURL, http.StatusSeeOther)
 		return
 	}
 	http.Redirect(w, r, checkoutSess.URL, http.StatusSeeOther)
