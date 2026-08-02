@@ -69,10 +69,14 @@ jobs:
           topdomain: otownmakerspace.dk
           stripe_price_id: ${{ vars.STRIPE_PRICE_ID }}
           session_cookie_name: ${{ vars.SESSION_COOKIE_NAME }}
-          email_address: ${{ secrets.EMAIL_ADDRESS }}
-          email_password: ${{ secrets.EMAIL_PASSWORD }}
-          email_host: ${{ vars.EMAIL_HOST }}
-          email_port: ${{ vars.EMAIL_PORT }}
+          smtp_username: ${{ secrets.SMTP_USERNAME }}
+          smtp_password: ${{ secrets.SMTP_PASSWORD }}
+          smtp_host: ${{ vars.SMTP_HOST }}
+          smtp_port: ${{ vars.SMTP_PORT }}
+          # MAIL_FROM / MAIL_REPLY_TO are stored as environment *secrets*
+          # (sender addresses aren't sensitive, but that's where they live).
+          mail_from: ${{ secrets.MAIL_FROM }}
+          mail_reply_to: ${{ secrets.MAIL_REPLY_TO }}
           brand_name: ${{ vars.BRAND_NAME }}
           brand_wordmark_leading: ${{ vars.BRAND_WORDMARK_LEADING }}
           brand_wordmark_accent: ${{ vars.BRAND_WORDMARK_ACCENT }}

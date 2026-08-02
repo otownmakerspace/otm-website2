@@ -41,8 +41,8 @@ inputs:
   cookie_store_key:
     description: "Session cookie encryption key (32 bytes for AES-256)"
     required: true
-  email_password:
-    description: "SMTP password for transactional mail"
+  smtp_password:
+    description: "SMTP password for transactional mail (Gmail: an app password, not the account password)"
     required: true
   altcha_hmac_key:
     description: "Random 32+ byte HMAC key for the Altcha proof-of-work CAPTCHA (set per environment; rotate to invalidate outstanding challenges)"
@@ -72,15 +72,23 @@ inputs:
   stripe_price_id:
     description: "Stripe Price ID of the membership subscription (price_xxx)"
     required: true
-  email_address:
-    description: "SMTP username (full email address used for AUTH and as From:)"
+  smtp_username:
+    description: "SMTP login account (full address, e.g. admin@otownmakerspace.dk)"
     required: true
-  email_host:
-    description: "SMTP server host (e.g. smtppro.zoho.com)"
+  smtp_host:
+    description: "SMTP server host (Gmail submission endpoint: smtp.gmail.com — NOT smtp.google.com, which is the inbound MX)"
     required: true
-  email_port:
-    description: "SMTP server port (e.g. 465 for SSL, 587 for STARTTLS)"
+  smtp_port:
+    description: "SMTP server port (587 for STARTTLS, 465 for SSL)"
     required: true
+  mail_from:
+    description: "Visible sender of automated mail (e.g. noreply@otownmakerspace.dk); must be a Send-mail-as alias of the SMTP account. Empty falls back to smtp_username."
+    required: false
+    default: ""
+  mail_reply_to:
+    description: "Human-answered address: Reply-To, email-footer contact, admin notifications (e.g. info@otownmakerspace.dk). Empty falls back to smtp_username."
+    required: false
+    default: ""
   brand_name:
     description: "Public brand name rendered in emails (e.g. \"O'Town Makerspace\")"
     required: false
@@ -158,8 +166,8 @@ runs:
         STRIPE_KEY: ${{ inputs.stripe_key }}
         STRIPE_WEBHOOK_SECRET: ${{ inputs.stripe_webhook_secret }}
         COOKIE_STORE_KEY: ${{ inputs.cookie_store_key }}
-        EMAIL_ADDRESS: ${{ inputs.email_address }}
-        EMAIL_PASSWORD: ${{ inputs.email_password }}
+        SMTP_USERNAME: ${{ inputs.smtp_username }}
+        SMTP_PASSWORD: ${{ inputs.smtp_password }}
         ALTCHA_HMAC_KEY: ${{ inputs.altcha_hmac_key }}
         GOOGLE_CLIENT_ID: ${{ inputs.google_client_id }}
         GOOGLE_CLIENT_SECRET: ${{ inputs.google_client_secret }}
@@ -168,7 +176,7 @@ runs:
         host: ${{ steps.ts.outputs.resolved_host }}
         username: ${{ inputs.deployment_remote_username }}
         key: ${{ inputs.deployment_remote_ssh_private_key }}
-        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_ADDRESS,EMAIL_PASSWORD,ALTCHA_HMAC_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REFRESH_TOKEN
+        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,SMTP_USERNAME,SMTP_PASSWORD,ALTCHA_HMAC_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REFRESH_TOKEN
         script_stop: true
         script: |
           set -euo pipefail
@@ -177,8 +185,8 @@ runs:
           printf '%s' "$STRIPE_KEY"            | sudo tee "${{ inputs.secrets_folder }}/stripe_key"            >/dev/null
           printf '%s' "$STRIPE_WEBHOOK_SECRET" | sudo tee "${{ inputs.secrets_folder }}/stripe_webhook_secret" >/dev/null
           printf '%s' "$COOKIE_STORE_KEY"      | sudo tee "${{ inputs.secrets_folder }}/cookie_store_key"      >/dev/null
-          printf '%s' "$EMAIL_ADDRESS"         | sudo tee "${{ inputs.secrets_folder }}/email_address"         >/dev/null
-          printf '%s' "$EMAIL_PASSWORD"        | sudo tee "${{ inputs.secrets_folder }}/email_password"        >/dev/null
+          printf '%s' "$SMTP_USERNAME"         | sudo tee "${{ inputs.secrets_folder }}/smtp_username"         >/dev/null
+          printf '%s' "$SMTP_PASSWORD"         | sudo tee "${{ inputs.secrets_folder }}/smtp_password"         >/dev/null
           printf '%s' "$ALTCHA_HMAC_KEY"       | sudo tee "${{ inputs.secrets_folder }}/altcha_hmac_key"       >/dev/null
           # Written unconditionally (possibly empty): the compose file bind-
           # mounts these, and a missing bind source fails container start.
@@ -213,8 +221,10 @@ runs:
           printf '%s\n' 'TOPDOMAIN=${{ inputs.topdomain }}'                 >> "$ENV_FILE"
           printf '%s\n' 'STRIPE_PRICE_ID=${{ inputs.stripe_price_id }}'     >> "$ENV_FILE"
           printf '%s\n' 'SESSION_COOKIE_NAME=${{ inputs.session_cookie_name }}' >> "$ENV_FILE"
-          printf '%s\n' 'EMAIL_HOST=${{ inputs.email_host }}'               >> "$ENV_FILE"
-          printf '%s\n' 'EMAIL_PORT=${{ inputs.email_port }}'               >> "$ENV_FILE"
+          printf '%s\n' 'SMTP_HOST=${{ inputs.smtp_host }}'                 >> "$ENV_FILE"
+          printf '%s\n' 'SMTP_PORT=${{ inputs.smtp_port }}'                 >> "$ENV_FILE"
+          printf '%s\n' 'MAIL_FROM=${{ inputs.mail_from }}'                 >> "$ENV_FILE"
+          printf '%s\n' 'MAIL_REPLY_TO=${{ inputs.mail_reply_to }}'         >> "$ENV_FILE"
           printf '%s\n' 'BRAND_NAME=${{ inputs.brand_name }}'               >> "$ENV_FILE"
           printf '%s\n' 'BRAND_WORDMARK_LEADING=${{ inputs.brand_wordmark_leading }}' >> "$ENV_FILE"
           printf '%s\n' 'BRAND_WORDMARK_ACCENT=${{ inputs.brand_wordmark_accent }}'   >> "$ENV_FILE"

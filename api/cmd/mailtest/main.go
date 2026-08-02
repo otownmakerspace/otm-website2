@@ -9,10 +9,11 @@
 //	go run ./cmd/mailtest -to you@example.com -template all      # send every template in turn
 //
 // Reads SMTP credentials from (in priority order):
-//  1. -user / -password / -host / -port flags
-//  2. EMAIL_ADDRESS / EMAIL_PASSWORD / EMAIL_HOST / EMAIL_PORT env vars
-//  3. Secret files under -secrets dir (default ../secrets/app) — user/password only
-//  4. Dotenv file at -env path (default ../infra/app/.env) — any EMAIL_* key
+//  1. -user / -password / -host / -port / -from / -reply-to flags
+//  2. SMTP_USERNAME / SMTP_PASSWORD / SMTP_HOST / SMTP_PORT / MAIL_FROM /
+//     MAIL_REPLY_TO env vars
+//  3. Secret files under -secrets dir (default ../secrets/app) — username/password only
+//  4. Dotenv file at -env path (default ../infra/app/.env)
 package main
 
 import (
@@ -40,12 +41,14 @@ var allTemplates = map[string]email.Template{
 func main() {
 	to := flag.String("to", "", "recipient address (required)")
 	tmpl := flag.String("template", "reset", "template name: welcome|goodbye|reset|unsubscription|new_member|all")
-	secretsDir := flag.String("secrets", "../secrets/app", "directory holding email_address and email_password files")
-	envFile := flag.String("env", "../infra/app/.env", "dotenv file scanned for EMAIL_* fallbacks (host/port live here for the dev stack)")
+	secretsDir := flag.String("secrets", "../secrets/app", "directory holding smtp_username and smtp_password files")
+	envFile := flag.String("env", "../infra/app/.env", "dotenv file scanned for SMTP_*/MAIL_* fallbacks (host/port live here for the dev stack)")
 	user_ := flag.String("user", "", "SMTP username (overrides env / secret file / dotenv)")
 	password := flag.String("password", "", "SMTP password (overrides env / secret file / dotenv)")
 	host := flag.String("host", "", "SMTP host (overrides env / dotenv)")
 	port := flag.Int("port", 0, "SMTP port (overrides env / dotenv)")
+	from := flag.String("from", "", "visible From address — must be a Send-mail-as alias of the SMTP account or Gmail silently rewrites it (overrides env / dotenv; empty = SMTP username)")
+	replyTo := flag.String("reply-to", "", "Reply-To + footer contact address (overrides env / dotenv; empty = SMTP username)")
 	name := flag.String("name", "Test User", "name to render into the template")
 	baseURL := flag.String("base-url", "https://otownmakerspace.dk", "public base URL for the deployed environment under test — drives both the link rendered in the template and the LogoURL fetched by the email client. Point at a staging host to test against staging.")
 	link := flag.String("link", "", "fully-qualified link to render into the template (overrides -base-url-derived default)")
@@ -56,15 +59,18 @@ func main() {
 	}
 
 	dotenv := readDotenv(*envFile)
+	// Same resolution order as config.Load: flag, env var, secret file, dotenv.
 	cfg := config.EmailConf{
-		User:     pickString(*user_, os.Getenv("EMAIL_ADDRESS"), readFile(*secretsDir, "email_address"), dotenv["EMAIL_ADDRESS"]),
-		Password: pickString(*password, os.Getenv("EMAIL_PASSWORD"), readFile(*secretsDir, "email_password"), dotenv["EMAIL_PASSWORD"]),
-		Host:     pickString(*host, os.Getenv("EMAIL_HOST"), dotenv["EMAIL_HOST"]),
-		Port:     pickInt(*port, atoiSafe(os.Getenv("EMAIL_PORT")), atoiSafe(dotenv["EMAIL_PORT"])),
+		Username: pickString(*user_, os.Getenv("SMTP_USERNAME"), readFile(*secretsDir, "smtp_username"), dotenv["SMTP_USERNAME"]),
+		Password: pickString(*password, os.Getenv("SMTP_PASSWORD"), readFile(*secretsDir, "smtp_password"), dotenv["SMTP_PASSWORD"]),
+		Host:     pickString(*host, os.Getenv("SMTP_HOST"), dotenv["SMTP_HOST"]),
+		Port:     pickInt(*port, atoiSafe(os.Getenv("SMTP_PORT")), atoiSafe(dotenv["SMTP_PORT"])),
+		From:     pickString(*from, os.Getenv("MAIL_FROM"), dotenv["MAIL_FROM"]),
+		ReplyTo:  pickString(*replyTo, os.Getenv("MAIL_REPLY_TO"), dotenv["MAIL_REPLY_TO"]),
 	}
-	if cfg.User == "" || cfg.Password == "" || cfg.Host == "" || cfg.Port == 0 {
+	if cfg.Username == "" || cfg.Password == "" || cfg.Host == "" || cfg.Port == 0 {
 		log.Fatalf("missing config — user=%q host=%q port=%d password=%t",
-			cfg.User, cfg.Host, cfg.Port, cfg.Password != "")
+			cfg.Username, cfg.Host, cfg.Port, cfg.Password != "")
 	}
 
 	templates := []string{*tmpl}
@@ -91,8 +97,9 @@ func main() {
 		}
 		// new_member and unsubscription read .Data.Number; supply a fake.
 		var data any = struct{ Number int }{Number: 42}
-		log.Printf("→ sending %q (%s) to %s via %s:%d as %s — link=%s logo=%s",
-			t.Subject, t.File, *to, cfg.Host, cfg.Port, cfg.User, resolvedLink, brand.LogoURL)
+		log.Printf("→ sending %q (%s) to %s via %s:%d auth=%s from=%s reply-to=%s — link=%s logo=%s",
+			t.Subject, t.File, *to, cfg.Host, cfg.Port, cfg.Username,
+			pickString(cfg.From, cfg.Username), pickString(cfg.ReplyTo, cfg.Username), resolvedLink, brand.LogoURL)
 		if err := m.Send(*to, u, t, resolvedLink, data); err != nil {
 			log.Fatalf("✗ send failed: %v", err)
 		}

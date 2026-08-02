@@ -79,7 +79,7 @@ func main() {
 	addr := cfg.Backend.HostAddr()
 	log.Printf("listening on %s (public URL: %s, members host: %s)", addr, cfg.Backend.PublicURL, cfg.Backend.MembersHost)
 	// Non-secret config dump — useful for spotting misconfigured env vars
-	// (e.g. EMAIL_HOST set to an email address, missing STRIPE_PRICE_ID,
+	// (e.g. SMTP_HOST set to an email address, missing STRIPE_PRICE_ID,
 	// wrong brand override) in the very first lines of docker logs.
 	log.Printf("config: smtp=%s:%d stripe_price_id=%s", cfg.Email.Host, cfg.Email.Port, cfg.Stripe.PriceID)
 	log.Printf("brand: name=%q wordmark=%q/%q logo=%s", cfg.Brand.Name, cfg.Brand.WordmarkLeading, cfg.Brand.WordmarkAccent, cfg.Brand.LogoURL)

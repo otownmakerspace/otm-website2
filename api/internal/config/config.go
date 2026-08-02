@@ -56,11 +56,29 @@ type StripeConf struct {
 	PriceID        string // price_xxx — fallback price for re-checkout flows when the form doesn't carry a price_id (e.g. session-recovery). New signups should pick from /checkout/prices.
 }
 
+// EmailConf drives transactional mail, split into two concerns:
+//
+// Transport (SMTP_*): Host/Port say which server to dial; Username/Password
+// authenticate (with Gmail: the Workspace account the app password belongs
+// to — Host is smtp.gmail.com, NOT smtp.google.com, which is the inbound MX).
+//
+// Message identity (MAIL_*):
+//   - From: visible sender of automated mail (e.g. noreply@otownmakerspace.dk).
+//     With Gmail SMTP the address MUST be registered under the account's
+//     "Send mail as" aliases, otherwise Gmail silently rewrites it to Username.
+//   - ReplyTo: the human-answered address (e.g. info@otownmakerspace.dk) —
+//     set as Reply-To on automated mail, rendered as the contact link in
+//     email footers, and the recipient of admin notifications.
+//
+// From and ReplyTo are optional: empty values fall back to Username, which
+// reproduces the original single-address behaviour.
 type EmailConf struct {
-	User     string
+	Username string
 	Host     string
 	Port     int
 	Password string
+	From     string
+	ReplyTo  string
 }
 
 // BrandConf is the public-facing identity rendered into emails (and anywhere
@@ -103,9 +121,9 @@ type CaptchaConf struct {
 
 // Defaults applied when no config file is present and no env override is set.
 //
-// Email config (User/Host/Port) intentionally has no defaults — providers
-// and mailbox addresses are deployment-specific. Set via EMAIL_ADDRESS /
-// EMAIL_HOST / EMAIL_PORT env vars (CI/CD passes these from per-environment
+// Email config (Username/Host/Port) intentionally has no defaults — providers
+// and mailbox addresses are deployment-specific. Set via SMTP_USERNAME /
+// SMTP_HOST / SMTP_PORT env vars (CI/CD passes these from per-environment
 // GitHub secrets/variables) or via a TOML config file. The Go SMTP client
 // surfaces a clear error at first send if these are blank.
 var defaults = Config{
@@ -163,10 +181,13 @@ func Load() Config {
 	secretOverride(&c.Stripe.PublishableKey, "STRIPE_PUBLISHABLE_KEY", "stripe_publishable_key")
 	secretOverride(&c.Stripe.EndpointSecret, "STRIPE_WEBHOOK_SECRET", "stripe_webhook_secret")
 	envOverride(&c.Stripe.PriceID, "STRIPE_PRICE_ID")
-	envOverride(&c.Email.Host, "EMAIL_HOST")
-	envOverrideInt(&c.Email.Port, "EMAIL_PORT")
-	secretOverride(&c.Email.User, "EMAIL_ADDRESS", "email_address")
-	secretOverride(&c.Email.Password, "EMAIL_PASSWORD", "email_password")
+	// SMTP_* = transport, MAIL_* = message identity.
+	envOverride(&c.Email.Host, "SMTP_HOST")
+	envOverrideInt(&c.Email.Port, "SMTP_PORT")
+	secretOverride(&c.Email.Username, "SMTP_USERNAME", "smtp_username")
+	secretOverride(&c.Email.Password, "SMTP_PASSWORD", "smtp_password")
+	envOverride(&c.Email.From, "MAIL_FROM")
+	envOverride(&c.Email.ReplyTo, "MAIL_REPLY_TO")
 
 	envOverride(&c.Brand.Name, "BRAND_NAME")
 	envOverride(&c.Brand.WordmarkLeading, "BRAND_WORDMARK_LEADING")

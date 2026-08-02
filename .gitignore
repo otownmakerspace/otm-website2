@@ -38,6 +38,10 @@
 /secrets/app/google_client_id
 /secrets/app/google_client_secret
 /secrets/app/google_refresh_token
+# SMTP credentials (renamed from the historically-tracked email_address /
+# email_password). Hold the real Workspace app password — never commit.
+/secrets/app/smtp_username
+/secrets/app/smtp_password
 
 # SQLite runtime DB (test data, container-mutated state — never commit).
 /db/

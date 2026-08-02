@@ -43,8 +43,13 @@ services:
       SESSION_COOKIE_NAME: "${SESSION_COOKIE_NAME:-otm-session}"
       # SMTP host/port are deployment-specific; no defaults.
       # Username is bind-mounted as a secret (see volumes below).
-      EMAIL_HOST: "${EMAIL_HOST:-}"
-      EMAIL_PORT: "${EMAIL_PORT:-}"
+      SMTP_HOST: "${SMTP_HOST:-}"
+      SMTP_PORT: "${SMTP_PORT:-}"
+      # Message identities (optional; both fall back to the smtp_username
+      # secret). MAIL_FROM must be a registered "Send mail as" alias of the
+      # Gmail account or Gmail silently rewrites it.
+      MAIL_FROM: "${MAIL_FROM:-}"
+      MAIL_REPLY_TO: "${MAIL_REPLY_TO:-}"
       # Brand identity rendered into emails. Backend has sane defaults; only
       # set these to override per-deployment.
       BRAND_NAME: "${BRAND_NAME:-}"
@@ -75,12 +80,12 @@ services:
         target: /run/secrets/stripe_webhook_secret
         read_only: true
       - type: bind
-        source: ${SECRETS_FOLDER}/email_address
-        target: /run/secrets/email_address
+        source: ${SECRETS_FOLDER}/smtp_username
+        target: /run/secrets/smtp_username
         read_only: true
       - type: bind
-        source: ${SECRETS_FOLDER}/email_password
-        target: /run/secrets/email_password
+        source: ${SECRETS_FOLDER}/smtp_password
+        target: /run/secrets/smtp_password
         read_only: true
       - type: bind
         source: ${SECRETS_FOLDER}/altcha_hmac_key

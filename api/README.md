@@ -51,7 +51,12 @@ Resolved at startup with this priority (highest wins):
 | Stripe API key | `STRIPE_KEY` | `stripe_key` | `sk_test_...` or `sk_live_...` |
 | Webhook secret | `STRIPE_WEBHOOK_SECRET` | `stripe_webhook_secret` | per Stripe webhook endpoint |
 | Stripe price ID | `STRIPE_PRICE_ID` | — | `price_xxx`. Test/live IDs differ. |
-| SMTP password | `EMAIL_PASSWORD` | `email_password` | for `User`/Host/Port from TOML |
+| SMTP username | `SMTP_USERNAME` | `smtp_username` | login account, e.g. `admin@otownmakerspace.dk` |
+| SMTP password | `SMTP_PASSWORD` | `smtp_password` | Gmail: an app password (2FA required) |
+| SMTP host/port | `SMTP_HOST` / `SMTP_PORT` | — | `smtp.gmail.com` / `587` |
+| Mail From | `MAIL_FROM` | — | visible sender (Send-mail-as alias); empty = username |
+| Mail Reply-To | `MAIL_REPLY_TO` | — | human inbox: Reply-To, footer contact, admin notify; empty = username |
+| Google Contacts sync | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REFRESH_TOKEN` | `google_client_id` / `google_client_secret` / `google_refresh_token` | mailing-list label sync; all empty ⇒ disabled. Label name via `GOOGLE_CONTACT_GROUP`. |
 | Captcha HMAC key | `ALTCHA_HMAC_KEY` | `altcha_hmac_key` | random ≥32 byte secret. Empty disables Altcha verification (and logs `captcha: DISABLED` at startup). Per-environment value. |
 | Production flag | `SITE_RELEASE` | — | presence (any value) ⇒ release; absence ⇒ test, runs `db.SeedTest` |
 

@@ -71,7 +71,7 @@ ensure_secrets() {
   # Per-file (not just first-run) so a checkout that predates a newly added
   # secret still gets the file — compose bind mounts fail on missing sources.
   mkdir -p "$secrets_dir"
-  for f in cookie_store_key stripe_key stripe_publishable_key stripe_webhook_secret email_address email_password; do
+  for f in cookie_store_key stripe_key stripe_publishable_key stripe_webhook_secret smtp_username smtp_password; do
     if [[ ! -f "$secrets_dir/$f" ]]; then
       echo "REPLACE_ME" > "$secrets_dir/$f"
       warn "  Created $secrets_dir/$f — fill in the real value"

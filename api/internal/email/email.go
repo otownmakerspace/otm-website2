@@ -41,8 +41,10 @@ var (
 //
 // marketingURL (apex site) and portalURL (member backend) are passed in by
 // the caller from config so templates never hardcode a deployment's host —
-// staging mail links to staging, production to production. The contact
-// address rendered in mail is simply cfg.User (the SMTP From mailbox).
+// staging mail links to staging, production to production. Sender identity:
+// mail goes out From cfg.From (noreply-style alias) with Reply-To and the
+// rendered contact address set to cfg.ReplyTo (the human-answered inbox);
+// both fall back to cfg.Username (the SMTP login) when unset.
 type Mailer struct {
 	cfg          config.EmailConf
 	brand        config.BrandConf
@@ -52,6 +54,25 @@ type Mailer struct {
 
 func NewMailer(cfg config.EmailConf, brand config.BrandConf, marketingURL, portalURL string) *Mailer {
 	return &Mailer{cfg: cfg, brand: brand, marketingURL: marketingURL, portalURL: portalURL}
+}
+
+// fromAddr is the visible sender of automated mail. Falls back to the SMTP
+// login so a deployment without MAIL_FROM behaves exactly as before the
+// transport/identity split.
+func (m *Mailer) fromAddr() string {
+	if m.cfg.From != "" {
+		return m.cfg.From
+	}
+	return m.cfg.Username
+}
+
+// replyToAddr is the human-answered address: Reply-To header, footer contact
+// link, and admin-notification recipient. Falls back to the SMTP login.
+func (m *Mailer) replyToAddr() string {
+	if m.cfg.ReplyTo != "" {
+		return m.cfg.ReplyTo
+	}
+	return m.cfg.Username
 }
 
 // host strips the scheme and any trailing slash from a URL so templates can
@@ -91,7 +112,7 @@ func (m *Mailer) Send(to string, u user.User, t Template, link string, data any)
 		Data         any
 	}{
 		Name: u.Name, Link: link, Email: u.Email, Subject: subject, Brand: m.brand,
-		MarketingURL: m.marketingURL, PortalURL: m.portalURL, ContactEmail: m.cfg.User, Data: data,
+		MarketingURL: m.marketingURL, PortalURL: m.portalURL, ContactEmail: m.replyToAddr(), Data: data,
 	})
 	if err != nil {
 		log.Print("email: execute template:", err)
@@ -99,12 +120,17 @@ func (m *Mailer) Send(to string, u user.User, t Template, link string, data any)
 	}
 
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", m.cfg.User)
+	msg.SetHeader("From", m.fromAddr())
 	msg.SetHeader("To", to)
+	// Replies to noreply-style automated mail should reach a human. Omitted
+	// when From already is the contact address (redundant header).
+	if m.replyToAddr() != m.fromAddr() {
+		msg.SetHeader("Reply-To", m.replyToAddr())
+	}
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body.String())
 
-	dialer := gomail.NewDialer(m.cfg.Host, m.cfg.Port, m.cfg.User, m.cfg.Password)
+	dialer := gomail.NewDialer(m.cfg.Host, m.cfg.Port, m.cfg.Username, m.cfg.Password)
 	if err := dialer.DialAndSend(msg); err != nil {
 		log.Printf("email: send to %s failed: %v", to, err)
 		return fmt.Errorf("email send: %w", err)
@@ -113,8 +139,8 @@ func (m *Mailer) Send(to string, u user.User, t Template, link string, data any)
 	return nil
 }
 
-// AdminAddress returns the From-address used by the mailer; used when notifying
-// the operations inbox of new members or cancellations.
+// AdminAddress returns the operations inbox notified of new members and
+// cancellations — the human-answered contact address, not the noreply sender.
 func (m *Mailer) AdminAddress() string {
-	return m.cfg.User
+	return m.replyToAddr()
 }
