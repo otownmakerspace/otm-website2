@@ -120,12 +120,15 @@ func (m *Mailer) Send(to string, u user.User, t Template, link string, data any)
 	}
 
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", m.fromAddr())
+	// Brand name as the display name — otherwise the receiving client (or
+	// Gmail's SMTP layer) decorates the bare address with the sending
+	// account's profile name, which is an ops detail, not the brand.
+	msg.SetAddressHeader("From", m.fromAddr(), m.brand.Name)
 	msg.SetHeader("To", to)
 	// Replies to noreply-style automated mail should reach a human. Omitted
 	// when From already is the contact address (redundant header).
 	if m.replyToAddr() != m.fromAddr() {
-		msg.SetHeader("Reply-To", m.replyToAddr())
+		msg.SetAddressHeader("Reply-To", m.replyToAddr(), m.brand.Name)
 	}
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body.String())
