@@ -51,6 +51,10 @@ services:
       BRAND_WORDMARK_LEADING: "${BRAND_WORDMARK_LEADING:-}"
       BRAND_WORDMARK_ACCENT: "${BRAND_WORDMARK_ACCENT:-}"
       BRAND_LOGO_URL: "${BRAND_LOGO_URL:-}"
+      # Google Contacts label that mirrors the active membership (mailing-list
+      # sync). Backend default is "Makerspace Members"; override per deployment
+      # so staging syncs into its own label, never the production one.
+      GOOGLE_CONTACT_GROUP: "${GOOGLE_CONTACT_GROUP:-}"
     networks: [ app_network ]
     restart: unless-stopped
     volumes:
@@ -81,6 +85,21 @@ services:
       - type: bind
         source: ${SECRETS_FOLDER}/altcha_hmac_key
         target: /run/secrets/altcha_hmac_key
+        read_only: true
+      # Google Contacts mailing-list sync credentials. Files may be empty —
+      # the backend then disables the sync — but must exist (a missing bind
+      # source fails the mount). dev.sh and the deploy action both create them.
+      - type: bind
+        source: ${SECRETS_FOLDER}/google_client_id
+        target: /run/secrets/google_client_id
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/google_client_secret
+        target: /run/secrets/google_client_secret
+        read_only: true
+      - type: bind
+        source: ${SECRETS_FOLDER}/google_refresh_token
+        target: /run/secrets/google_refresh_token
         read_only: true
       - ../../db:/app/db
 

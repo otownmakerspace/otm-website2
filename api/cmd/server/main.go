@@ -21,6 +21,7 @@ import (
 	"github.com/iustin94/makerspace/api/internal/config"
 	"github.com/iustin94/makerspace/api/internal/db"
 	"github.com/iustin94/makerspace/api/internal/email"
+	"github.com/iustin94/makerspace/api/internal/googlecontacts"
 	apphttp "github.com/iustin94/makerspace/api/internal/http"
 	"github.com/iustin94/makerspace/api/internal/session"
 	"github.com/iustin94/makerspace/api/internal/stripe"
@@ -65,7 +66,13 @@ func main() {
 	if !captchaSvc.Enabled() {
 		log.Print("captcha: DISABLED (ALTCHA_HMAC_KEY not set) — protected forms accept any submission")
 	}
-	svc := stripe.NewService(cfg, database, sessions, mailer, captchaSvc)
+	contacts := googlecontacts.New(cfg.Google)
+	if contacts.Enabled() {
+		log.Printf("google contacts: mailing-list sync ENABLED (label %q)", cfg.Google.ContactGroup)
+	} else {
+		log.Print("google contacts: mailing-list sync DISABLED (GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN not all set)")
+	}
+	svc := stripe.NewService(cfg, database, sessions, mailer, captchaSvc, contacts)
 
 	mux := apphttp.Mux(cfg.Backend.StaticDir, cfg.Backend.PublicURL, cfg.Backend.MembersHost, database, sessions, mailer, svc, captchaSvc)
 

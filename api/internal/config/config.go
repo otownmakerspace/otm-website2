@@ -16,6 +16,7 @@ type Config struct {
 	Email   EmailConf
 	Brand   BrandConf
 	Captcha CaptchaConf
+	Google  GoogleConf
 }
 
 type BackendConf struct {
@@ -77,6 +78,22 @@ type BrandConf struct {
 	LogoURL         string // Absolute URL to a horizontal wordmark image (PNG or SVG). Empty triggers per-deployment derivation in Load() from MarketingBaseURL → PublicURL → makerspace.olaru.dk, so staging emails reference staging assets automatically.
 }
 
+// GoogleConf drives the Google Contacts mailing-list sync: on subscription
+// create/cancel the backend adds/removes the member in a Contacts label on
+// the admin's Gmail account (typing the label into To/BCC in Gmail expands to
+// all members). Leaving any credential empty disables the sync — deployments
+// without Google secrets behave exactly as before.
+//
+// The refresh token is minted once, interactively, with cmd/googleauth; the
+// client id/secret come from a Google Cloud OAuth client (Desktop type) with
+// the People API enabled.
+type GoogleConf struct {
+	ClientID     string
+	ClientSecret string
+	RefreshToken string
+	ContactGroup string // Contacts label display name holding active members.
+}
+
 // CaptchaConf holds the HMAC key used by the Altcha proof-of-work CAPTCHA on
 // the signup + password-reset forms. Empty key disables verification — only
 // safe in local dev / tests.
@@ -107,6 +124,9 @@ var defaults = Config{
 		// MarketingBaseURL (or PublicURL) after all overrides so each
 		// deployment serves its own host's copy of the wordmark instead of
 		// every environment pointing at production.
+	},
+	Google: GoogleConf{
+		ContactGroup: "Makerspace Members",
 	},
 }
 
@@ -154,6 +174,14 @@ func Load() Config {
 	envOverride(&c.Brand.LogoURL, "BRAND_LOGO_URL")
 
 	secretOverride(&c.Captcha.HMACKey, "ALTCHA_HMAC_KEY", "altcha_hmac_key")
+
+	// Google Contacts sync. The client id isn't strictly secret, but riding
+	// the secret-file mechanism keeps all three Google credentials in one
+	// place operationally.
+	secretOverride(&c.Google.ClientID, "GOOGLE_CLIENT_ID", "google_client_id")
+	secretOverride(&c.Google.ClientSecret, "GOOGLE_CLIENT_SECRET", "google_client_secret")
+	secretOverride(&c.Google.RefreshToken, "GOOGLE_REFRESH_TOKEN", "google_refresh_token")
+	envOverride(&c.Google.ContactGroup, "GOOGLE_CONTACT_GROUP")
 
 	// SITE_RELEASE presence (any value) marks production. Absence = test.
 	_, isRelease := os.LookupEnv("SITE_RELEASE")

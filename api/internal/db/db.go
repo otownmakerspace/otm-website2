@@ -141,6 +141,26 @@ func GetByCustomerID(db *sql.DB, customerID string) (user.User, error) {
 	return u, err
 }
 
+// ListActive returns every active member (email + name only), ordered by
+// email. Used by cmd/googlebackfill to seed the Google Contacts mailing-list
+// label from the membership database.
+func ListActive(db *sql.DB) ([]user.User, error) {
+	rows, err := db.Query("SELECT email, name FROM user WHERE active = 1 ORDER BY email")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var users []user.User
+	for rows.Next() {
+		var u user.User
+		if err := rows.Scan(&u.Email, &u.Name); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, rows.Err()
+}
+
 // GetByEmail returns the user row for the given email.
 func GetByEmail(db *sql.DB, email string) (user.User, error) {
 	var u user.User

@@ -47,6 +47,21 @@ inputs:
   altcha_hmac_key:
     description: "Random 32+ byte HMAC key for the Altcha proof-of-work CAPTCHA (set per environment; rotate to invalidate outstanding challenges)"
     required: true
+  # Google Contacts mailing-list sync (optional). Empty values write empty
+  # secret files, which the backend treats as "sync disabled" — so workflows
+  # that don't pass these deploy unchanged.
+  google_client_id:
+    description: "Google OAuth client ID (Desktop-app type) for the Contacts mailing-list sync"
+    required: false
+    default: ""
+  google_client_secret:
+    description: "Google OAuth client secret for the Contacts mailing-list sync"
+    required: false
+    default: ""
+  google_refresh_token:
+    description: "Google OAuth refresh token minted by api/cmd/googleauth (contacts scope)"
+    required: false
+    default: ""
 
   subdomain:
     description: "Subdomain for Traefik routing (e.g. staging, www)"
@@ -80,6 +95,10 @@ inputs:
     default: ""
   brand_logo_url:
     description: "Absolute URL of a horizontal wordmark image (PNG or SVG) for emails"
+    required: false
+    default: ""
+  google_contact_group:
+    description: "Google Contacts label holding active members (empty = backend default \"Makerspace Members\")"
     required: false
     default: ""
   session_cookie_name:
@@ -142,11 +161,14 @@ runs:
         EMAIL_ADDRESS: ${{ inputs.email_address }}
         EMAIL_PASSWORD: ${{ inputs.email_password }}
         ALTCHA_HMAC_KEY: ${{ inputs.altcha_hmac_key }}
+        GOOGLE_CLIENT_ID: ${{ inputs.google_client_id }}
+        GOOGLE_CLIENT_SECRET: ${{ inputs.google_client_secret }}
+        GOOGLE_REFRESH_TOKEN: ${{ inputs.google_refresh_token }}
       with:
         host: ${{ steps.ts.outputs.resolved_host }}
         username: ${{ inputs.deployment_remote_username }}
         key: ${{ inputs.deployment_remote_ssh_private_key }}
-        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_ADDRESS,EMAIL_PASSWORD,ALTCHA_HMAC_KEY
+        envs: STRIPE_KEY,STRIPE_WEBHOOK_SECRET,COOKIE_STORE_KEY,EMAIL_ADDRESS,EMAIL_PASSWORD,ALTCHA_HMAC_KEY,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REFRESH_TOKEN
         script_stop: true
         script: |
           set -euo pipefail
@@ -158,6 +180,11 @@ runs:
           printf '%s' "$EMAIL_ADDRESS"         | sudo tee "${{ inputs.secrets_folder }}/email_address"         >/dev/null
           printf '%s' "$EMAIL_PASSWORD"        | sudo tee "${{ inputs.secrets_folder }}/email_password"        >/dev/null
           printf '%s' "$ALTCHA_HMAC_KEY"       | sudo tee "${{ inputs.secrets_folder }}/altcha_hmac_key"       >/dev/null
+          # Written unconditionally (possibly empty): the compose file bind-
+          # mounts these, and a missing bind source fails container start.
+          printf '%s' "$GOOGLE_CLIENT_ID"      | sudo tee "${{ inputs.secrets_folder }}/google_client_id"      >/dev/null
+          printf '%s' "$GOOGLE_CLIENT_SECRET"  | sudo tee "${{ inputs.secrets_folder }}/google_client_secret"  >/dev/null
+          printf '%s' "$GOOGLE_REFRESH_TOKEN"  | sudo tee "${{ inputs.secrets_folder }}/google_refresh_token"  >/dev/null
           # Glob must expand as root (the dir is mode 0700 root-owned, otmadmin
           # can't readdir for glob expansion). `sudo sh -c` runs the shell as
           # root so glob expansion + the chmod/chown both see the real files.
@@ -192,6 +219,7 @@ runs:
           printf '%s\n' 'BRAND_WORDMARK_LEADING=${{ inputs.brand_wordmark_leading }}' >> "$ENV_FILE"
           printf '%s\n' 'BRAND_WORDMARK_ACCENT=${{ inputs.brand_wordmark_accent }}'   >> "$ENV_FILE"
           printf '%s\n' 'BRAND_LOGO_URL=${{ inputs.brand_logo_url }}'       >> "$ENV_FILE"
+          printf '%s\n' 'GOOGLE_CONTACT_GROUP=${{ inputs.google_contact_group }}' >> "$ENV_FILE"
           printf '%s\n' 'SITE_RELEASE=1'                                    >> "$ENV_FILE"
 
           echo "${{ inputs.ghcr_token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin

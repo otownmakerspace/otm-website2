@@ -1,10 +1,12 @@
 package stripe
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	stripepkg "github.com/stripe/stripe-go/v82"
 	stripesession "github.com/stripe/stripe-go/v82/checkout/session"
@@ -145,12 +147,20 @@ func (s *Service) fulfillCheckout(checkoutSessionID string) error {
 			return err
 		}
 		log.Printf("webhook: rebound customer %s to returning member %s", u.CustomerID, u.Email)
+		// Re-subscribe metadata carries no name; read it from the user row so
+		// a contact created now isn't nameless. Best-effort — email suffices.
+		name := ""
+		if stored, err := dbpkg.GetByEmail(s.DB, u.Email); err == nil {
+			name = stored.Name
+		}
+		s.mailingListAdd(u.Email, name)
 		return nil
 	}
 	if err := dbpkg.AddUser(s.DB, u); err != nil {
 		log.Print("webhook: AddUser: ", err)
 		return err
 	}
+	s.mailingListAdd(u.Email, u.Name)
 
 	if err := s.Mailer.Send(u.Email, u, email.Welcome, "https://discord.gg/CGBgKNwT", struct{}{}); err != nil {
 		log.Print("webhook: welcome email: ", err)
@@ -180,6 +190,7 @@ func (s *Service) handleSubscriptionEnded(sub stripepkg.Subscription) error {
 		log.Printf("webhook: GetByCustomerID: %v", err)
 		return err
 	}
+	s.mailingListRemove(u.Email)
 
 	n, err := dbpkg.CountActive(s.DB)
 	if err != nil {
@@ -196,4 +207,41 @@ func (s *Service) handleSubscriptionEnded(sub stripepkg.Subscription) error {
 	}
 	log.Print("webhook: subscription ended for ", u.Email)
 	return nil
+}
+
+// mailingListAdd / mailingListRemove sync the member into the Google Contacts
+// mailing-list label. Deliberately best-effort: a Google outage must not fail
+// the webhook — a non-2xx response makes Stripe retry the event, re-running
+// fulfillment side effects, and the membership itself is unaffected by list
+// drift. Failures are logged loudly; the admin notification emails that
+// accompany every join/leave make manual repair possible.
+//
+// Bounded by its own timeout because the oauth2 transport may need an extra
+// round-trip to refresh the access token.
+const mailingListTimeout = 15 * time.Second
+
+func (s *Service) mailingListAdd(email, name string) {
+	if !s.Contacts.Enabled() {
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), mailingListTimeout)
+	defer cancel()
+	if err := s.Contacts.AddMember(ctx, email, name); err != nil {
+		log.Printf("webhook: MAILING LIST SYNC FAILED — add %s manually in Google Contacts: %v", email, err)
+		return
+	}
+	log.Printf("webhook: mailing list: added %s", email)
+}
+
+func (s *Service) mailingListRemove(email string) {
+	if !s.Contacts.Enabled() {
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), mailingListTimeout)
+	defer cancel()
+	if err := s.Contacts.RemoveMember(ctx, email); err != nil {
+		log.Printf("webhook: MAILING LIST SYNC FAILED — remove %s manually in Google Contacts: %v", email, err)
+		return
+	}
+	log.Printf("webhook: mailing list: removed %s", email)
 }

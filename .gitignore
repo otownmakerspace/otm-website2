@@ -31,5 +31,13 @@
 # Ansible vault password — local-only, never commit.
 /infra/provisioning/ansible/.vault_pass
 
+# Google Contacts mailing-list sync credentials. The refresh token grants
+# standing write access to the admin's PERSONAL Google account — never commit.
+# (Unlike the other secrets/app files, which hold dev/test values and are
+# historically tracked, these must stay local-only.)
+/secrets/app/google_client_id
+/secrets/app/google_client_secret
+/secrets/app/google_refresh_token
+
 # SQLite runtime DB (test data, container-mutated state — never commit).
 /db/

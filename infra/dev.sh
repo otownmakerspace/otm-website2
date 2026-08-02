@@ -68,17 +68,24 @@ ensure_network() {
 
 ensure_secrets() {
   local secrets_dir="$ROOT_DIR/secrets/app"
-  if [[ ! -d "$secrets_dir" ]]; then
-    warn "Secrets dir $secrets_dir does not exist."
-    msg "Creating it with placeholder files..."
-    mkdir -p "$secrets_dir"
-    for f in cookie_store_key stripe_key stripe_publishable_key stripe_webhook_secret email_address email_password; do
-      if [[ ! -f "$secrets_dir/$f" ]]; then
-        echo "REPLACE_ME" > "$secrets_dir/$f"
-        warn "  Created $secrets_dir/$f — fill in the real value"
-      fi
-    done
-  fi
+  # Per-file (not just first-run) so a checkout that predates a newly added
+  # secret still gets the file — compose bind mounts fail on missing sources.
+  mkdir -p "$secrets_dir"
+  for f in cookie_store_key stripe_key stripe_publishable_key stripe_webhook_secret email_address email_password; do
+    if [[ ! -f "$secrets_dir/$f" ]]; then
+      echo "REPLACE_ME" > "$secrets_dir/$f"
+      warn "  Created $secrets_dir/$f — fill in the real value"
+    fi
+  done
+  # Google Contacts sync creds are optional: empty file = feature disabled.
+  # Created empty (not REPLACE_ME) so the backend cleanly disables the sync
+  # instead of hammering Google with a garbage token.
+  for f in google_client_id google_client_secret google_refresh_token; do
+    if [[ ! -f "$secrets_dir/$f" ]]; then
+      : > "$secrets_dir/$f"
+      msg "  Created empty $secrets_dir/$f (Google Contacts sync disabled until filled)"
+    fi
+  done
 }
 
 compose_app() {

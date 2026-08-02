@@ -9,6 +9,7 @@ require (
 	github.com/stripe/stripe-go/v82 v82.5.0
 	github.com/tursodatabase/go-libsql v0.0.0-20250912065916-9dd20bb43d31
 	golang.org/x/crypto v0.42.0
+	golang.org/x/oauth2 v0.30.0
 	gopkg.in/mail.v2 v2.3.1
 )
 

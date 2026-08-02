@@ -21,6 +21,7 @@ import (
 	"github.com/iustin94/makerspace/api/internal/config"
 	dbpkg "github.com/iustin94/makerspace/api/internal/db"
 	"github.com/iustin94/makerspace/api/internal/email"
+	"github.com/iustin94/makerspace/api/internal/googlecontacts"
 	"github.com/iustin94/makerspace/api/internal/i18n"
 	"github.com/iustin94/makerspace/api/internal/session"
 	"github.com/iustin94/makerspace/api/internal/user"
@@ -34,9 +35,10 @@ type Service struct {
 	Sessions  *session.Store
 	Mailer    *email.Mailer
 	Captcha   *captcha.Service
-	HugoHead  template.HTML // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
-	LogoLight template.HTML // inline SVG of the light-mode horizontal lockup, mirrors marketing-site usage
-	LogoDark  template.HTML // inline SVG of the dark-mode wordmark, mirrors marketing-site usage
+	Contacts  *googlecontacts.Client // Gmail mailing-list label sync; disabled client when Google creds absent
+	HugoHead  template.HTML          // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
+	LogoLight template.HTML          // inline SVG of the light-mode horizontal lockup, mirrors marketing-site usage
+	LogoDark  template.HTML          // inline SVG of the dark-mode wordmark, mirrors marketing-site usage
 }
 
 // NewService returns a Service. All dependencies must be non-nil. HugoHead is
@@ -44,13 +46,14 @@ type Service struct {
 // site isn't bundled — the dashboard template falls back to a minimal head.
 // LogoLight/LogoDark are read from the same static dir; if missing they stay
 // empty and the header simply renders without a logo (no crash).
-func NewService(cfg config.Config, db *sql.DB, sessions *session.Store, mailer *email.Mailer, captchaSvc *captcha.Service) *Service {
+func NewService(cfg config.Config, db *sql.DB, sessions *session.Store, mailer *email.Mailer, captchaSvc *captcha.Service, contacts *googlecontacts.Client) *Service {
 	return &Service{
 		Cfg:       cfg,
 		DB:        db,
 		Sessions:  sessions,
 		Mailer:    mailer,
 		Captcha:   captchaSvc,
+		Contacts:  contacts,
 		HugoHead:  loadHugoHead(cfg.Backend.StaticDir),
 		LogoLight: loadInlineSVG(cfg.Backend.StaticDir, "images/branding/logos/horizontal-lockup-notagline.svg"),
 		LogoDark:  loadInlineSVG(cfg.Backend.StaticDir, "images/branding/logos/wordmark-white-transparent.svg"),
