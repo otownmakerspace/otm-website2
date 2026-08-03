@@ -94,17 +94,28 @@ func main() {
 	log.Fatal(stdhttp.ListenAndServe(addr, mux))
 }
 
-// backfillMailingList reconciles the Google Contacts mailing-list label with
-// the active members in THIS deployment's database — the authoritative member
-// list. It replaces the retired cmd/googlebackfill tool, which read whatever
-// SQLite file it was pointed at (by default a local dev copy) and could push
-// non-member data into the real label. Runs in the background on every
-// release-mode start; SyncMembers is duplicate-safe, so restarts converge to
-// a no-op and a half-finished run heals itself on the next one.
+// backfillMailingList makes the Google Contacts mailing-list label mirror the
+// active members in THIS deployment's database — the authoritative member
+// list. Mirror means both directions: missing members are added AND labelled
+// contacts who aren't active members are unlabelled (so drift from the days
+// before the sync existed — or from the retired cmd/googlebackfill tool that
+// once seeded the label from a local dev DB copy — heals on the next start).
+// Consequently the label is database-owned: contacts added to it by hand in
+// Gmail get stripped again here. Runs in the background on every release-mode
+// start; SyncMembers is duplicate-safe and idempotent, so restarts converge
+// to a no-op and a half-finished run heals itself on the next one.
 func backfillMailingList(database *sql.DB, contacts *googlecontacts.Client) {
 	users, err := db.ListActive(database)
 	if err != nil {
 		log.Print("google contacts: backfill: list active members: ", err)
+		return
+	}
+	// Refuse to mirror an empty member set: zero active members is far more
+	// likely a misconfigured DB path (fresh file, wrong volume mount) than a
+	// makerspace with no members — and mirroring it would strip the whole
+	// label. Manual pruning is the right tool for a genuinely empty roster.
+	if len(users) == 0 {
+		log.Print("google contacts: backfill SKIPPED — no active members in the database (empty label mirror refused)")
 		return
 	}
 	members := make([]googlecontacts.Member, len(users))
@@ -115,10 +126,10 @@ func backfillMailingList(database *sql.DB, contacts *googlecontacts.Client) {
 	// first fill creates contacts at a quota-friendly pace (~0.7s each).
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
-	created, labelled, already, err := contacts.SyncMembers(ctx, members)
+	created, labelled, already, removed, err := contacts.SyncMembers(ctx, members)
 	if err != nil {
 		log.Print("google contacts: backfill INCOMPLETE (self-heals on next restart): ", err)
 	}
-	log.Printf("google contacts: backfill done — %d active member(s): %d contact(s) created, %d labelled, %d already in place",
-		len(members), created, labelled, already)
+	log.Printf("google contacts: backfill done — %d active member(s): %d contact(s) created, %d labelled, %d already in place, %d unlabelled",
+		len(members), created, labelled, already, removed)
 }

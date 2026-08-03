@@ -140,33 +140,37 @@ const syncCreateDelay = 700 * time.Millisecond
 // under the People API's documented maximum of 1000 per mutate call.
 const modifyBatchMax = 200
 
-// SyncMembers ensures every member is a contact carrying the mailing-list
-// label. Duplicate-safe by construction: the full contact list is fetched
-// ONCE up front, so re-running (e.g. on every server start) re-labels rather
-// than re-creates, and repeated emails in the input collapse to one contact.
-// Contacts are never removed from the label — the cancellation webhook owns
-// removal.
+// SyncMembers makes the mailing-list label MIRROR the given member set:
+// afterwards, exactly the members' contacts carry the label. Existing
+// contacts are labelled, unknown emails become new contacts, and labelled
+// contacts matching no member are unlabelled — including hand-added ones and
+// email-less contacts (nothing without an address belongs on a mailing list).
+// Contacts themselves are never deleted, only the label membership changes.
 //
-// Returns how many contacts were created, how many existing contacts were
-// newly labelled, and how many were already in place. A per-member create
+// Duplicate-safe and idempotent: the full contact list is fetched ONCE up
+// front, so re-running (e.g. on every server start) re-labels rather than
+// re-creates, repeated emails in the input collapse to one contact, and a
+// converged label is a pure read. Returns how many contacts were created,
+// newly labelled, already in place, and unlabelled. A per-member create
 // failure is collected rather than fatal — the rest of the list still syncs —
 // and the joined error reports every failure.
-func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, labelled, already int, err error) {
+func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, labelled, already, removed int, err error) {
 	if !c.Enabled() {
-		return 0, 0, 0, ErrDisabled
+		return 0, 0, 0, 0, ErrDisabled
 	}
 	group, err := c.ensureGroup(ctx)
 	if err != nil {
-		return 0, 0, 0, err
+		return 0, 0, 0, 0, err
 	}
 	byEmail, inGroup, err := c.listContacts(ctx, group)
 	if err != nil {
-		return 0, 0, 0, err
+		return 0, 0, 0, 0, err
 	}
 
 	var errs []error
 	var toLabel []string
 	seen := make(map[string]bool, len(members))
+	keep := make(map[string]bool, len(members)) // pre-existing contacts that match a member
 	paced := false
 	for _, m := range members {
 		email := strings.ToLower(strings.TrimSpace(m.Email))
@@ -182,7 +186,7 @@ func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, la
 				select {
 				case <-time.After(syncCreateDelay):
 				case <-ctx.Done():
-					return created, labelled, already, errors.Join(append(errs, ctx.Err())...)
+					return created, labelled, already, removed, errors.Join(append(errs, ctx.Err())...)
 				}
 			}
 			paced = true
@@ -191,14 +195,26 @@ func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, la
 				continue
 			}
 			created++
-		case !inGroup[person]:
-			toLabel = append(toLabel, person)
-			inGroup[person] = true // two input emails can map to one contact — label it once
-			labelled++
-		default:
+		case keep[person]:
+			// Two input emails mapping to one contact — already handled.
+		case inGroup[person]:
+			keep[person] = true
 			already++
+		default:
+			keep[person] = true
+			toLabel = append(toLabel, person)
+			labelled++
 		}
 	}
+
+	// Mirror step: unlabel everyone carrying the label who matched no member.
+	var toUnlabel []string
+	for person := range inGroup {
+		if !keep[person] {
+			toUnlabel = append(toUnlabel, person)
+		}
+	}
+
 	for start := 0; start < len(toLabel); start += modifyBatchMax {
 		batch := toLabel[start:min(start+modifyBatchMax, len(toLabel))]
 		if merr := c.modifyGroupMembers(ctx, group, batch, nil); merr != nil {
@@ -206,7 +222,15 @@ func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, la
 			errs = append(errs, merr)
 		}
 	}
-	return created, labelled, already, errors.Join(errs...)
+	for start := 0; start < len(toUnlabel); start += modifyBatchMax {
+		batch := toUnlabel[start:min(start+modifyBatchMax, len(toUnlabel))]
+		if merr := c.modifyGroupMembers(ctx, group, nil, batch); merr != nil {
+			errs = append(errs, merr)
+			continue
+		}
+		removed += len(batch)
+	}
+	return created, labelled, already, removed, errors.Join(errs...)
 }
 
 // listContacts fetches every connection once, returning each email address
