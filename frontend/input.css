@@ -122,7 +122,7 @@
   }
   
   .page-content details summary {
-    @apply cursor-pointer select-none list-none px-5 py-4 font-secondary font-semibold text-secondary transition-colors duration-200 hover:text-accent flex items-center justify-between;
+    @apply cursor-pointer select-none list-none px-5 py-4 font-secondary font-semibold text-secondary transition-colors duration-200 hover:text-accent active:text-accent flex items-center justify-between;
   }
   
   .page-content details summary::-webkit-details-marker {

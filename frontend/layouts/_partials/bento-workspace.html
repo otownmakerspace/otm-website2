@@ -1,7 +1,7 @@
 {{/* Bento Workspace Grid */}}
 {{/* Usage: {{ partial "bento-workspace.html" . }} */}}
 
-<section class="bg-primary py-16">
+<section class="bg-primary py-6 xl:py-16">
   <div class="container mx-auto px-4">
 
     <!-- Desktop Bento Grid -->
@@ -77,46 +77,50 @@
 
     </div>
 
-    <!-- Mobile Version: List -->
+    <!-- Mobile Version: hero-first photo bento.
+         Overlay text/gradients use white/black (not theme vars) — dark mode
+         remaps secondary/primary-2 to grays that fail over photos. -->
     <div class="flex flex-col gap-4 xl:hidden">
 
-      <a href="{{ "/work-areas/3dprint/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "3d_print" }}
-      </a>
-
-      <a href="{{ "/work-areas/electronics/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "electronics" }}
-      </a>
-
-      <!-- Mobile Hero -->
-      {{ $img := resources.Get "images/bento/weld.png" }}
-      <div class="relative overflow-hidden rounded-[10px] bg-cover bg-center py-10"
-        style="background-image: url('{{ with $img }}{{ .RelPermalink }}{{ end }}');">
-        <div class="absolute inset-0 bg-secondary/70"></div>
-        <div class="relative z-10 text-center px-6">
-          <h2 class="font-secondary text-2xl font-bold text-primary-2">{{ i18n "your_very_own" }}</h2>
-          <h2 class="font-secondary text-3xl font-bold text-accent">{{ i18n "makerspace" }}</h2>
+      <!-- Mobile Hero: value proposition above the fold, page h1 on mobile -->
+      {{ $heroImg := resources.Get "images/bento/weld.png" }}
+      {{ $hero := $heroImg.Resize "800x webp q85" }}
+      <div class="relative h-72 overflow-hidden rounded-[10px]">
+        <img src="{{ $hero.RelPermalink }}" alt="" fetchpriority="high" class="absolute inset-0 h-full w-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
+        <div class="absolute inset-x-0 bottom-0 p-5">
+          <h1 class="font-secondary font-bold leading-tight">
+            <span class="block text-2xl text-white">{{ i18n "your_very_own" }}</span>
+            <span class="block text-3xl text-accent">{{ i18n "makerspace" }}</span>
+          </h1>
+          <p class="mt-2 text-sm leading-snug text-white/80">{{ i18n "hero_subline" }}</p>
         </div>
       </div>
 
-      <a href="{{ "/work-areas/laser/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "laser_cutter" }}
-      </a>
+      <!-- Work area tiles: same photos and bottom-left label grammar as the desktop bento -->
+      <div class="grid grid-cols-2 gap-3">
+        {{ $areas := slice
+          (dict "url" "/work-areas/3dprint/" "img" "images/bento/3d-print.png" "label" "3d_print")
+          (dict "url" "/work-areas/laser/" "img" "images/bento/Laser-cutter.png" "label" "laser_cutter")
+          (dict "url" "/work-areas/cnc/" "img" "images/workspace/cnc_background.jpg" "label" "cnc_machine")
+          (dict "url" "/work-areas/metal/" "img" "images/workspace/metal_background.jpg" "label" "metal_work")
+          (dict "url" "/work-areas/electronics/" "img" "images/bento/solder.png" "label" "electronics")
+          (dict "url" "/work-areas/woodwork/" "img" "images/bento/woodworking.png" "label" "wood_work")
+        }}
+        {{ range $areas }}
+        {{ $img := resources.Get .img }}
+        {{ $tile := $img.Resize "480x webp q85" }}
+        <a href="{{ .url | relLangURL }}" class="relative h-36 overflow-hidden rounded-[10px] transition-transform duration-150 active:scale-[0.98]">
+          <img src="{{ $tile.RelPermalink }}" alt="" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+          <p class="absolute bottom-3 left-3 right-3 font-secondary text-base font-bold text-white inline-flex items-center gap-2">{{ i18n .label }}<i class="fa-solid fa-arrow-right text-xs"></i></p>
+        </a>
+        {{ end }}
+      </div>
 
-      <a href="{{ "/work-areas/cnc/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "cnc_machine" }}
-      </a>
-
-      <a href="{{ "/work-areas/metal/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "metal_work" }}
-      </a>
-
-      <a href="{{ "/work-areas/woodwork/" | relLangURL }}" class="block rounded-[10px] bg-surface px-6 py-4 text-center font-secondary font-semibold text-secondary shadow-sm transition-colors hover:bg-accent hover:text-white">
-        {{ i18n "wood_work" }}
-      </a>
-
-      <a href="{{ "/work-areas/" | relLangURL }}" class="bg-accent hover:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
-        {{ i18n "explore_space" }}
+      <!-- CTA advances the funnel — the tiles already cover exploration -->
+      <a href="{{ "/getting-started/" | relLangURL }}" class="bg-accent active:bg-accent-2 block rounded-[10px] px-6 py-4 text-center font-secondary font-semibold text-white shadow-sm transition-colors">
+        {{ i18n "getting_started" }}
       </a>
 
     </div>

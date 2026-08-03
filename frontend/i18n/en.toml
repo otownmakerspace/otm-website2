@@ -61,6 +61,9 @@ other = "Your Very Own Makerspace"
 [your_very_own]
 other = "Your Very Own"
 
+[hero_subline]
+other = "A community-driven workshop in Odense, open to members around the clock."
+
 [makerspace]
 other = "Makerspace"
 
