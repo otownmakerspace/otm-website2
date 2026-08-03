@@ -285,6 +285,9 @@ other = "Arkiv"
 [by]
 other = "Af"
 
+[untranslated_post]
+other = "Ikke oversat — vises på originalsproget"
+
 # ── About ──
 [contents]
 other = "Indhold"

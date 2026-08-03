@@ -285,6 +285,9 @@ other = "Archive"
 [by]
 other = "By"
 
+[untranslated_post]
+other = "Not translated — shown in its original language"
+
 # ── About ──
 [contents]
 other = "Contents"

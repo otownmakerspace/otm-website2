@@ -1,4 +1,21 @@
 {{ define "main" }}
+{{- /*
+  Untranslated fallback: each language builds as a separate site, so posts
+  without a .<lang>.md twin would silently vanish from that language's list.
+  Merge in default-language posts that have no translation here; they render
+  in their original language with an "untranslated" badge.
+*/ -}}
+{{- $pages := .Pages }}
+{{- if ne .Language.Lang site.Sites.Default.Language.Lang }}
+  {{- $lang := .Language.Lang }}
+  {{- with site.Sites.Default.GetPage .Path }}
+    {{- range .RegularPages }}
+      {{- $translated := false }}
+      {{- range .Translations }}{{ if eq .Language.Lang $lang }}{{ $translated = true }}{{ end }}{{ end }}
+      {{- if not $translated }}{{ $pages = $pages | append . }}{{ end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 <section class="py-16">
   <div class="container mx-auto px-4">
     <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
@@ -31,7 +48,7 @@
 
           <!-- Post List -->
           <ul class="flex flex-col gap-3" id="post-list">
-            {{ range .Pages.ByDate.Reverse }}
+            {{ range $pages.ByDate.Reverse }}
             <li>
               <a href="#{{ .File.BaseFileName }}" class="post-link group block rounded-[10px] p-2 duration-200 hover:bg-surface">
                 <time datetime='{{ .Date.Format "2006-01-02" }}' class="text-xs text-secondary-2">
@@ -49,7 +66,7 @@
           <div class="mt-6 border-t border-primary-2 pt-6">
             <h3 class="text-secondary mb-3 text-sm font-semibold uppercase tracking-wide">{{ i18n "archive" }}</h3>
             <ul class="flex flex-col gap-1 text-sm">
-              {{ range .Pages.GroupByDate "January 2006" }}
+              {{ range $pages.GroupByDate "January 2006" }}
               <li class="text-gray-dark">{{ .Key }} ({{ len .Pages }})</li>
               {{ end }}
             </ul>
@@ -59,7 +76,7 @@
 
       <!-- Main Content -->
       <main class="min-w-0 flex-1">
-        {{ range .Pages.ByDate.Reverse }}
+        {{ range $pages.ByDate.Reverse }}
         <article id="{{ .File.BaseFileName }}" class="mb-12 scroll-mt-8 rounded-[10px] bg-surface p-6 shadow-sm xl:p-8">
           <header class="mb-6">
             <div class="mb-2 flex flex-wrap items-center gap-3">
@@ -69,6 +86,11 @@
               {{ with .Params.category }}
               <span class="bg-accent/10 text-accent rounded-full px-3 py-1 text-xs font-medium">
                 {{ . }}
+              </span>
+              {{ end }}
+              {{ if ne .Language.Lang $.Language.Lang }}
+              <span class="bg-primary text-secondary-2 rounded-full px-3 py-1 text-xs font-medium">
+                {{ i18n "untranslated_post" }}
               </span>
               {{ end }}
             </div>
