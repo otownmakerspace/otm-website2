@@ -1,7 +1,7 @@
 # =========================================================
 # Backend builder
 # =========================================================
-FROM golang:1.24-bookworm AS backend-builder
+FROM golang:1.25-bookworm AS backend-builder
 
 WORKDIR /src
 

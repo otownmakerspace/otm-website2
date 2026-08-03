@@ -5,87 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>O'Town Makerspace — Newsletter template</title>
   <!--
-    Member-newsletter template for HAND-SENDING from Gmail.
-    Derived from api/internal/email/templates/_layout.html so announcements
-    match the transactional emails (welcome/goodbye) members already receive.
-
-    HOW TO USE
-      1. Open this file in a browser (double-click it).
-      2. Select all (Ctrl+A), copy (Ctrl+C).
-      3. Paste into a Gmail compose window — the design survives because
-         every style is inline.
-      4. Replace the [BRACKETED] placeholder text; delete blocks you don't
-         need (the button and the second section are optional).
-      5. Put "Makerspace Members" in BCC and send — or save the compose as a
-         Gmail Template (⋮ → Templates → Save draft as template) so future
-         sends start pre-branded.
-
-    DESIGN NOTES
-      - Header is the TEXT wordmark on purpose: the SVG logos don't render
-        in Gmail/Outlook. If a PNG wordmark is ever exported, an <img> can
-        replace the header span.
-      - Tables + inline styles only; <style> blocks don't survive the
-        copy-paste into Gmail, so nothing important may live in one.
-      - Palette mirrors frontend/config/_default/hugo.toml [params.colors]:
-        navy #0D1A63 / #1A2CA3, orange #F68048, page #EDF2F8, muted #7681AB.
+    Member newsletter for hand-sending from Gmail.
+    Open in a browser → select all → copy → paste into Gmail compose →
+    replace [BRACKETED] text (delete the button table if unused) →
+    BCC "Makerspace Members" and send.
+    Tables + inline styles only — <style> blocks don't survive the paste.
+    Palette mirrors frontend/config/_default/hugo.toml [params.colors].
   -->
 </head>
 <body style="margin: 0; padding: 0; background-color: #EDF2F8; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #1A2CA3;">
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; background-color: #EDF2F8;">
     <tr>
-      <td align="center" style="padding: 40px 16px;">
+      <td align="center" style="padding: 32px 16px;">
 
-        <!-- Wordmark -->
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; max-width: 600px; margin: 0 auto;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; max-width: 560px;">
+
+          <!-- Wordmark -->
           <tr>
-            <td align="center" style="padding-bottom: 28px;">
+            <td align="center" style="padding-bottom: 20px;">
               <a href="https://otownmakerspace.dk" style="text-decoration: none;">
-                <span style="font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; font-weight: 700; color: #0D1A63; letter-spacing: 1px;">
+                <span style="font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: 700; color: #0D1A63; letter-spacing: 1px;">
                   O'TOWN&nbsp;<span style="color: #F68048;">MAKERSPACE</span>
                 </span>
               </a>
             </td>
           </tr>
-        </table>
 
-        <!-- Card -->
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; max-width: 600px; background-color: #ffffff; border: 1px solid #E1E9F4; border-radius: 12px;">
+          <!-- Card -->
           <tr>
-            <td style="padding: 40px;">
+            <td style="background-color: #ffffff; border: 1px solid #E1E9F4; border-radius: 12px; padding: 32px;">
 
-              <h1 style="margin: 0 0 16px 0; font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 28px; line-height: 34px; font-weight: 700; color: #0D1A63;">
-                [HEADLINE — e.g. "New laser cutter has arrived"]
+              <h1 style="margin: 0 0 16px 0; font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 24px; line-height: 30px; font-weight: 700; color: #0D1A63;">
+                [HEADLINE]
               </h1>
 
               <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
                 Hi everyone,
               </p>
               <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
-                [YOUR MESSAGE HERE — a couple of short paragraphs. Keep links
-                orange: <a href="https://otownmakerspace.dk" style="color: #F68048; text-decoration: underline;">like this</a>.]
+                [YOUR MESSAGE — keep links orange:
+                <a href="https://otownmakerspace.dk" style="color: #F68048; text-decoration: underline;">like this</a>.]
               </p>
 
-              <!-- Optional CTA button — delete this table if not needed -->
+              <!-- Optional button — delete this table if not needed -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin: 24px 0;">
                 <tr>
                   <td align="center" bgcolor="#F68048" style="border-radius: 10px;">
-                    <a href="https://otownmakerspace.dk" style="display: inline-block; padding: 14px 32px; font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 600; line-height: 20px; color: #ffffff; text-decoration: none; background-color: #F68048; border-radius: 10px;">
+                    <a href="https://otownmakerspace.dk" style="display: inline-block; padding: 12px 28px; font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 600; line-height: 20px; color: #ffffff; text-decoration: none; background-color: #F68048; border-radius: 10px;">
                       [BUTTON TEXT]
                     </a>
                   </td>
                 </tr>
               </table>
-
-              <!-- Optional second section — delete from <hr> down if not needed -->
-              <hr style="border: none; border-top: 1px solid #E1E9F4; margin: 28px 0;">
-
-              <h2 style="margin: 0 0 12px 0; font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; line-height: 26px; font-weight: 700; color: #0D1A63;">
-                [SECOND TOPIC — e.g. "Upcoming: open workshop night"]
-              </h2>
-              <p style="margin: 0 0 4px 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
-                [More text here.]
-              </p>
 
               <p style="margin: 24px 0 0 0; font-size: 16px; line-height: 24px; color: #1A2CA3;">
                 See you at the space,<br>
@@ -94,23 +66,7 @@
 
             </td>
           </tr>
-        </table>
 
-        <!-- Footer -->
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; max-width: 600px; margin: 0 auto;">
-          <tr>
-            <td align="center" style="padding: 28px 16px 0 16px;">
-              <p style="margin: 0 0 6px 0; font-family: 'Roboto', sans-serif; font-size: 13px; line-height: 20px; color: #7681AB;">
-                <strong style="color: #0D1A63;">O'Town Makerspace</strong>
-                &nbsp;&middot;&nbsp; Havnegade 57, 5000 Odense C, Denmark
-              </p>
-              <p style="margin: 0; font-family: 'Roboto', sans-serif; font-size: 13px; line-height: 20px; color: #7681AB;">
-                <a href="https://otownmakerspace.dk" style="color: #0D1A63; text-decoration: underline;">otownmakerspace.dk</a>
-                &nbsp;&middot;&nbsp;
-                <a href="mailto:info@otownmakerspace.dk" style="color: #0D1A63; text-decoration: underline;">info@otownmakerspace.dk</a>
-              </p>
-            </td>
-          </tr>
         </table>
 
       </td>
