@@ -81,12 +81,15 @@
     @apply mb-4;
   }
   
+  /* Block flow + margins, NOT flex/gap: news posts get copy-pasted into
+     Gmail, which keeps a copied display:flex but drops flex-direction,
+     flowing list items into a row. */
   .page-content ul {
-    @apply mb-6 ml-5 flex flex-col gap-2 list-disc;
+    @apply mb-6 ml-5 list-disc space-y-2;
   }
-  
+
   .page-content ol {
-    @apply mb-6 ml-5 flex flex-col gap-2 list-decimal;
+    @apply mb-6 ml-5 list-decimal space-y-2;
   }
   
   .page-content li {

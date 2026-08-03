@@ -19,7 +19,7 @@ On Saturday, 15th August, we will be hosting another social meetup at the makers
 
 The event will take place from 13:00 and will end around 17:00. If you wish to attend, RSVP on Discord or at the following link:
 
-[RSVP — MakerMeet, 15th August](https://calendar.google.com/calendar/event?action=TEMPLATE&tmeid=M29zdGtiNWxzZGo2NWk5MTJtNjlkYzFnYXEgYWRtaW5Ab3Rvd25tYWtlcnNwYWNlLmRr&tmsrc=admin%40otownmakerspace.dk)
+[RSVP — MakerMeet, 15th August](https://calendar.app.google/V4mbbjYHGiWxnsZf6)
 
 ## Repurpose Marketplace
 
