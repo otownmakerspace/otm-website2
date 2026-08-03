@@ -5,6 +5,7 @@
 //   - open the libsql DB and run migrations
 //   - in test mode, seed the test user (real Stripe customer + sub)
 //   - construct dependencies and the route mux
+//   - in release mode, backfill the Gmail mailing-list label from the DB
 //   - bind and serve
 //
 // Domain logic lives under internal/. Adding a new endpoint or flow does not
@@ -12,8 +13,11 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"log"
 	stdhttp "net/http"
+	"time"
 
 	stripepkg "github.com/stripe/stripe-go/v82"
 
@@ -67,10 +71,14 @@ func main() {
 		log.Print("captcha: DISABLED (ALTCHA_HMAC_KEY not set) — protected forms accept any submission")
 	}
 	contacts := googlecontacts.New(cfg.Google)
-	if contacts.Enabled() {
-		log.Printf("google contacts: mailing-list sync ENABLED (label %q)", cfg.Google.ContactGroup)
-	} else {
+	switch {
+	case !contacts.Enabled():
 		log.Print("google contacts: mailing-list sync DISABLED (GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET/GOOGLE_REFRESH_TOKEN not all set)")
+	case cfg.Backend.IsTest:
+		log.Printf("google contacts: mailing-list sync ENABLED (label %q); startup backfill SKIPPED — test-mode data must never reach the real mailing list", cfg.Google.ContactGroup)
+	default:
+		log.Printf("google contacts: mailing-list sync ENABLED (label %q); backfilling from the membership database", cfg.Google.ContactGroup)
+		go backfillMailingList(database, contacts)
 	}
 	svc := stripe.NewService(cfg, database, sessions, mailer, captchaSvc, contacts)
 
@@ -84,4 +92,33 @@ func main() {
 	log.Printf("config: smtp=%s:%d stripe_price_id=%s", cfg.Email.Host, cfg.Email.Port, cfg.Stripe.PriceID)
 	log.Printf("brand: name=%q wordmark=%q/%q logo=%s", cfg.Brand.Name, cfg.Brand.WordmarkLeading, cfg.Brand.WordmarkAccent, cfg.Brand.LogoURL)
 	log.Fatal(stdhttp.ListenAndServe(addr, mux))
+}
+
+// backfillMailingList reconciles the Google Contacts mailing-list label with
+// the active members in THIS deployment's database — the authoritative member
+// list. It replaces the retired cmd/googlebackfill tool, which read whatever
+// SQLite file it was pointed at (by default a local dev copy) and could push
+// non-member data into the real label. Runs in the background on every
+// release-mode start; SyncMembers is duplicate-safe, so restarts converge to
+// a no-op and a half-finished run heals itself on the next one.
+func backfillMailingList(database *sql.DB, contacts *googlecontacts.Client) {
+	users, err := db.ListActive(database)
+	if err != nil {
+		log.Print("google contacts: backfill: list active members: ", err)
+		return
+	}
+	members := make([]googlecontacts.Member, len(users))
+	for i, u := range users {
+		members[i] = googlecontacts.Member{Email: u.Email, Name: u.Name}
+	}
+	// Generous ceiling: the run is a couple of requests when converged, but a
+	// first fill creates contacts at a quota-friendly pace (~0.7s each).
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+	defer cancel()
+	created, labelled, already, err := contacts.SyncMembers(ctx, members)
+	if err != nil {
+		log.Print("google contacts: backfill INCOMPLETE (self-heals on next restart): ", err)
+	}
+	log.Printf("google contacts: backfill done — %d active member(s): %d contact(s) created, %d labelled, %d already in place",
+		len(members), created, labelled, already)
 }

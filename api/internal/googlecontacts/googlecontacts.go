@@ -25,6 +25,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"golang.org/x/oauth2"
 
@@ -122,6 +123,147 @@ func (c *Client) RemoveMember(ctx context.Context, email string) error {
 		return nil
 	}
 	return c.modifyGroupMembers(ctx, group, nil, []string{person})
+}
+
+// Member is one desired mailing-list entry, as SyncMembers consumes them.
+type Member struct {
+	Email string
+	Name  string
+}
+
+// syncCreateDelay paces contact creations during SyncMembers so a large
+// backfill stays inside the People API per-minute write quota. Labelling
+// existing contacts is exempt — that is a single batched members:modify call.
+const syncCreateDelay = 700 * time.Millisecond
+
+// modifyBatchMax caps resource names per members:modify request, comfortably
+// under the People API's documented maximum of 1000 per mutate call.
+const modifyBatchMax = 200
+
+// SyncMembers ensures every member is a contact carrying the mailing-list
+// label. Duplicate-safe by construction: the full contact list is fetched
+// ONCE up front, so re-running (e.g. on every server start) re-labels rather
+// than re-creates, and repeated emails in the input collapse to one contact.
+// Contacts are never removed from the label — the cancellation webhook owns
+// removal.
+//
+// Returns how many contacts were created, how many existing contacts were
+// newly labelled, and how many were already in place. A per-member create
+// failure is collected rather than fatal — the rest of the list still syncs —
+// and the joined error reports every failure.
+func (c *Client) SyncMembers(ctx context.Context, members []Member) (created, labelled, already int, err error) {
+	if !c.Enabled() {
+		return 0, 0, 0, ErrDisabled
+	}
+	group, err := c.ensureGroup(ctx)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+	byEmail, inGroup, err := c.listContacts(ctx, group)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	var errs []error
+	var toLabel []string
+	seen := make(map[string]bool, len(members))
+	paced := false
+	for _, m := range members {
+		email := strings.ToLower(strings.TrimSpace(m.Email))
+		if email == "" || seen[email] {
+			continue
+		}
+		seen[email] = true
+
+		person, exists := byEmail[email]
+		switch {
+		case !exists:
+			if paced {
+				select {
+				case <-time.After(syncCreateDelay):
+				case <-ctx.Done():
+					return created, labelled, already, errors.Join(append(errs, ctx.Err())...)
+				}
+			}
+			paced = true
+			if cerr := c.createContact(ctx, group, email, m.Name); cerr != nil {
+				errs = append(errs, cerr)
+				continue
+			}
+			created++
+		case !inGroup[person]:
+			toLabel = append(toLabel, person)
+			inGroup[person] = true // two input emails can map to one contact — label it once
+			labelled++
+		default:
+			already++
+		}
+	}
+	for start := 0; start < len(toLabel); start += modifyBatchMax {
+		batch := toLabel[start:min(start+modifyBatchMax, len(toLabel))]
+		if merr := c.modifyGroupMembers(ctx, group, batch, nil); merr != nil {
+			labelled -= len(batch)
+			errs = append(errs, merr)
+		}
+	}
+	return created, labelled, already, errors.Join(errs...)
+}
+
+// listContacts fetches every connection once, returning each email address
+// mapped to its person resource name (a multi-email contact appears under all
+// its addresses) plus the set of people already carrying the label. One
+// paginated sweep serves a whole SyncMembers run — the per-member lookup that
+// findContactByEmail does would cost one full listing PER member.
+func (c *Client) listContacts(ctx context.Context, group string) (byEmail map[string]string, inGroup map[string]bool, err error) {
+	byEmail = make(map[string]string)
+	inGroup = make(map[string]bool)
+	pageToken := ""
+	for {
+		var out struct {
+			Connections []struct {
+				ResourceName   string `json:"resourceName"`
+				EmailAddresses []struct {
+					Value string `json:"value"`
+				} `json:"emailAddresses"`
+				Memberships []struct {
+					ContactGroupMembership struct {
+						ContactGroupResourceName string `json:"contactGroupResourceName"`
+					} `json:"contactGroupMembership"`
+				} `json:"memberships"`
+			} `json:"connections"`
+			NextPageToken string `json:"nextPageToken"`
+		}
+		q := url.Values{
+			"personFields": {"emailAddresses,memberships"},
+			"pageSize":     {"1000"},
+		}
+		if pageToken != "" {
+			q.Set("pageToken", pageToken)
+		}
+		if err := c.call(ctx, http.MethodGet, "/people/me/connections?"+q.Encode(), nil, &out); err != nil {
+			return nil, nil, fmt.Errorf("list connections: %w", err)
+		}
+		for _, p := range out.Connections {
+			for _, e := range p.EmailAddresses {
+				addr := strings.ToLower(strings.TrimSpace(e.Value))
+				if addr == "" {
+					continue
+				}
+				if _, dup := byEmail[addr]; !dup {
+					byEmail[addr] = p.ResourceName
+				}
+			}
+			for _, m := range p.Memberships {
+				if m.ContactGroupMembership.ContactGroupResourceName == group {
+					inGroup[p.ResourceName] = true
+				}
+			}
+		}
+		pageToken = out.NextPageToken
+		if pageToken == "" {
+			return byEmail, inGroup, nil
+		}
+	}
 }
 
 // ensureGroup resolves the label's resource name ("contactGroups/<id>"),

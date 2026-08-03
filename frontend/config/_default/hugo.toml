@@ -101,7 +101,7 @@ defaultContentLanguage = 'en'
 
   [params.social]
     facebook = "https://www.facebook.com/profile.php?id=61590717692379&sk=mentions"
-    instagram = "https://www.instagram.com/otownmakerspace/"
+    instagram = "https://www.instagram.com/otown_makerspace/"
     discord = "https://discord.gg/RHVfMu49CG"
 
 # Enable raw HTML in markdown
