@@ -1,21 +1,16 @@
 ---
-title: "New Partnership Announcement"
+title: "New Partner: Hetzner"
 date: 2026-01-25
-author: "Director"
+author: "The Board"
 category: "Announcements"
-tags: ["Partnership", "Growth"]
-draft: true
+tags: ["Partnership", "Hetzner", "Sponsors"]
+draft: false
 ---
 
-We are thrilled to announce our new partnership with [Partner Organization Name], which will expand our reach and impact in the community.
+We are thrilled to welcome [Hetzner](https://www.hetzner.com) as a partner of O'Town Makerspace.
 
-> "This partnership represents a significant step forward in our mission to serve the community."
-> — Organization Director
+Hetzner is one of Europe's leading hosting and cloud infrastructure providers, and their support keeps our digital home running — the website and member systems you use every day are hosted on Hetzner infrastructure.
 
-### What This Means for Volunteers
+Partnerships like this let us put more of our resources into what matters: tools, materials, and events at the makerspace. You can see all the companies supporting us on our [sponsors page](/sponsors/).
 
-This partnership opens up new opportunities for our volunteers, including:
-
-- Access to additional training resources
-- Joint volunteer events
-- Expanded program offerings
+If your company would also like to support the makerspace, [get in touch](/contact/).
