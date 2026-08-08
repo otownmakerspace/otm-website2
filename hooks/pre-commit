@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# ─────────────────────────────────────────────────────────────────────────────
+# hooks/pre-commit
+#
+# Keeps the committed brand-logo PNGs in sync with the brand SVGs.
+#
+# The PNGs under marketing-materials/assets/logos/ are tracked (see that
+# directory's .gitignore note): the Typst templates embed PNGs, not SVGs,
+# because the lockups are composite SVGs whose nested <image href> the Typst
+# image() loader can't resolve. Committing them means a fresh clone renders
+# without needing a rasterizer installed.
+#
+# Because they are tracked, they can drift from their sources. This hook fires
+# only when a brand logo SVG (or the export script itself) is staged, then:
+#   1. re-runs export-logos.sh,
+#   2. prunes PNGs whose source SVG no longer exists,
+#   3. stages the resulting PNG changes into the same commit.
+#
+# Install (once per clone):   git config core.hooksPath hooks
+# Bypass for one commit:      git commit --no-verify
+# ─────────────────────────────────────────────────────────────────────────────
+set -euo pipefail
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+LOGO_SRC_REL="frontend/branding/logos"
+EXPORT_SCRIPT="$REPO_ROOT/marketing-materials/export-logos.sh"
+OUT_DIR="$REPO_ROOT/marketing-materials/assets/logos"
+IND_DIR="$OUT_DIR/individual"
+
+# Only act when something that affects the rendered PNGs is staged. Keeps
+# ordinary commits fast — a full export is ~36 rasterizer invocations.
+staged=$(git diff --cached --name-only --diff-filter=ACMRD)
+if ! grep -qE "^($LOGO_SRC_REL/.*\.svg|marketing-materials/export-logos\.sh)$" <<<"$staged"; then
+  exit 0
+fi
+
+echo "pre-commit: brand logo sources changed — regenerating PNGs…"
+
+# The export script hard-fails if no rasterizer is present. Surface that as a
+# blocked commit rather than letting stale PNGs ship alongside new SVGs.
+if ! command -v inkscape >/dev/null 2>&1 \
+  && ! command -v rsvg-convert >/dev/null 2>&1 \
+  && ! command -v magick >/dev/null 2>&1; then
+  echo "pre-commit: ERROR — no rasterizer on PATH (need inkscape, rsvg-convert, or magick)." >&2
+  echo "  The logo PNGs are committed and would go out of sync with the SVGs." >&2
+  echo "  Install one, or commit with --no-verify if you will regenerate separately." >&2
+  exit 1
+fi
+
+"$EXPORT_SCRIPT"
+
+# Prune orphans: a deleted SVG would otherwise leave its PNG committed forever.
+if [[ -d "$IND_DIR" ]]; then
+  for png in "$IND_DIR"/*.png; do
+    [[ -e "$png" ]] || continue
+    base=$(basename "$png" .png)
+    if [[ ! -e "$REPO_ROOT/$LOGO_SRC_REL/$base.svg" ]]; then
+      echo "  pruning orphan: individual/$base.png (no matching SVG)"
+      rm -f "$png"
+    fi
+  done
+fi
+
+git add -A "$OUT_DIR"
+
+if git diff --cached --quiet -- "$OUT_DIR"; then
+  echo "pre-commit: logo PNGs already up to date."
+else
+  echo "pre-commit: staged logo PNG updates:"
+  git diff --cached --name-status -- "$OUT_DIR" | sed 's/^/  /'
+fi
