@@ -45,3 +45,9 @@
 
 # SQLite runtime DB (test data, container-mutated state — never commit).
 /db/
+
+# Database dumps. These carry live member PII (emails, phones, bcrypt hashes,
+# Stripe customer IDs) — never commit, regardless of engine or filename.
+*.sql
+*.dump
+*.sql.gz
