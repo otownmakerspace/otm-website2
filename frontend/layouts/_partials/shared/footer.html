@@ -6,12 +6,12 @@
           {{ with site.Params.logo }}
           {{/* See header.html for why this is inlined rather than <img src=>. */}}
           <span class="site-logo site-logo--light inline-block h-10 xl:h-12" role="img" aria-label="{{ site.Title }}">
-            {{ readFile (printf "static/%s" .) | safeHTML }}
+            {{ readFile . | safeHTML }}
           </span>
           {{ end }}
           {{ with site.Params.logoDark }}
           <span class="site-logo site-logo--dark inline-block h-10 xl:h-12" role="img" aria-label="{{ site.Title }}">
-            {{ readFile (printf "static/%s" .) | safeHTML }}
+            {{ readFile . | safeHTML }}
           </span>
           {{ end }}
           {{ if and (not site.Params.logo) (not site.Params.logoDark) }}

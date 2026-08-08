@@ -61,7 +61,7 @@ logos (`inkscape`, `rsvg-convert`, or `magick`).
 
 ## The logo step — why it exists
 
-The brand lockups (`frontend/static/images/branding/logos/horizontal-lockup-*.svg`)
+The brand lockups (`frontend/branding/logos/horizontal-lockup-*.svg`)
 are *composite* SVGs: they pull the gear mark and wordmark in via nested
 `<image href="/images/…">` references. Typst's `image()` can't resolve those
 nested hrefs, so it would render an empty logo. `export-logos.sh` flattens

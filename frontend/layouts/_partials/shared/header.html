@@ -38,13 +38,13 @@
              Inlined as SVG so the lockup's inner <image href> references
              can resolve (browsers sandbox SVGs loaded via <img>). */}}
         <span class="site-logo site-logo--light inline-block h-12" role="img" aria-label="{{ $.Site.Title }}">
-          {{ readFile (printf "static/%s" .) | safeHTML }}
+          {{ readFile . | safeHTML }}
         </span>
         {{ end }}
         {{ with .Site.Params.logoDark }}
         {{/* Dark-mode logo — only shown when <html> has .dark */}}
         <span class="site-logo site-logo--dark inline-block h-12" role="img" aria-label="{{ $.Site.Title }}">
-          {{ readFile (printf "static/%s" .) | safeHTML }}
+          {{ readFile . | safeHTML }}
         </span>
         {{ end }}
         {{ if and (not .Site.Params.logo) (not .Site.Params.logoDark) }}

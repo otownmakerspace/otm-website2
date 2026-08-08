@@ -109,7 +109,7 @@ in the GitHub UI.
 | `BRAND_NAME`              | `O'Town Makerspace`      | `O'Town Makerspace`    | Public-facing brand displayed in transactional emails (footer, body copy, subject lines like *"Welcome to {brand}!"*). Optional — backend defaults to `O'Town Makerspace`. Set to override at rebrand. |
 | `BRAND_WORDMARK_LEADING`  | `O'TOWN`                 | `O'TOWN`               | Dark/primary part of the two-tone email wordmark. Optional — defaults to `O'TOWN`. |
 | `BRAND_WORDMARK_ACCENT`   | `MAKERSPACE`             | `MAKERSPACE`           | Orange-coloured second part of the wordmark. Optional — defaults to `MAKERSPACE`. |
-| `BRAND_LOGO_URL`          | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | Absolute URL to a horizontal wordmark image rendered at the top of every email (PNG or SVG). The site's marketing host serves this from `frontend/static/images/branding/logos/`. Empty disables the image — clients fall back to the text wordmark above. Optional — defaults to the production URL. |
+| `BRAND_LOGO_URL`          | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | `https://makerspace.olaru.dk/images/branding/logos/wordmark-consolidated.svg` | Absolute URL to a horizontal wordmark image rendered at the top of every email (PNG or SVG). The site's marketing host serves this from `frontend/branding/logos/`. Empty disables the image — clients fall back to the text wordmark above. Optional — defaults to the production URL. |
 
 ### Secrets — 13 per environment
 

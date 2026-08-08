@@ -34,7 +34,11 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 STATIC_DIR=$(cd "$SCRIPT_DIR/../frontend/static" && pwd)
-LOGO_SRC_DIR="$STATIC_DIR/images/branding/logos"
+# Brand logos are the single source of truth in frontend/branding/logos/. Hugo
+# republishes them at /images/branding/logos/ via a module mount, so the site
+# URLs are unchanged — but on disk they no longer live under static/, which is
+# why the href rewrite below needs a branding-specific rule.
+LOGO_SRC_DIR=$(cd "$SCRIPT_DIR/../frontend/branding/logos" && pwd)
 OUT_DIR="$SCRIPT_DIR/assets/logos"
 IND_DIR="$OUT_DIR/individual"
 WIDTH="${WIDTH:-1600}"
@@ -55,10 +59,14 @@ fi
 render_svg() {
   local src="$1" out="$2" pre="${3:-}"
   local tmp; tmp=$(mktemp --suffix=.svg)
+  # Two href rewrites, most-specific first: brand logos resolve to the canonical
+  # branding/ dir, everything else (icons, photos) still resolves under static/.
+  local rewrite_logos="s#href=\"/images/branding/logos/#href=\"file://$LOGO_SRC_DIR/#g"
+  local rewrite_static="s#href=\"/images/#href=\"file://$STATIC_DIR/images/#g"
   if [[ -n "$pre" ]]; then
-    sed -e "$pre" -e "s#href=\"/images/#href=\"file://$STATIC_DIR/images/#g" "$src" > "$tmp"
+    sed -e "$pre" -e "$rewrite_logos" -e "$rewrite_static" "$src" > "$tmp"
   else
-    sed "s#href=\"/images/#href=\"file://$STATIC_DIR/images/#g" "$src" > "$tmp"
+    sed -e "$rewrite_logos" -e "$rewrite_static" "$src" > "$tmp"
   fi
   case "$RENDERER" in
     inkscape) inkscape "$tmp" --export-type=png --export-filename="$out" -w "$WIDTH" >/dev/null 2>&1 ;;

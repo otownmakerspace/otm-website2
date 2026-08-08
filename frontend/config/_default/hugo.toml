@@ -4,6 +4,27 @@ title = "O'Town Makerspace — Community Workshop in Odense"
 theme = 'hugo-up-business-main'
 defaultContentLanguage = 'en'
 
+# Brand logos are a single source of truth in frontend/branding/logos/ — the
+# Hugo site, the Typst pipeline in marketing-materials/, and the campaign
+# folder all read that one directory instead of keeping copies.
+#
+# The mount republishes it at the historic URL (/images/branding/logos/…) so
+# nothing downstream changes: theme params, the favicon in baseof.html, and the
+# Go backend all still resolve. The backend matters most — it inlines these
+# SVGs off disk from the *published* output (BACKEND_STATIC_DIR=/app/public),
+# and loadInlineSVG only logs on a miss, so a wrong target would silently strip
+# logos from checkout and email rather than fail loudly.
+#
+# The `static -> static` entry re-declares Hugo's default mount, which adding a
+# mount for this target would otherwise replace.
+[module]
+  [[module.mounts]]
+    source = 'static'
+    target = 'static'
+  [[module.mounts]]
+    source = 'branding/logos'
+    target = 'static/images/branding/logos'
+
 [languages]
   [languages.en]
     languageCode = 'en-us'
@@ -23,9 +44,15 @@ defaultContentLanguage = 'en'
 
 [params]
   siteName = "O'Town Makerspace"
-  logo = "images/branding/logos/horizontal-lockup-notagline.svg"
-  logoDark = "images/branding/logos/wordmark-white-transparent.svg"
-  logoVertical = "images/branding/logos/vertical-lockup.svg"
+  # Filesystem paths relative to the project root, NOT URLs — header.html and
+  # footer.html inline these with readFile, which reads the real project
+  # directory and ignores the module mount above. (The mount only affects what
+  # Hugo publishes; readFile does not see through it.) The inlined lockups
+  # still contain <image href="/images/branding/logos/…"> references, and those
+  # ARE resolved as URLs by the browser — which the mount serves.
+  logo = "branding/logos/horizontal-lockup-notagline.svg"
+  logoDark = "branding/logos/wordmark-white-transparent.svg"
+  logoVertical = "branding/logos/vertical-lockup.svg"
   location = ["Havnegade 57, 5000 Odense C, Denmark"]
   contact = ["info@theotowngarage.com"]
   calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
