@@ -55,7 +55,11 @@
       <div class="xl:col-span-3">
         <h2 class="text-primary mb-2 text-center text-lg font-bold xl:text-start">Contact Us</h2>
         <ul class="flex flex-col gap-1 text-sm">
-          {{ range .Site.Params.contact }}
+          {{/* Kept in sync with the project override in layouts/_partials/shared/.
+               This partial is shadowed today; if it is ever un-shadowed it must not
+               silently render an empty Contact block off a param that no longer
+               exists. Source of truth: hugo.toml [params.email].contact. */}}
+          {{ with site.Params.email.contact }}
             <li class="text-center xl:text-start">{{ . }}</li>
           {{ end }}
         </ul>

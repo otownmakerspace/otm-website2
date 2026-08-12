@@ -1,4 +1,22 @@
 {{ define "main" }}
+{{/* Google Calendar identity: ONE param, hugo.toml [params.email].calendar.
+     The three Google URLs below each want it in a different encoding — a raw
+     query value, a URL-escaped path segment, and an unpadded-base64 "cid" — so
+     all three are derived here. Page front matter must NOT carry pre-encoded
+     copies (it used to carry googleCalendarId + calendarCid in both events.md
+     and events.da.md); that is four extra copies of one address, silently
+     drifting the day the calendar moves. */}}
+{{ $calendarId := site.Params.email.calendar }}
+{{ if not $calendarId }}
+  {{ errorf "params.email.calendar is unset in hugo.toml — the events page cannot build its calendar embed, .ics download or subscribe link without it" }}
+{{ end }}
+{{/* NOTE: `| urlquery` MUST stay inline in the URLs below — do not hoist it into a
+     variable here. Go's html/template escapes contextually and inspects the
+     pipeline: it recognises a trailing `urlquery` and adds nothing, but a
+     pre-escaped variable looks like plain text and gets escaped a second time
+     ("%40" -> "%2540"), silently breaking the embed. */}}
+{{/* Google's cid is standard base64 of the calendar ID with '=' padding stripped. */}}
+{{ $calendarCid := base64Encode $calendarId | strings.TrimRight "=" }}
 <section class="py-16">
   <div class="container mx-auto px-4">
     <h1 class="text-secondary mb-8 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ .Title }}</h1>
@@ -30,7 +48,7 @@
       <h2 class="text-secondary mb-8 text-center font-secondary text-2xl font-bold">{{ i18n "event_calendar" }}</h2>
       <div class="mx-auto max-w-5xl overflow-hidden rounded-[10px] bg-surface shadow-lg">
         <iframe
-                src="https://calendar.google.com/calendar/embed?src={{ .Params.googleCalendarId | urlquery }}&ctz={{ .Params.timezone | default "Europe/London" }}&mode={{ .Params.calendarMode | default "MONTH" }}&showTitle=0&showNav=1&showPrint=0&showTabs=1&showCalendars=0"
+                src="https://calendar.google.com/calendar/embed?src={{ $calendarId | urlquery }}&ctz={{ .Params.timezone | default "Europe/London" }}&mode={{ .Params.calendarMode | default "MONTH" }}&showTitle=0&showNav=1&showPrint=0&showTabs=1&showCalendars=0"
         class="h-[600px] w-full border-0"
         loading="lazy">
         </iframe>
@@ -43,10 +61,10 @@
       <h2 class="text-secondary mb-4 font-secondary text-2xl font-bold">{{ i18n "never_miss_event" }}</h2>
       <p class="mb-6 text-gray-dark">{{ i18n "subscribe_calendar" }}</p>
       <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <a href="{{ .Site.Params.calendarIcsUrl }}" download class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-6 py-2 duration-300 hover:text-white">
+        <a href="https://calendar.google.com/calendar/ical/{{ $calendarId | urlquery }}/public/basic.ics" download class="border-accent text-accent hover:bg-accent rounded-[10px] border-2 px-6 py-2 duration-300 hover:text-white">
           {{ i18n "download_ics" }}
         </a>
-        <a href="https://calendar.google.com/calendar/r?cid={{ .Params.calendarCid }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-6 py-2 text-white duration-300">
+        <a href="https://calendar.google.com/calendar/r?cid={{ $calendarCid }}" class="bg-accent hover:bg-accent-2 rounded-[10px] px-6 py-2 text-white duration-300">
           {{ i18n "add_google_calendar" }}
         </a>
       </div>

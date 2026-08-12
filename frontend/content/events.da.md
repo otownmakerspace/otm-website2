@@ -4,11 +4,9 @@ type: "page"
 layout: "events"
 description: "Hold dig opdateret med vores frivillige aktiviteter og fællesskabsarrangementer."
 
-googleCalendarId: "info@theotowngarage.com"
+# Kalenderens identitet står ét sted: hugo.toml, [params.email].calendar.
 timezone: "Europe/Copenhagen"
 calendarMode: "MONTH"
-
-calendarCid: "aW5mb0B0aGVvdG93bmdhcmFnZS5jb20"
 
 featuredEvents:
   - title: "Åbent hus / Ugentligt møde"

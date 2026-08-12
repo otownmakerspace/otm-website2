@@ -66,14 +66,19 @@
               </a>
             </li>
           {{ end }}
-          {{ range .Site.Params.contact }}
-            <li class="text-center xl:text-start">
-              <a href="mailto:{{ . }}" class="hover:text-accent inline-flex items-center gap-1.5">
-                <i class="fa-regular fa-envelope shrink-0"></i>
-                {{ . }}
-              </a>
-            </li>
+          {{/* Single source of truth: hugo.toml [params.email].contact. Hard-fail
+               rather than `with`, so a renamed/empty param breaks the build instead
+               of quietly dropping the contact link from every page on the site. */}}
+          {{ $contact := site.Params.email.contact }}
+          {{ if not $contact }}
+            {{ errorf "params.email.contact is unset in hugo.toml — the site footer has no address to link" }}
           {{ end }}
+          <li class="text-center xl:text-start">
+            <a href="mailto:{{ $contact }}" class="hover:text-accent inline-flex items-center gap-1.5">
+              <i class="fa-regular fa-envelope shrink-0"></i>
+              {{ $contact }}
+            </a>
+          </li>
         </ul>
       </div>
     </div>

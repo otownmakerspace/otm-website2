@@ -4,13 +4,12 @@ type: "page"
 layout: "events"
 description: "Stay up to date with our volunteer activities and community events."
 
-# Google Calendar embed settings (no API key needed - just make calendar public)
-googleCalendarId: "info@theotowngarage.com"
+# Google Calendar embed settings (no API key needed - just make calendar public).
+# The calendar's identity is NOT here: it lives once in hugo.toml under
+# [params.email].calendar, and events.html derives the embed, .ics and subscribe
+# URLs from it. Only presentation options belong in front matter.
 timezone: "Europe/Copenhagen"  # Change to your timezone
 calendarMode: "MONTH"  # MONTH, WEEK, or AGENDA
-
-# For subscribe links
-calendarCid: "aW5mb0B0aGVvdG93bmdhcmFnZS5jb20"
 
 # Optional: Featured events (can also be pulled dynamically)
 featuredEvents:

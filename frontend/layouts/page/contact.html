@@ -4,16 +4,18 @@
   <div class="container mx-auto px-4">
     <h1 class="text-secondary mb-12 text-center font-secondary text-4xl font-bold xl:text-6xl">{{ i18n "get_in_touch" }}</h1>
     <div class="mx-auto grid max-w-5xl gap-8 xl:grid-cols-3">
-      {{/* Email */}}
-      {{ range .Site.Params.contact }}
+      {{/* Email — single source of truth: hugo.toml [params.email].contact. */}}
+      {{ $contact := site.Params.email.contact }}
+      {{ if not $contact }}
+        {{ errorf "params.email.contact is unset in hugo.toml — the contact page has no address to show" }}
+      {{ end }}
       <div class="rounded-[10px] bg-surface p-8 text-center shadow-sm">
         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/15">
           <i class="fa-regular fa-envelope text-accent text-2xl"></i>
         </div>
         <h3 class="text-secondary mb-2 font-secondary text-xl font-bold">{{ i18n "email_us" }}</h3>
-        <a href="mailto:{{ . }}" class="text-accent hover:text-accent-2 text-lg">{{ . }}</a>
+        <a href="mailto:{{ $contact }}" class="text-accent hover:text-accent-2 text-lg">{{ $contact }}</a>
       </div>
-      {{ end }}
 
       {{/* Location */}}
       {{ range .Site.Params.location }}

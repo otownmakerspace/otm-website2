@@ -54,8 +54,6 @@ defaultContentLanguage = 'en'
   logoDark = "branding/logos/wordmark-white-transparent.svg"
   logoVertical = "branding/logos/vertical-lockup.svg"
   location = ["Havnegade 57, 5000 Odense C, Denmark"]
-  contact = ["info@theotowngarage.com"]
-  calendarIcsUrl = "https://calendar.google.com/calendar/ical/info%40theotowngarage.com/public/basic.ics"
   ogImage = "images/og-default.jpg"
   # Google Ads tag (gtag.js). Consent-gated via the Klaro "googleAds"
   # service in baseof.html. Moved here from the retired otg-website
@@ -69,6 +67,37 @@ defaultContentLanguage = 'en'
   # runtime by the Go server via BACKEND_PUBLIC_URL env var.
   memberPortalUrl = "/login/"
   memberSignupUrl = "/checkout/"
+
+  # ── Mail addresses: single source of truth ──
+  # NOTHING else in the frontend may hardcode an address. Templates read these
+  # params; layouts that need an encoded form (URL-escaped, base64) derive it
+  # with `urlquery` / `base64Encode` rather than storing a second copy. Both
+  # keys are load-bearing: footer.html, contact.html and events.html abort the
+  # build via `errorf` if either is empty, so a typo fails loudly instead of
+  # rendering a page with a missing contact link.
+  #
+  # The Go backend does NOT read this file — its outbound mail identity comes
+  # from the MAIL_FROM / MAIL_REPLY_TO env vars (see api/README.md). Keep
+  # `contact` below in sync with MAIL_REPLY_TO; they are the same human inbox.
+  #
+  # This table must stay BELOW every bare key in [params]: in TOML, keys after
+  # a table header belong to that table, so moving it up would silently swallow
+  # siteName, logo, location, … into params.email.
+  [params.email]
+    # Public inbox. Every mailto: link on the site resolves to this.
+    contact = "info@otownmakerspace.dk"
+
+    # Google account that owns the public events calendar — a *calendar ID* we
+    # read from, not a mailbox we send to. events.html derives all three Google
+    # URLs from this one value (embed src, .ics download, "add to Google
+    # Calendar" cid); it is the same address as `contact` today, but keep it a
+    # separate key so moving the calendar never forces a mailto: change.
+    #
+    # This replaces the retired info@theotowngarage.com calendar, which now
+    # 404s — the events page had been embedding a calendar that no longer
+    # exists. Verify with:
+    #   curl -sIL https://calendar.google.com/calendar/ical/info%40otownmakerspace.dk/public/basic.ics
+    calendar = "info@otownmakerspace.dk"
 
   [[params.sponsor_items]]
     name = "Coalescent Mobile Robotics"
