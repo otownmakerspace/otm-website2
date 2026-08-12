@@ -19,7 +19,7 @@ import (
 // document with its own auth-aware chrome.
 type dashboardPageView struct {
 	Lang        i18n.Lang
-	Head        template.HTML // extracted from docs/index.html — Tailwind, fonts, theme tokens
+	Head        template.HTML // extracted from public/index.html — Tailwind, fonts, theme tokens
 	LogoLight   template.HTML // inline SVG of the marketing-site light-mode logo
 	LogoDark    template.HTML // inline SVG of the marketing-site dark-mode logo
 	UserEmail   string
@@ -54,7 +54,7 @@ func dashboardErrorMessage(s i18n.Strings, code string) string {
 	}
 }
 
-// loadHugoHead reads <head>...</head> out of docs/index.html so the dashboard
+// loadHugoHead reads <head>...</head> out of public/index.html so the dashboard
 // page gets the same Tailwind, fonts, and theme-token setup as the rest of
 // the site without duplicating the boilerplate.
 //

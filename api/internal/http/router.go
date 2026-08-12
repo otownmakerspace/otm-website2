@@ -146,7 +146,7 @@ func Mux(
 }
 
 // staticFallbackWith404 wraps http.FileServer so that requests to a path
-// that doesn't exist on disk get the Hugo-built docs/404.html body with
+// that doesn't exist on disk get the Hugo-built public/404.html body with
 // proper HTTP 404 status — instead of the default plain-text
 // "404 page not found\n" that FileServer emits. Localization (Danish
 // /da/* paths) is handled inside errpage.Render.

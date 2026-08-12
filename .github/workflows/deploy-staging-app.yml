@@ -24,7 +24,7 @@ jobs:
   # The Docker image build (infra/app/Dockerfile, frontend-builder stage) runs
   # npm install -> Tailwind -> Hugo internally, so it is the single source of
   # truth for the compiled static site. No separate Hugo/artifact step is needed
-  # here; a prior build-hugo job only produced a CSS-less docs/ that the Docker
+  # here; a prior build-hugo job only produced a CSS-less public/ that the Docker
   # build overwrote anyway.
   publish:
     runs-on: ubuntu-latest

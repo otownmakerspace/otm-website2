@@ -36,7 +36,7 @@ type Service struct {
 	Mailer    *email.Mailer
 	Captcha   *captcha.Service
 	Contacts  *googlecontacts.Client // Gmail mailing-list label sync; disabled client when Google creds absent
-	HugoHead  template.HTML          // <head> contents lifted from Hugo's docs/index.html for the dashboard's chrome
+	HugoHead  template.HTML          // <head> contents lifted from Hugo's public/index.html for the dashboard's chrome
 	LogoLight template.HTML          // inline SVG of the light-mode horizontal lockup, mirrors marketing-site usage
 	LogoDark  template.HTML          // inline SVG of the dark-mode wordmark, mirrors marketing-site usage
 }

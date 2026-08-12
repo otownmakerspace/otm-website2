@@ -1,5 +1,10 @@
 baseURL = 'https://otownmakerspace.dk/'
-publishDir = 'docs'
+# Hugo's default. It was 'docs' historically — a GitHub Pages convention from
+# when Pages could only serve a branch root or /docs. This repo deploys Pages
+# via actions/deploy-pages (see .github/workflows/hugo.yml), which uploads an
+# artifact from any path, so that constraint no longer applies. 'docs' also
+# collided with the real content section at /docs/, producing docs/docs/.
+publishDir = 'public'
 title = "O'Town Makerspace — Community Workshop in Odense"
 theme = 'hugo-up-business-main'
 defaultContentLanguage = 'en'

@@ -6,7 +6,7 @@ one repository, three peer concerns:
 
 ```
 otm-website/
-├── frontend/    Hugo (content + layouts + theme; produces frontend/docs/)
+├── frontend/    Hugo (content + layouts + theme; produces frontend/public/)
 ├── api/         Go backend (Stripe checkout, webhook fulfilment, sessions, email)
 └── infra/       Docker/Traefik runtime + Terraform/Ansible provisioning
 ```
@@ -40,7 +40,7 @@ Reverse-proxy deploys are manual (`workflow_dispatch`):
 - [`deploy-production-reverseproxy.yml`](.github/workflows/deploy-production-reverseproxy.yml)
 
 The legacy [`hugo.yml`](.github/workflows/hugo.yml) keeps publishing
-`makerspace.olaru.dk` to GitHub Pages from `frontend/docs/` for now.
+`makerspace.olaru.dk` to GitHub Pages from `frontend/public/` for now.
 It gets retired during the production cutover (see
 [Production cutover](#production-cutover) below).
 
@@ -152,7 +152,7 @@ at startup.
 
 ```sh
 git clone …otm-website && cd otm-website
-cd frontend && hugo --minify       # builds frontend/docs/
+cd frontend && hugo --minify       # builds frontend/public/
 cd ..
 ./infra/dev.sh build               # Hugo + Docker image
 ./infra/dev.sh app up --dev        # app + reverse-proxy + stripe-cli

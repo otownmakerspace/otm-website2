@@ -3,6 +3,9 @@
 /.idea/vcs.xml
 
 # Hugo (lives under frontend/ after the migration)
+/frontend/public/
+# Former publishDir, renamed to public/. Kept ignored so a stale output tree
+# left over from a pre-rename checkout never gets committed by accident.
 /frontend/docs/
 /frontend/.hugo_build.lock
 /frontend/resources/_gen/

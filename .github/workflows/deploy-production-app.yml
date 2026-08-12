@@ -40,11 +40,11 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
           hugo --minify --environment production --baseURL "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
 
-      - name: Upload frontend/docs/ artifact
+      - name: Upload frontend/public/ artifact
         uses: actions/upload-artifact@v4
         with:
           name: hugo-public
-          path: frontend/docs/
+          path: frontend/public/
 
   publish:
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: hugo-public
-          path: frontend/docs/
+          path: frontend/public/
 
       - name: Build and Publish Docker Image
         uses: ./.github/actions/publish

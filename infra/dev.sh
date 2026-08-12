@@ -174,7 +174,7 @@ case "$cmd" in
     # Forward the Hugo env/baseURL into the Docker build so the
     # frontend-builder stage's in-container Hugo run matches what we
     # built on the host above. Without these flags Hugo inside Docker
-    # defaults to production and overwrites the dev-built docs/.
+    # defaults to production and overwrites the dev-built public/.
     # SUBDOMAIN/TOPDOMAIN go through too so the Hugo build can compose
     # https://members.<SUBDOMAIN>.<TOPDOMAIN>/... links via os.Getenv.
     docker build \

@@ -80,8 +80,9 @@ WORKDIR /app
 
 COPY --from=backend-builder /out/server ./server
 
-# Hugo's publishDir is set to "docs" in config/_default/hugo.toml.
-COPY --from=frontend-builder /app/frontend/docs ./public
+# Hugo's publishDir is "public" (config/_default/hugo.toml). The destination
+# must stay ./public — BACKEND_STATIC_DIR below points the Go server at it.
+COPY --from=frontend-builder /app/frontend/public ./public
 
 COPY infra/app/entrypoint.sh /entrypoint.sh
 
