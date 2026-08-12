@@ -21,44 +21,20 @@ jobs:
       - name: Run tests
         uses: ./.github/actions/test
 
-  build-hugo:
+  # The Docker image build (infra/app/Dockerfile, frontend-builder stage) runs
+  # npm install -> Tailwind -> Hugo internally, so it is the single source of
+  # truth for the compiled static site. No separate Hugo/artifact step is needed
+  # here; a prior build-hugo job only produced a CSS-less public/ that the Docker
+  # build overwrote anyway — the builder does `COPY frontend/ ./` and re-runs
+  # Hugo, and only the in-Docker run executes Tailwind first. Staging dropped
+  # the same job for the same reason (see deploy-staging-app.yml).
+  publish:
     runs-on: ubuntu-latest
     environment: Production
     needs: test
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Build Hugo static site
-        env:
-          HUGO_VERSION: "0.161.1"
-        working-directory: frontend
-        run: |
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-          hugo --minify --environment production --baseURL "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
-
-      - name: Upload frontend/public/ artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: hugo-public
-          path: frontend/public/
-
-  publish:
-    runs-on: ubuntu-latest
-    environment: Production
-    needs: build-hugo
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download Hugo output
-        uses: actions/download-artifact@v4
-        with:
-          name: hugo-public
-          path: frontend/public/
 
       - name: Build and Publish Docker Image
         uses: ./.github/actions/publish
@@ -67,6 +43,12 @@ jobs:
           ghcr_image_tag: ${{ env.GHCR_IMAGE_TAG }}
           hugo_environment: production
           hugo_base_url: "https://${{ vars.SUBDOMAIN }}.${{ vars.TOPDOMAIN }}/"
+          # Forwarded into the in-Docker Hugo build as HUGO_PARAMS_SUBDOMAIN /
+          # HUGO_PARAMS_TOPDOMAIN, which _partials/func/members-href.html reads
+          # to compose members.<sub>.<top> links. Staging passes these; without
+          # them Hugo sees empty params and emits broken member-portal URLs.
+          subdomain: ${{ vars.SUBDOMAIN }}
+          topdomain: ${{ vars.TOPDOMAIN }}
 
   deploy:
     runs-on: ubuntu-latest

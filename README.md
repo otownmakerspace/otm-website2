@@ -30,8 +30,8 @@ Branch-per-environment:
 | Push to       | Workflow                                              | Effect |
 |---------------|-------------------------------------------------------|--------|
 | `master`      | [`main.yml`](.github/workflows/main.yml)              | Run tests (Go + Hugo). No deploy. |
-| `staging`     | [`deploy-staging-app.yml`](.github/workflows/deploy-staging-app.yml) | test → build-hugo → publish image → deploy to **Staging** environment. |
-| `production`  | [`deploy-production-app.yml`](.github/workflows/deploy-production-app.yml) | test → build-hugo → publish image → deploy to **Production** environment. |
+| `staging`     | [`deploy-staging-app.yml`](.github/workflows/deploy-staging-app.yml) | test → publish image (Hugo builds inside Docker) → deploy to **Staging** environment. |
+| `production`  | [`deploy-production-app.yml`](.github/workflows/deploy-production-app.yml) | test → publish image (Hugo builds inside Docker) → deploy to **Production** environment. |
 | pull request  | [`backend_test.yml`](.github/workflows/backend_test.yml), [`hugo_test.yml`](.github/workflows/hugo_test.yml) | PR validation. |
 
 Reverse-proxy deploys are manual (`workflow_dispatch`):
