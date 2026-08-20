@@ -1,0 +1,27 @@
+# Copy for the A4 contact poster (poster/contact.typ).
+#
+# The contact FACTS below (email, address, socials) are duplicated from the
+# site config — frontend/config/_default/hugo.toml is the single source of
+# truth ([params.email].contact, [params].location, [params.social]). If the
+# site's contact details change, update this file and da/contact/meta.yml to
+# match.
+title: Get in Touch
+eyebrow: Community workshop in Odense
+email_label: Email us
+email: info@otownmakerspace.dk
+location_label: Our location
+address: Havnegade 57, 5000 Odense C
+hours_label: Open hours
+hours_public: "Public: during Open House events"
+hours_members: "Members: 24/7 access"
+hours_note: "Event calendar: otownmakerspace.dk/events"
+follow_label: Follow us
+scan_hint: Scan to open
+# Full URLs — rendered as QR codes on the poster, not printed as text.
+# facebook has no vanity URL, only the numeric profile.php form.
+facebook_url: https://www.facebook.com/profile.php?id=61590717692379
+instagram_url: https://www.instagram.com/otown_makerspace/
+discord_url: https://discord.gg/RHVfMu49CG
+site: otownmakerspace.dk
+site_url: https://otownmakerspace.dk
+tagline: MAKE · TINKER · SHARE

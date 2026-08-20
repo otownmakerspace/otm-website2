@@ -21,8 +21,9 @@
 #
 # Contrast fix for dark backgrounds: the white-transparent lockup ships with
 # the FULL-COLOUR gear (gear-mark-transparent.svg), whose navy parts vanish on
-# a navy panel. For logo-dark.png we swap it for the white gear
-# (gear-mark-white.svg) so the whole mark contrasts.
+# a navy panel. For logo-dark.png we swap it for the white knockout gear
+# (gear-mark-white-transparent.svg — the plain white variant would bake a navy
+# background square into the lockup) so the whole mark contrasts.
 #
 # Output is PNG, not JPEG, to preserve transparency on light OR dark surfaces.
 # Re-run after changing any brand logo SVG. assets/logos/ is gitignored.
@@ -81,7 +82,7 @@ echo "Rasterizing brand logos (${WIDTH}px, $RENDERER):"
 # 1) Composed lockups embedded by the Typst templates.
 render_svg "$LOGO_SRC_DIR/horizontal-lockup-notagline.svg"        "$OUT_DIR/logo-light.png"
 render_svg "$LOGO_SRC_DIR/horizontal-lockup-white-transparent.svg" "$OUT_DIR/logo-dark.png" \
-           "s#gear-mark-transparent.svg#gear-mark-white.svg#"
+           "s#gear-mark-transparent.svg#gear-mark-white-transparent.svg#"
 echo "  templates → logo-light.png, logo-dark.png (dark uses white gear)"
 
 # 2) Every brand logo SVG, rendered individually.

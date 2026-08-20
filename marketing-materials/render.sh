@@ -52,6 +52,7 @@ declare -A SLIDES=(
   ["square"]="01-hook 02-pain 03-solution 04-proof 05-cta"
   ["google-ads"]="160x600 300x250 300x600 320x50 728x90"
   ["facebook"]="cover"
+  ["poster"]="contact"
 )
 
 LANGS=("en" "da")
@@ -59,7 +60,7 @@ THEMES=("light" "dark")
 
 total=0
 for lang in "${LANGS[@]}"; do
-  for format in square google-ads facebook; do
+  for format in square google-ads facebook poster; do
     for theme in "${THEMES[@]}"; do
       out_dir="$OUTPUT_DIR/$lang/$format/$theme"
       mkdir -p "$out_dir"
@@ -74,9 +75,12 @@ for lang in "${LANGS[@]}"; do
         # SVG — scalable master.
         "$TYPST" compile "$src" "$out_dir/${slide}.svg" --format svg "${common[@]}"
         # PNG — rasterized, upload-ready marketing asset (logo baked in).
-        # Banners stay at 72ppi for spec-exact IAB pixels; everything else
+        # Banners stay at 72ppi for spec-exact IAB pixels; the A4 poster is
+        # a print piece, so its PNG rasterizes at 300ppi; everything else
         # renders at PPI (default 2×) for crispness.
-        if [[ "$format" == "google-ads" ]]; then ppi=72; else ppi="$PPI"; fi
+        if [[ "$format" == "google-ads" ]]; then ppi=72
+        elif [[ "$format" == "poster" ]]; then ppi=300
+        else ppi="$PPI"; fi
         "$TYPST" compile "$src" "$out_dir/${slide}.png" --format png --ppi "$ppi" "${common[@]}"
         total=$((total + 1))
         printf "  → %s/%s/%s/%s.{svg,png}\n" "$lang" "$format" "$theme" "$slide"

@@ -22,10 +22,13 @@ marketing-materials/
 ├── fonts/                  static TTFs Typst loads via --font-path
 │                           (Space Grotesk display, Roboto body, Material Symbols)
 ├── data/                   slide content (YAML), {en, da}
-│   ├── en/{hero,pain,how,features,subscribe}/…
+│   ├── en/{hero,pain,how,features,subscribe,contact}/…
 │   └── da/…
 ├── square/                 1080×1080 universal social — 5 slides + _layout.typ
 ├── google-ads/             5 display-banner sizes + _layout.typ
+├── facebook/               851×315 Facebook Page cover + _layout.typ
+├── poster/                 A4 (210×297mm) print posters + _layout.typ
+│                           (contact.typ — color-coded contact-info poster)
 ├── assets/logos/           rasterized logos (PNG, generated — gitignored):
 │   ├── logo-light.png      navy+orange lockup (templates, light bg)
 │   ├── logo-dark.png       all-white lockup   (templates, dark bg)
@@ -45,19 +48,23 @@ marketing-materials/
 TYPST=~/.local/bin/typst ./render.sh
 ```
 
-Outputs 40 assets (2 formats × 2 languages × 2 themes × 5 slides), each as
-**both** `<slide>.svg` (scalable master) and `<slide>.png` (rasterized,
-upload-ready, logo baked in) under `out/<lang>/<format>/<theme>/`. PNGs come
-out at exact spec pixels — square at 1080×1080, banners at their IAB sizes —
-ready to drag-upload to the ad manager. Set `PPI=144` for 2× (retina) social
-PNGs (keep banners at the default 72 for spec-exact pixels). To export just the logos (e.g. after editing a brand SVG):
+Outputs 48 assets (12 templates × 2 languages × 2 themes), each as **both**
+`<slide>.svg` (scalable master) and `<slide>.png` (rasterized, upload-ready,
+logo baked in) under `out/<lang>/<format>/<theme>/`. PNGs come out at exact
+spec pixels — square at 1080×1080, banners at their IAB sizes — ready to
+drag-upload to the ad manager; the A4 poster PNG rasterizes at 300ppi for
+print (its SVG is the scalable print master). Set `PPI=144` for 2× (retina)
+social PNGs (keep banners at the default 72 for spec-exact pixels). To export
+just the logos (e.g. after editing a brand SVG):
 
 ```sh
 ./export-logos.sh        # → assets/logos/logo-light.png, logo-dark.png
 ```
 
 Requires Typst on PATH (or `TYPST=path/to/typst`), plus a rasterizer for the
-logos (`inkscape`, `rsvg-convert`, or `magick`).
+logos (`inkscape`, `rsvg-convert`, or `magick`). The poster's QR codes use the
+`@preview/tiaoma` Typst package — downloaded from the package registry on the
+first compile (needs network once), then cached in `~/.cache/typst`.
 
 ## The logo step — why it exists
 
@@ -71,9 +78,12 @@ its transparency on both light and dark ad backgrounds.
 
 - `logo-light.png` ← `horizontal-lockup-notagline.svg` (navy + orange)
 - `logo-dark.png`  ← `horizontal-lockup-white-transparent.svg`, **with the gear
-  swapped to the white variant** (`gear-mark-white.svg`). The shipped
-  white-transparent lockup keeps the full-colour gear, whose navy parts vanish
-  on a navy panel — the swap makes the whole mark contrast on dark backgrounds.
+  swapped to the white knockout variant** (`gear-mark-white-transparent.svg`).
+  The shipped white-transparent lockup keeps the full-colour gear, whose navy
+  parts vanish on a navy panel — the swap makes the whole mark contrast on dark
+  backgrounds. (The transparent knockout is used rather than
+  `gear-mark-white.svg`, which would bake its navy background square into the
+  lockup.)
 
 `export-logos.sh` also renders **every** brand logo SVG standalone to
 `assets/logos/individual/<name>.png` (all gear marks, wordmarks, and lockup

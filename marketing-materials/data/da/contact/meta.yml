@@ -1,0 +1,22 @@
+# Tekst til A4-kontaktplakaten (poster/contact.typ). Dansk udgave af
+# en/contact/meta.yml — kontaktFAKTA spejler hugo.toml (se kommentaren dér).
+title: Kontakt os
+eyebrow: Fællesskabsdrevet værksted i Odense
+email_label: Skriv til os
+email: info@otownmakerspace.dk
+location_label: Vores lokation
+address: Havnegade 57, 5000 Odense C
+hours_label: Åbningstider
+hours_public: "Offentlig: under Åbent Hus-arrangementer"
+hours_members: "Medlemmer: 24/7 adgang"
+hours_note: "Kalender: otownmakerspace.dk/da/events"
+follow_label: Følg os
+scan_hint: Scan for at åbne
+# Fulde URL'er — gengives som QR-koder på plakaten, ikke som tekst.
+facebook_url: https://www.facebook.com/profile.php?id=61590717692379
+instagram_url: https://www.instagram.com/otown_makerspace/
+discord_url: https://discord.gg/RHVfMu49CG
+site: otownmakerspace.dk
+site_url: https://otownmakerspace.dk
+# Brand-tagline forbliver på engelsk — den matcher logoets lockup.
+tagline: MAKE · TINKER · SHARE
